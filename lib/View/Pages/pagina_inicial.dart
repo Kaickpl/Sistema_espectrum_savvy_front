@@ -1,0 +1,196 @@
+import 'package:espectrum_front/View/Pages/trocar_senha.dart';
+import 'package:flutter/material.dart';
+
+import '../Widgets/fundo_tela.dart';
+import '../Widgets/logo_container.dart';
+import '../Widgets/roda_pe.dart';
+
+class PaginaInicial extends StatefulWidget {
+  const PaginaInicial({super.key});
+
+  @override
+  State<PaginaInicial> createState() => _PaginaInicialState();
+}
+
+class _PaginaInicialState extends State<PaginaInicial> {
+  final _formKey = GlobalKey<FormState>();
+  bool obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FundoTela(
+        child: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    LogoContainer(
+                      nomePage: "Sistema de Gestão Terapêutica",
+                    ),
+
+                    SizedBox(height: 15),
+
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Login",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary,
+                                ),
+                              ),
+
+                              SizedBox(height: 20),
+
+                              Text(
+                                "Email",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary,
+                                ),
+                              ),
+
+                              SizedBox(height: 8),
+
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Digite seu email:",
+                                  filled: true,
+                                  fillColor: Colors.grey.shade100,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Digite seu email";
+                                  }
+                                  if (!value.contains("@")) {
+                                    return "Email inválido";
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              SizedBox(height: 10),
+
+                              Text(
+                                "Senha",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary,
+                                ),
+                              ),
+
+                              SizedBox(height: 8),
+
+                              TextFormField(
+                                obscureText: obscureText,
+                                decoration: InputDecoration(
+                                  hintText: "Digite sua senha",
+                                  filled: true,
+                                  fillColor: Color(0xFFF5F5F5),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        obscureText = !obscureText;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      obscureText
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                                validator: (valueSenha) {
+                                  if (valueSenha == null ||
+                                      valueSenha.isEmpty) {
+                                    return "Digite sua senha";
+                                  }
+                                  if (valueSenha.length < 6) {
+                                    return "Login ou senha estão errados";
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              SizedBox(height: 15),
+
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const TrocarSenha(),
+                                      ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "Esqueci minha senha",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  TextButton(
+                                    onPressed: (){},
+                                    child: Text("Entrar"),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 230),
+
+                    RodaPe(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      );
+  }
+}
