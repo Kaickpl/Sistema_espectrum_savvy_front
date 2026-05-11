@@ -1,6 +1,5 @@
 import 'package:espectrum_front/View/Pages/trocar_senha.dart';
 import 'package:flutter/material.dart';
-
 import '../Widgets/fundo_tela.dart';
 import '../Widgets/logo_container.dart';
 import '../Widgets/roda_pe.dart';
@@ -31,9 +30,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    LogoContainer(
-                      nomePage: "Sistema de Gestão Terapêutica",
-                    ),
+                    LogoContainer(nomePage: "Sistema de Gestão Terapêutica"),
 
                     SizedBox(height: 15),
 
@@ -55,9 +52,9 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
                                 ),
                               ),
 
@@ -67,9 +64,9 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                 "Email",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimary,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                               ),
 
@@ -103,9 +100,9 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimary,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                 ),
                               ),
 
@@ -150,38 +147,115 @@ class _PaginaInicialState extends State<PaginaInicial> {
 
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const TrocarSenha(),
-                                      ),
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const TrocarSenha(),
+                                        ),
                                       );
                                     },
                                     child: Text(
                                       "Esqueci minha senha",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.secondary,
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  TextButton(
-                                    onPressed: (){},
-                                    child: Text("Entrar"),
-                                  )
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                        ],
+                                      ),
+                                    ),
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 25,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadiusGeometry.circular(12),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          //Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home());
+                                        }
+                                      },
+                                      child: Text(
+                                        "Entrar",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
+                              SizedBox(height: 10),
+
+                              Center(child: Text("ou")),
+
+                              SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 40,
+                                child: OutlinedButton.icon(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.g_mobiledata,
+                                    size: 30,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
+                                  ),
+                                  label: Text(
+                                    "Entrar com o Google",
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              Center(
+                                child: Text("Não tem conta ?"),
+                              ),
+                              Center(
+                                child: TextButton(onPressed:(){
+                                }, child: Text("Criar conta"),
+                                ),
+                              )
+
                             ],
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 230),
 
                     RodaPe(),
                   ],
@@ -191,6 +265,6 @@ class _PaginaInicialState extends State<PaginaInicial> {
           ),
         ),
       ),
-      );
+    );
   }
 }

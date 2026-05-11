@@ -15,6 +15,7 @@ void main () {
         title: "Espectrum Savvy" ,
         theme: tema_claro.tema,
         home: PaginaInicial(),
+        debugShowCheckedModeBanner: false,
       );
     }
 }
