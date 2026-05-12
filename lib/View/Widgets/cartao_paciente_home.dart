@@ -21,8 +21,8 @@ class CartaoPacienteHome extends StatelessWidget {
         color: const Color.fromRGBO(255, 255, 255, 1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color.fromRGBO(243, 244, 246, 1),
-          width: 5
+          color: const Color.fromARGB(130, 197, 197, 197),
+          width: 1
         )
       ),
       padding: EdgeInsets.all(10),
