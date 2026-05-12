@@ -6,8 +6,8 @@ class DrawerPadrao extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      shadowColor: Theme.of(context).colorScheme.onSecondary,
-      backgroundColor: Theme.of(context).colorScheme.secondary,
+      shadowColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       child: ListView(padding: EdgeInsets.zero,),
     );
   }
