@@ -15,7 +15,7 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CabecalhoPadrao(titulo: "Protocolo Soccially Savvy"),
-      endDrawer: DrawerPadrao(  ),
+      endDrawer: DrawerPadrao(),
       body: Center(
         child: SafeArea(bottom: false, child: SingleChildScrollView()),
       ),
