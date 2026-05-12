@@ -1,4 +1,5 @@
 import 'package:espectrum_front/View/Pages/trocar_senha.dart';
+import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:espectrum_front/View/Widgets/categoria_cadastro.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +13,7 @@ class TelaCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(
-        toolbarHeight: 35,
-        actions: [],
-      ),
+      appBar: AppBarPadrao(nome: "Seleção Perfis",),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
