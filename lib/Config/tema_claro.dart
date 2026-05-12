@@ -4,7 +4,7 @@ class tema_claro{
   static final ThemeData tema = ThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.light,
-      primary: Color(0xFFFFFFFF),
+      primary: Color(0xFFF2F2F7),
       onPrimary: Colors.black54,
       secondary: Color(0xFF20B7E5),
       onSecondary: Colors.white,

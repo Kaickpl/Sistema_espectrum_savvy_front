@@ -1,4 +1,6 @@
+import 'package:espectrum_front/View/Pages/pagina_cadastro.dart';
 import 'package:espectrum_front/View/Pages/trocar_senha.dart';
+import 'package:espectrum_front/View/Widgets/fundo_bot%C3%A3o.dart';
 import 'package:flutter/material.dart';
 import '../Widgets/fundo_tela.dart';
 import '../Widgets/logo_container.dart';
@@ -170,20 +172,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Theme.of(context).colorScheme.primary,
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
-                                        ],
-                                      ),
-                                    ),
+                                  FundoBotao(
                                     child: TextButton(
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
@@ -192,7 +181,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadiusGeometry.circular(12),
+                                              BorderRadius.circular(10),
                                         ),
                                       ),
                                       onPressed: () {
@@ -240,22 +229,32 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20,),
+                              SizedBox(height: 20),
+                              Center(child: Text("Não tem conta ?")),
                               Center(
-                                child: Text("Não tem conta ?"),
-                              ),
-                              Center(
-                                child: TextButton(onPressed:(){
-                                }, child: Text("Criar conta"),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TelaCadastro(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Criar conta",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                                  ),
                                 ),
-                              )
-
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
-
 
                     RodaPe(),
                   ],
