@@ -1,5 +1,6 @@
 import 'package:espectrum_front/Config/tema_claro.dart';
 import 'package:espectrum_front/View/Pages/pagina_inicial.dart';
+import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ void main () {
       return MaterialApp(
         title: "Espectrum Savvy" ,
         theme: tema_claro.tema,
-        home: PaginaInicial(),
+        home: PaginaProtocolo(),
       );
     }
 }

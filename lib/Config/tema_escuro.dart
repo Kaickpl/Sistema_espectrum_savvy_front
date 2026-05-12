@@ -6,7 +6,7 @@ class tema_escuro{
         brightness: Brightness.dark,
         primary: Color(0xFF8B7CFF),
         onPrimary: Colors.white,
-        secondary: Color(0xFF3CC7F5),
+        secondary: Color(0xFF2783DC),
         onSecondary: Colors.black,
         tertiary: Color(0xFFB197FC),
         onTertiary: Colors.black,
