@@ -1,8 +1,12 @@
-import 'package:espectrum_front/View/Pages/trocar_senha.dart';
+import 'package:espectrum_front/View/Pages/tela_perfis.dart';
+import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
+import 'package:espectrum_front/View/Widgets/widget_termo_uso_privacidade.dart';
+import 'package:espectrum_front/View/Widgets/fundo_bot%C3%A3o.dart';
 import 'package:flutter/material.dart';
 import '../Widgets/fundo_tela.dart';
 import '../Widgets/logo_container.dart';
 import '../Widgets/roda_pe.dart';
+import '../Widgets/widget_input_acesso.dart';
 
 class PaginaInicial extends StatefulWidget {
   const PaginaInicial({super.key});
@@ -60,87 +64,37 @@ class _PaginaInicialState extends State<PaginaInicial> {
 
                               SizedBox(height: 20),
 
-                              Text(
-                                "Email",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              ),
-
-                              SizedBox(height: 8),
-
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: "Digite seu email:",
-                                  filled: true,
-                                  fillColor: Colors.grey.shade100,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
+                              CampoTexto(
+                                label: "Email",
+                                hintText: "Digite seu email",
+                                keyboardType: TextInputType.emailAddress,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Digite seu email";
-                                  }
-                                  if (!value.contains("@")) {
-                                    return "Email inválido";
-                                  }
+                                  if (value == null || value.isEmpty) return "Digite seu email";
+                                  if (!value.contains("@")) return "Email inválido";
                                   return null;
                                 },
                               ),
-
-                              SizedBox(height: 10),
-
-                              Text(
-                                "Senha",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                ),
-                              ),
-
                               SizedBox(height: 8),
-
-                              TextFormField(
+                              CampoTexto(
+                                label: "Senha",
+                                hintText: "Digite sua senha",
+                                keyboardType: TextInputType.text,
                                 obscureText: obscureText,
-                                decoration: InputDecoration(
-                                  hintText: "Digite sua senha",
-                                  filled: true,
-                                  fillColor: Color(0xFFF5F5F5),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        obscureText = !obscureText;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      obscureText
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
+                                validator: (valueSenha) {
+                                  if (valueSenha == null || valueSenha.isEmpty) return "Digite seu email";
+                                },
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      obscureText = !obscureText;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    obscureText
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
                                   ),
                                 ),
-                                validator: (valueSenha) {
-                                  if (valueSenha == null ||
-                                      valueSenha.isEmpty) {
-                                    return "Digite sua senha";
-                                  }
-                                  if (valueSenha.length < 6) {
-                                    return "Login ou senha estão errados";
-                                  }
-                                  return null;
-                                },
                               ),
 
                               SizedBox(height: 15),
@@ -170,20 +124,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Theme.of(context).colorScheme.primary,
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
-                                        ],
-                                      ),
-                                    ),
+                                  FundoBotao(
                                     child: TextButton(
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
@@ -192,7 +133,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadiusGeometry.circular(12),
+                                              BorderRadius.circular(10),
                                         ),
                                       ),
                                       onPressed: () {
@@ -240,21 +181,33 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20,),
+                              SizedBox(height: 20),
+                              Center(child: Text("Não tem conta ?")),
                               Center(
-                                child: Text("Não tem conta ?"),
-                              ),
-                              Center(
-                                child: TextButton(onPressed:(){
-                                }, child: Text("Criar conta"),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TelaCadastro(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Criar conta",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                                  ),
                                 ),
-                              )
-
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
+
 
 
                     RodaPe(),
