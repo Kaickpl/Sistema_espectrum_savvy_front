@@ -14,8 +14,7 @@ void main () {
       return MaterialApp(
         title: "Espectrum Savvy" ,
         theme: tema_claro.tema,
-        home: PaginaInicial(),
-        debugShowCheckedModeBanner: false,
+        home: HomeAluno(),
       );
     }
 }
