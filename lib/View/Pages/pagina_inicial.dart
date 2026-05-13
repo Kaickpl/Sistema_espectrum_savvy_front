@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../Widgets/fundo_tela.dart';
 import '../Widgets/logo_container.dart';
 import '../Widgets/roda_pe.dart';
-import '../Widgets/widget_atributos.dart';
+import '../Widgets/widget_input_acesso.dart';
 
 class PaginaInicial extends StatefulWidget {
   const PaginaInicial({super.key});
