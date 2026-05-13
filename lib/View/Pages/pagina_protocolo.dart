@@ -1,6 +1,6 @@
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
+import 'package:espectrum_front/View/Widgets/categoria_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
-import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:flutter/material.dart';
 
 class PaginaProtocolo extends StatefulWidget {
@@ -11,7 +11,7 @@ class PaginaProtocolo extends StatefulWidget {
 }
 
 class _PaginaProtocoloState extends State<PaginaProtocolo> {
-  int questoesRespondidas = 3;
+  int questoesRespondidas = 35;
   final int totalDeQuestoes = 110;
   final String nomePaciente = "João Silva";
 
@@ -64,10 +64,10 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                 Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.10),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.10),
                     borderRadius: BorderRadius.circular(12),
-                    
-                    
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,24 +125,32 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                             ),
                           ],
                         ),
-                        child: Column(children: [
-                          Text('${questoesRespondidas.toString().padLeft(2, '0')}/$totalDeQuestoes',
+                        child: Column(
+                          children: [
+                            Text(
+                              '${questoesRespondidas.toString().padLeft(2, '0')}/$totalDeQuestoes',
                               style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                          SizedBox(height: 4),
-                          Text("Questões Respondidas",
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Questões Respondidas",
                               style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                        ],),
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
-                  SizedBox(width: 16,),
+                    SizedBox(width: 16),
 
-                  Expanded(
+                    Expanded(
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 24),
                         decoration: BoxDecoration(
@@ -156,23 +164,107 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                             ),
                           ],
                         ),
-                        child: Column(children: [
-                          Text("${nomePaciente}",
+                        child: Column(
+                          children: [
+                            Text(
+                              "${nomePaciente}",
                               style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                          SizedBox(height: 4),
-                          Text("Nome do Paciente",
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Nome do Paciente",
                               style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                        ],),
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    )
-
+                    ),
                   ],
                 ),
+
+                SizedBox(height: 16),
+
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Progresso",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            "${((questoesRespondidas / totalDeQuestoes) * 100).toStringAsFixed(0)}%",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: questoesRespondidas / totalDeQuestoes,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.10),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 8),
+
+                CategoriaProtocolo(
+                  nomeCategoria: "Atenção Compartilhada",
+                  iconeCategoria: Icon(
+                    Icons.playlist_add_check_circle_rounded,
+                    color: Colors.white,
+                  ),
+                  questoesRespondidasInicias: 5, //Substituir por valor real
+                  totalDeQuestoes: 9,
+                ),
+              
+                CategoriaProtocolo(
+                  iconeCategoria: Icon(Icons.toys, color: Theme.of(context).colorScheme.onPrimary), nomeCategoria: "Brincadeira Compartilhada", questoesRespondidasInicias: 3, totalDeQuestoes: 24),
+
+                CategoriaProtocolo(iconeCategoria: Icon(Icons.remove_outlined, color: Theme.of(context).colorScheme.onPrimary), nomeCategoria: "Auto-Regulação", questoesRespondidasInicias: 0, totalDeQuestoes: 18),
+ 
+                CategoriaProtocolo(iconeCategoria: Icon(Icons.emoji_emotions, color: Theme.of(context).colorScheme.onPrimary), nomeCategoria: "Social/Emocional", questoesRespondidasInicias: 0, totalDeQuestoes: 6),
+
+                CategoriaProtocolo(iconeCategoria: Icon(Icons.social_distance, color: Theme.of(context).colorScheme.onPrimary), nomeCategoria: "Linguagem Social", questoesRespondidasInicias: 0, totalDeQuestoes: 24),
+
+                CategoriaProtocolo(iconeCategoria: Icon(Icons.class_outlined, color: Theme.of(context).colorScheme.onPrimary), nomeCategoria: "Sala de Aula/Comportamento em Grupo", questoesRespondidasInicias: 0, totalDeQuestoes: 23),
+
+                CategoriaProtocolo(iconeCategoria: Icon(Icons.sign_language, color: Theme.of(context).colorScheme.onPrimary), nomeCategoria: "Linguagem não Verbal", questoesRespondidasInicias: 6, totalDeQuestoes: 6),
+
               ],
             ),
           ),

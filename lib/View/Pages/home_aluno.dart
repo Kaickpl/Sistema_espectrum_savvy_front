@@ -8,7 +8,6 @@ class HomeAluno extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Atalho para não precisar digitar Theme.of(context) toda hora
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
 
@@ -191,6 +190,8 @@ class HomeAluno extends StatelessWidget {
               data: DateTime(2026, 12, 25, 20, 30), 
               nivel: 3, 
               idade: 2,
+              status: 'em progresso',
+              corStatus: const Color.fromARGB(255, 216, 163, 71),
             ),
             const SizedBox(height: 20),
             CartaoPacienteHome(
@@ -198,6 +199,8 @@ class HomeAluno extends StatelessWidget {
               data: DateTime(2026, 12, 25, 20, 30), 
               nivel: 1, 
               idade: 5,
+              status: 'em progresso',
+              corStatus: const Color.fromARGB(255, 216, 163, 71),
             ),
             const SizedBox(height: 20),
             const BotaoGrande(texto: 'Histórico dos pacientes'),
