@@ -1,5 +1,5 @@
 import 'package:espectrum_front/Config/tema_claro.dart';
-import 'package:espectrum_front/View/Pages/home_aluno.dart';
+import 'package:espectrum_front/Config/tema_escuro.dart';
 import 'package:espectrum_front/View/Pages/pagina_inicial.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
@@ -14,10 +14,11 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Espectrum Savvy",
-      theme: tema_claro.tema,
-      home: HomeAluno(),
-    );
-  }
+      return MaterialApp(
+        title: "Espectrum Savvy",
+        theme: TemaClaro.tema,
+        darkTheme: TemaEscuro.tema,
+        home: PaginaInicial(),
+      );
+    }
 }

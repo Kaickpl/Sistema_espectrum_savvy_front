@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class tema_escuro{
+class TemaEscuro{
   static final ThemeData tema = ThemeData(
       colorScheme: ColorScheme(
         brightness: Brightness.dark,
