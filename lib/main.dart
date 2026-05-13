@@ -16,7 +16,7 @@ void main () {
         title: "Espectrum Savvy",
         theme: TemaClaro.tema,
         darkTheme: TemaEscuro.tema,
-        home: PaginaInicial (),
+        home: PaginaInicial(),
       );
     }
 }
