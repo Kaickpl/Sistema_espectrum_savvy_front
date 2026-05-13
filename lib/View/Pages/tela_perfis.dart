@@ -1,10 +1,10 @@
-import 'package:espectrum_front/View/Pages/trocar_senha.dart';
+import 'package:espectrum_front/View/Pages/cadastro_admin.dart';
+import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:espectrum_front/View/Widgets/categoria_cadastro.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../Widgets/logo_container.dart';
 
 class TelaCadastro extends StatelessWidget {
@@ -13,6 +13,7 @@ class TelaCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBarPadrao(nome: "Seleção Perfis",),
       body: SafeArea(
         bottom: false,
@@ -38,7 +39,7 @@ class TelaCadastro extends StatelessWidget {
                       Theme.of(context).colorScheme.tertiary,
                       Theme.of(context).colorScheme.secondary,
                     ],
-                    destino: TrocarSenha(),
+                    destino: CadastroAdmin(),
                     icone: FaIcon(FontAwesomeIcons.userShield),
                   ),
 
@@ -78,7 +79,6 @@ class TelaCadastro extends StatelessWidget {
                     destino: TrocarSenha(),
                     icone: Icon(Icons.people),
                   ),
-
                   SizedBox(height: 20),
                   RodaPe(),
                 ],
