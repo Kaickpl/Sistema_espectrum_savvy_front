@@ -9,7 +9,7 @@ class tema_claro{
       secondary: Color(0xFFAF89E4),
       onSecondary: Colors.white,
       tertiary: Color(0xFF2A7FDC),
-      onTertiary: Colors.white,
+      onTertiary: Color(0xFF66A3EF),
       error: Color(0xFFE53935),
       onError: Colors.white,
       surface: Color(0xFFF4F5FB),

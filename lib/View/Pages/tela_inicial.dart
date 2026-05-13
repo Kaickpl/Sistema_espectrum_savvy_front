@@ -176,7 +176,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onPrimary,
+                                      ).colorScheme.secondary,
                                     ),
                                   ),
                                 ),
@@ -197,7 +197,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   child: Text(
                                     "Criar conta",
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.onPrimary,
+                                      color: Theme.of(context).colorScheme.secondary,
                                     ),
                                   ),
                                 ),
