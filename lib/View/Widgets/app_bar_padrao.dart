@@ -19,7 +19,7 @@ class _AppBarPadraoState extends State<AppBarPadrao> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       title: Text(widget.nome,style:TextStyle(fontWeight: FontWeight(16),color: Theme.of(context).colorScheme.onSurface),
       ),
       actions: [

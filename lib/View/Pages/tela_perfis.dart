@@ -31,7 +31,7 @@ class TelaCadastro extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  LogoContainer(nomePage: "Seleção de cadastro"),
+                  LogoContainer(nomePage: "Seleção de cadastro",imagem: "assets/Images/Logo.png",),
                   SizedBox(height: 20),
 
                   CategoriaCadastro(

@@ -21,7 +21,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro"),
       body: SafeArea(
         bottom: false,
@@ -31,7 +31,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                LogoContainer(nomePage: 'Cadastro Professor'),
+                LogoContainer(nomePage: 'Cadastro Professor', imagem: "assets/Images/Logo.png",),
                 SizedBox(height: 12),
                 CategoriaAtributos(nome: "Dados Professor      ",icone: Icons.person,),
                 SizedBox(height: 12,),
@@ -92,6 +92,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                 SizedBox(height: 12),
 
                 CategoriaAtributos(nome: "Dados de Seguraça ",icone: Icons.security,),
+
                 SizedBox(height: 12,),
 
 
@@ -143,7 +144,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                 ),
                 SizedBox(height: 12,),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
                   child: ConteinerTermoDeUsoPrivacidade(),
                 ),
 

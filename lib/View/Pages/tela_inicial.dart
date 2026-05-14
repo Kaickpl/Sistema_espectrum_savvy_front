@@ -1,5 +1,6 @@
 import 'package:espectrum_front/View/Pages/tela_perfis.dart';
 import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
+import 'package:espectrum_front/View/Pages/tela_verificar_email.dart';
 import 'package:espectrum_front/View/Widgets/widget_termo_uso_privacidade.dart';
 import 'package:espectrum_front/View/Widgets/fundo_bot%C3%A3o.dart';
 import 'package:flutter/material.dart';
@@ -34,14 +35,14 @@ class _PaginaInicialState extends State<PaginaInicial> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    LogoContainer(nomePage: "Sistema de Gestão Terapêutica"),
+                    LogoContainer(nomePage: "Sistema de Gestão Terapêutica",imagem: "assets/Images/Logo.png",),
 
                     SizedBox(height: 15),
 
                     Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Padding(
@@ -109,7 +110,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              const TrocarSenha(),
+                                              TelaVerificarEmail(),
                                         ),
                                       );
                                     },
@@ -169,7 +170,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                     size: 30,
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.onPrimary,
+                                    ).colorScheme.secondary,
                                   ),
                                   label: Text(
                                     "Entrar com o Google",
@@ -177,6 +178,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.secondary,
+                                      fontWeight: FontWeight.w900
                                     ),
                                   ),
                                 ),

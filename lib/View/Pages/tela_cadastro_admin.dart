@@ -21,7 +21,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro Administrador"),
       body: SafeArea(
         bottom: false,
@@ -31,7 +31,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    LogoContainer(nomePage: 'Cadastro Administrador'),
+                    LogoContainer(nomePage: 'Cadastro Administrador',imagem: "assets/Images/Logo.png",),
                     SizedBox(height: 12),
                     CategoriaAtributos(nome: "Dados Administrador",icone: Icons.person,),
                     SizedBox(height: 12,),
@@ -153,7 +153,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     ),
                     SizedBox(height: 12,),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
                       child: ConteinerTermoDeUsoPrivacidade(),
                     ),
 

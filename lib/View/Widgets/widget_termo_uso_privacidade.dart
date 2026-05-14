@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:espectrum_front/View/Pages/tela_pdf.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +19,7 @@ class _ConteinerTermoDeUsoPrivacidadeState
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.onPrimary,
       borderRadius: BorderRadius.circular(10),
       elevation: 2,
       child: Row(

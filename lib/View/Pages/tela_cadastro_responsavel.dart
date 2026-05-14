@@ -21,7 +21,7 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro"),
       body: SafeArea(
         bottom: false,
@@ -31,7 +31,7 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                LogoContainer(nomePage: 'Cadastro Professor'),
+                LogoContainer(nomePage: 'Cadastro Professor', imagem: "assets/Images/Logo.png",),
                 SizedBox(height: 12),
                 CategoriaAtributos(nome: "Dados Professor      ",icone: Icons.person,),
                 SizedBox(height: 12,),
@@ -69,20 +69,6 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
                 CampoTexto(
                   label: "CPF",
                   hintText: "000.000.000-00",
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return "O campo não pode ser em vazio";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
-
-                CategoriaAtributos(nome: "Dados Acadêmicos ",icone: Icons.work,),
-                SizedBox(height: 12,),
-
-                CampoTexto(
-                  label: "Escola",
-                  hintText: "Digite a escola",
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) return "O campo não pode ser em vazio";
@@ -143,7 +129,7 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
                 ),
                 SizedBox(height: 12,),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
                   child: ConteinerTermoDeUsoPrivacidade(),
                 ),
 
