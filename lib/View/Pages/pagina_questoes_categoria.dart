@@ -8,9 +8,7 @@ class QuestaoModelo {
   final int id;
   final String titulo;
   int? nota;
-
   QuestaoModelo({required this.id, required this.titulo, this.nota});
-
   bool get estaRespondida => nota != null;
 }
 
