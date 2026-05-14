@@ -15,7 +15,7 @@ void main () {
   Widget build(BuildContext context) {
       return MaterialApp(
         title: "Espectrum Savvy" ,
-        theme: tema_claro.tema,
+        theme: TemaClaro.tema,
         home: HomeAluno(),
       );
     }
