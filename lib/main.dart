@@ -1,9 +1,9 @@
 import 'package:espectrum_front/Config/tema_claro.dart';
 import 'package:espectrum_front/View/Pages/home_adm.dart';
+import 'package:espectrum_front/Config/tema_escuro.dart';
 import 'package:espectrum_front/View/Pages/home_aluno.dart';
 import 'package:espectrum_front/View/Pages/pagina_inicial.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
-import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

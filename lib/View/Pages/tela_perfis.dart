@@ -14,7 +14,7 @@ class TelaCadastro extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBarPadrao(nome: "Seleção Perfis",),
+      appBar: AppBarPadrao(nome: "Seleção Perfis"),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -34,7 +34,8 @@ class TelaCadastro extends StatelessWidget {
 
                   CategoriaCadastro(
                     nome: "Admin",
-                    descricao: "Gerencie usuários, permissões e configurações do sistema",
+                    descricao:
+                        "Gerencie usuários, permissões e configurações do sistema",
                     gradiente: [
                       Theme.of(context).colorScheme.tertiary,
                       Theme.of(context).colorScheme.secondary,
@@ -46,7 +47,8 @@ class TelaCadastro extends StatelessWidget {
                   SizedBox(height: 8),
                   CategoriaCadastro(
                     nome: "Estágiario",
-                    descricao: "Acompanhe atividades e registre desenvolvimento do paciente",
+                    descricao:
+                        "Acompanhe atividades e registre desenvolvimento do paciente",
                     gradiente: [
                       Theme.of(context).colorScheme.tertiary,
                       Theme.of(context).colorScheme.secondary,
@@ -59,7 +61,8 @@ class TelaCadastro extends StatelessWidget {
 
                   CategoriaCadastro(
                     nome: "Professor",
-                    descricao: "Acompanhe o seu aluno, podendo realizar o teste socially savvy durante as aulas",
+                    descricao:
+                        "Acompanhe o seu aluno, podendo realizar o teste socially savvy durante as aulas",
                     gradiente: [
                       Theme.of(context).colorScheme.primary,
                       Theme.of(context).colorScheme.tertiary,
@@ -71,7 +74,8 @@ class TelaCadastro extends StatelessWidget {
                   SizedBox(height: 8),
                   CategoriaCadastro(
                     nome: "Responsável",
-                    descricao: "Acompanhe o progresso e atividades do seu filho",
+                    descricao:
+                        "Acompanhe o progresso e atividades do seu filho",
                     gradiente: [
                       Theme.of(context).colorScheme.primary,
                       Theme.of(context).colorScheme.tertiary,
