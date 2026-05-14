@@ -1,49 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 
+class RetornoDaCategoria {
+  final int questoesRespondidas;
+  final String comentarioSalvo;
+
+  RetornoDaCategoria({
+    required this.questoesRespondidas,
+    required this.comentarioSalvo,
+  });
+}
+
+
 class CategoriaProtocolo extends StatefulWidget {
+
+  final IconData iconeCategoria;
+  final String nomeCategoria;
+  final List<QuestaoModelo> questoesDestaCategoria;
+  final VoidCallback aoAtualizar;
+
   CategoriaProtocolo({
     super.key,
     required this.iconeCategoria,
     required this.nomeCategoria,
-    required this.questoesRespondidasInicias,
-    required this.totalDeQuestoes,
+    required this.questoesDestaCategoria,
+    required this.aoAtualizar
   });
-
-  final Icon iconeCategoria;
-  final String nomeCategoria;
-  final int questoesRespondidasInicias;
-  final int totalDeQuestoes;
 
   @override
   State<CategoriaProtocolo> createState() => _CategoriaProtocoloState();
 }
 
 class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
-  late int questoesRespondidas;
+  String meuTextoSalvo = "";
 
-  void initState() {
-    super.initState();
-    questoesRespondidas = widget.questoesRespondidasInicias;
-  }
+  int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.estaRespondida).length;
+  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
 
   void abrirTelaDeQuestoes() async {
     final resultado = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PaginaQuestoesCategoria(
+          comentarioInicial: meuTextoSalvo,
           nomeCategoria: widget.nomeCategoria,
-          totalDeQuestoes: widget.totalDeQuestoes,
+          totalDeQuestoes: totalDeQuestoes,
+          iconeCategoria: widget.iconeCategoria,
+          questoesDaCategoria: widget.questoesDestaCategoria,
         ),
       ),
     );
 
-    if (resultado != null && resultado is int) {
       setState(() {
-        questoesRespondidas = resultado;
+        if (resultado != null && resultado is RetornoDaCategoria) {
+        meuTextoSalvo = resultado.comentarioSalvo;
+      }
+      
       });
+
+      widget.aoAtualizar();
     }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +82,8 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
                       color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
-                    child: widget.iconeCategoria,
+                    child: Icon(widget.iconeCategoria,
+                    color: Theme.of(context).colorScheme.onPrimary,),
                   ),
 
                   SizedBox(width: 12),
@@ -84,14 +101,14 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
                     ),
                   ),
               
-              questoesRespondidas == widget.totalDeQuestoes
+              questoesRespondidas == totalDeQuestoes && totalDeQuestoes> 0
                   ? Icon(
                       Icons.check_circle,
                       color: Theme.of(context).colorScheme.primary,
                       size: 30,
                     )
                   : Text(
-                      '(${questoesRespondidas}/${widget.totalDeQuestoes}) completas',
+                      '(${questoesRespondidas}/${widget.questoesDestaCategoria.length}) completas',
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(
