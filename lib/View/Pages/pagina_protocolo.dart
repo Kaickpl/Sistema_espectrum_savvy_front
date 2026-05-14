@@ -1,7 +1,9 @@
+import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
+import 'package:espectrum_front/View/Widgets/categoria_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
-import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:flutter/material.dart';
+import 'package:espectrum_front/View/Widgets/info_questoes_e_nome_paciente.dart';
 
 class PaginaProtocolo extends StatefulWidget {
   const PaginaProtocolo({super.key});
@@ -11,15 +13,56 @@ class PaginaProtocolo extends StatefulWidget {
 }
 
 class _PaginaProtocoloState extends State<PaginaProtocolo> {
-  int questoesRespondidas = 3;
-  final int totalDeQuestoes = 110;
   final String nomePaciente = "João Silva";
 
+  final TextEditingController _comentariosController = TextEditingController();
+
+  late List<QuestaoModelo> questoesAtencao;
+  late List<QuestaoModelo> questoesBrincadeira;
+
+  int get totalRespondidasGeral{
+    int cont = 0;
+    cont+= questoesAtencao.where((q) => q.estaRespondida).length;
+    cont+= questoesBrincadeira.where((q) => q.estaRespondida).length;
+    return cont;
+  }
+
+  int get totalQuestoesGeral{
+    return questoesAtencao.length + questoesAtencao.length;
+  }
+
+  @override
+  void dispose() {
+    _comentariosController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState(){
+    super.initState();
+      questoesAtencao =  [
+                    QuestaoModelo(id: 1, titulo: "Se atenta para o objeto apresentado?"),
+                    QuestaoModelo(id: 2, titulo: "Repete o próprio comportamento para manter interação social?"),
+                    QuestaoModelo(id: 3, titulo: "Repete ação com brinquedo para manter interação social?"),
+                    QuestaoModelo(id: 4, titulo: "Usa contato visual para manter interação social?"),
+                    QuestaoModelo(id: 5, titulo: "Segue um ponto ou gesticula em direção ao objeto?"),
+                    QuestaoModelo(id: 6, titulo: "Fixa o olhar em objetos?"),
+                    QuestaoModelo(id: 7, titulo: "Mostra outros objetos e estabelece contato visual para compartilhar interesse?"),
+                    QuestaoModelo(id: 8, titulo: "Aponta para objetos e estabelece contato visual para compartilhar interesse?"),
+                    QuestaoModelo(id: 9, titulo: "Comenta sobre o que está fazendo ou sobre o que o outro está fazendo?"),
+    ];
+
+    questoesBrincadeira = [
+      QuestaoModelo(id: 4, titulo: "Brinca de forma funcional com os brinquedos?"),
+      QuestaoModelo(id: 5, titulo: "Engaja em brincadeiras de faz de conta simples?"),
+    ];
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: CabecalhoPadrao(titulo: "Protocolo Soccially Savvy"),
+      appBar: CabecalhoPadrao(titulo: "Protocolo: ${nomePaciente}"),
       endDrawer: DrawerPadrao(),
       body: SafeArea(
         bottom: false,
@@ -29,150 +72,71 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Center(
-                  child: CircleAvatar(
-                    radius: 36,
-                    backgroundColor: Theme.of(context).colorScheme.surface,
-                    child: Icon(
-                      Icons.assignment,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 32,
-                    ),
-                  ),
+                InfoQuestoesENomePaciente(
+                  nomePaciente: nomePaciente,
+                  questoesRespondidas: totalRespondidasGeral,
+                  totalDeQuestoes: totalQuestoesGeral,
+                  iconePrincipal: Icons.assignment,
+                  tituloPrincipal: "Protocolo de Atendimento",
+                  subtitulo: "Protocolo Socially Savvy para análise\n do comportamento social no\n contexto da criança",
+                  textoInstrucoes: "Este protocolo foi desenvolvido para auxiliar na análise do comportamento social de crianças em diferentes contextos.",
+                  tituloComentario: "Comentários sobre o protocolo",
+                  dicaTextoComentario: "Anote aqui suas observações gerais sobre o protocolo, comportamento da criança, etc.",
+                  controller: _comentariosController,
                 ),
-                SizedBox(height: 16),
-                Text(
-                  "Protocolo de Atendimento",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
+
                 SizedBox(height: 8),
-                Text(
-                  "Protocolo Socially Savvy para análise\n do comportamento social no contexto \n da criança",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+
+                CategoriaProtocolo(
+                  nomeCategoria: "Atenção Compartilhada",
+                  iconeCategoria: Icons.announcement,
+                  questoesDestaCategoria: questoesAtencao,
+                  aoAtualizar: () {
+                    setState((){});
+                  },
                 ),
 
-                SizedBox(height: 16),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.10),
-                    borderRadius: BorderRadius.circular(12),
-                    
-                    
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.info,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 24,
-                      ),
+                // CategoriaProtocolo(
+                //   iconeCategoria: Icons.toys,
+                //   nomeCategoria: "Brincadeira Compartilhada",
+                //   questoesRespondidasInicias: 3,
+                //   totalDeQuestoes: 24,
+                // ),
 
-                      SizedBox(width: 24),
+                // CategoriaProtocolo(
+                //   iconeCategoria: Icons.self_improvement,
+                //   nomeCategoria: "Auto-Regulação",
+                //   questoesRespondidasInicias: 0,
+                //   totalDeQuestoes: 18,
+                // ),
 
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Instruções",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Responda todas as questões com base no comportamento observado da criança durante 15 dias.",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // CategoriaProtocolo(
+                //   iconeCategoria: Icons.emoji_emotions,
+                //   nomeCategoria: "Social/Emocional",
+                //   questoesRespondidasInicias: 0,
+                //   totalDeQuestoes: 6,
+                // ),
 
-                SizedBox(height: 16),
+                // CategoriaProtocolo(
+                //   iconeCategoria: Icons.social_distance,
+                //   nomeCategoria: "Linguagem Social",
+                //   questoesRespondidasInicias: 0,
+                //   totalDeQuestoes: 24,
+                // ),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(children: [
-                          Text('${questoesRespondidas.toString().padLeft(2, '0')}/$totalDeQuestoes',
-                              style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                          SizedBox(height: 4),
-                          Text("Questões Respondidas",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                        ],),
-                      ),
-                    ),
+                // CategoriaProtocolo(
+                //   iconeCategoria: Icons.class_outlined,
+                //   nomeCategoria: "Sala de Aula/Comportamento em Grupo",
+                //   questoesRespondidasInicias: 0,
+                //   totalDeQuestoes: 23,
+                // ),
 
-                  SizedBox(width: 16,),
-
-                  Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(children: [
-                          Text("${nomePaciente}",
-                              style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                          SizedBox(height: 4),
-                          Text("Nome do Paciente",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).colorScheme.onSurface)),
-                        ],),
-                      ),
-                    )
-
-                  ],
-                ),
+                // CategoriaProtocolo(
+                //   iconeCategoria: Icons.sign_language,
+                //   nomeCategoria: "Linguagem não Verbal",
+                //   questoesRespondidasInicias: 6,
+                //   totalDeQuestoes: 6,
+                // ),
               ],
             ),
           ),

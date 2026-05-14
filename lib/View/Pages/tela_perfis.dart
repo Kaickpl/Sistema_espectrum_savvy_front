@@ -1,10 +1,7 @@
-import 'package:espectrum_front/View/Pages/tela_cadastro_admin.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_responsavel.dart';
+import 'package:espectrum_front/View/Pages/cadastro_admin.dart';
 import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
-import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
+import 'package:espectrum_front/View/Widgets/categoria_cadastro.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,7 +34,8 @@ class TelaCadastro extends StatelessWidget {
 
                   CategoriaCadastro(
                     nome: "Admin",
-                    descricao: "Gerencie usuários, permissões e configurações do sistema",
+                    descricao:
+                        "Gerencie usuários, permissões e configurações do sistema",
                     gradiente: [
                       Theme.of(context).colorScheme.tertiary,
                       Theme.of(context).colorScheme.tertiary,
