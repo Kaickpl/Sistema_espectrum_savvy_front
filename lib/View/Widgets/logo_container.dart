@@ -13,7 +13,7 @@ class LogoContainer extends StatelessWidget {
         Container(
           width: 64,
           height: 64,
-          child: Image.asset("images/Logo.png",),
+          child: Image.asset("assets/Images/Logo.png",),
         ),
         SizedBox(height: 8),
         Text(
