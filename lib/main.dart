@@ -16,9 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
       return MaterialApp(
         title: "Espectrum Savvy",
-        theme: TemaClaro.tema,
-        darkTheme: TemaEscuro.tema,
-        home: PaginaInicial(),
+        theme: TemaEscuro.tema,
+        home: PaginaProtocolo(),
       );
     }
-}
+} 
