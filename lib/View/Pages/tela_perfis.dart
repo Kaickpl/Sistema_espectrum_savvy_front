@@ -1,6 +1,7 @@
 import 'package:espectrum_front/View/Pages/tela_cadastro_admin.dart';
-import 'package:espectrum_front/View/Pages/tela_estagiario.dart';
-import 'package:espectrum_front/View/Pages/tela_professor.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_responsavel.dart';
 import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
@@ -78,7 +79,7 @@ class TelaCadastro extends StatelessWidget {
                       Theme.of(context).colorScheme.onTertiary,
                       Theme.of(context).colorScheme.onTertiary,
                     ],
-                    destino: TrocarSenha(),
+                    destino: CadastroResponsavel(),
                     icone: Icon(Icons.people),
                   ),
                   SizedBox(height: 20),

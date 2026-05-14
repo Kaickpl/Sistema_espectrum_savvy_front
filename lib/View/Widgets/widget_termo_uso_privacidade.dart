@@ -63,7 +63,7 @@ class _ConteinerTermoDeUsoPrivacidadeState
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.push(context, MaterialPageRoute(builder: (
-                            _) => const TelaPdf(titulo: 'dssdsd', caminho: 'assets/PDF/termo.pdf',),
+                            _) => const TelaPdf(titulo: 'Termo de uso', caminho: 'assets/PDF/termo.pdf',),
                         ),
                         );
                       },
@@ -81,7 +81,7 @@ class _ConteinerTermoDeUsoPrivacidadeState
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.push(context, MaterialPageRoute(builder: (
-                            _) => const TelaPdf(titulo: 'dds', caminho: 'assets/PDF/privacidade.pdf',),
+                            _) => const TelaPdf(titulo: 'Politica de privacidade', caminho: 'assets/PDF/privacidade.pdf',),
                         ),
                         );
 

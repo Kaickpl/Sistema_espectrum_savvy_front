@@ -89,6 +89,17 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                     return null;
                   },
                 ),
+                SizedBox(height: 12,),
+                CampoTexto(
+                  label: "Periodo",
+                  hintText: "Digite seu Periodo",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return "O campo não pode ser em vazio";
+                    return null;
+                  },
+                ),
+
                 SizedBox(height: 12),
 
                 CategoriaAtributos(nome: "Dados de Seguraça ",icone: Icons.security,),

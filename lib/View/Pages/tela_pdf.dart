@@ -15,6 +15,7 @@ class TelaPdf extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(titulo),
       ),
       body: SfPdfViewer.asset(caminho),
