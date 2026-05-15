@@ -45,7 +45,9 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
   void initState() {
     super.initState();
     questoesAtencao = [
-      QuestaoModelo(id: 1, titulo: "Se atenta para o objeto apresentado?"),
+      QuestaoModelo(
+        id: 1,
+         titulo: "Se atenta para o objeto apresentado?"),
       QuestaoModelo(
         id: 2,
         titulo: "Repete o próprio comportamento para manter interação social?",

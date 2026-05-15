@@ -41,7 +41,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     horizontal: MediaQuery.of(context).size.width * 0.055,
                   ),
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 355),
+                    constraints: const BoxConstraints(maxWidth: 385),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: CategoriaAtributos(
@@ -207,11 +207,11 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     horizontal: MediaQuery.of(context).size.width * 0.055,
                   ),
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 355),
+                    constraints: const BoxConstraints(maxWidth: 495),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: CategoriaAtributos(
-                        nome: "Dados Responsável",
+                        nome: "Dado Responsável",
                         icone: Icons.supervisor_account,
                       ),
                     ),
