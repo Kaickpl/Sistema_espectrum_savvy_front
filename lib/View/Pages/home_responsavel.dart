@@ -21,10 +21,9 @@ class HomeResponsavel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                
-                InfoHomeProfessorEResponsavel(nomePerfil: "Responsável",),
+                InfoHomeProfessorEResponsavel(nomePerfil: "Responsável"),
 
-                SizedBox(height: 20,),
+                SizedBox(height: 20),
 
                 CartaoPacienteHome(
                   nomePaciente: "João Silva",
@@ -33,6 +32,12 @@ class HomeResponsavel extends StatelessWidget {
                   idade: 2,
                   status: "Em Progresso",
                   corStatus: Colors.yellow,
+                  onContinuar: () {
+                    print('a');
+                  },
+                  onHistorico: () {
+                    print('a');
+                  },
                 ),
               ],
             ),
@@ -40,8 +45,10 @@ class HomeResponsavel extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: Padding(padding: EdgeInsetsGeometry.all(17), child: BotaoGrande(texto: "Iniciar Protocolo"),)
-,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsetsGeometry.all(17),
+        child: BotaoGrande(texto: "Iniciar Protocolo"),
+      ),
     );
   }
 }

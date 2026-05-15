@@ -217,7 +217,8 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
                   nivel: pacienteAtual['nivel'],
                   idade: pacienteAtual['idade'],
                   status: pacienteAtual['status'],
-                  corStatus: definirCorStatus(pacienteAtual['status']),
+                  corStatus: definirCorStatus(pacienteAtual['status']), onContinuar: () { print('a'); }, onHistorico: () { print('a'); },
+                  
                 );
               },
               separatorBuilder: (context, index) => SizedBox(height: 10),
