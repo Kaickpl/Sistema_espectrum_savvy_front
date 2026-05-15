@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/tela_pdf.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class _ConteinerTermoDeUsoPrivacidadeState
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.onPrimary,
       borderRadius: BorderRadius.circular(10),
       elevation: 2,
       child: Row(
@@ -40,7 +41,10 @@ class _ConteinerTermoDeUsoPrivacidadeState
             child: RichText(
               text: TextSpan(
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .onSurface,
                   fontSize: 13,
                 ),
                 children: [
@@ -48,19 +52,38 @@ class _ConteinerTermoDeUsoPrivacidadeState
                   TextSpan(
                     text: 'Termos de uso',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .secondary,
                       decoration: TextDecoration.underline,
                     ),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(context, MaterialPageRoute(builder: (
+                            _) => const TelaPdf(titulo: 'Termo de uso', caminho: 'assets/PDF/termo.pdf',),
+                        ),
+                        );
+                      },
                   ),
                   const TextSpan(text: ' e com a '),
                   TextSpan(
                     text: 'Política de Privacidade',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .secondary,
                       decoration: TextDecoration.underline,
                     ),
-                    recognizer: TapGestureRecognizer()..onTap = () {},
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(context, MaterialPageRoute(builder: (
+                            _) => const TelaPdf(titulo: 'Politica de privacidade', caminho: 'assets/PDF/privacidade.pdf',),
+                        ),
+                        );
+
+                      },
                   ),
                   const TextSpan(text: ' do Espectrum Savvy'),
                 ],

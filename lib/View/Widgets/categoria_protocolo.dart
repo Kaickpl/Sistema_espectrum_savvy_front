@@ -11,7 +11,6 @@ class RetornoDaCategoria {
   });
 }
 
-
 class CategoriaProtocolo extends StatefulWidget {
 
   final IconData iconeCategoria;

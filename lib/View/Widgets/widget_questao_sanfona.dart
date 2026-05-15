@@ -31,6 +31,15 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
     4: "N/A (não aplicável)",
   };
 
+  final Map<int, Color> coresNotas = {
+    0 : Colors.red.withValues(alpha: 0.3),
+    1 : Colors.amber.withValues(alpha: 0.3),
+    2 : Colors.orange.withValues(alpha: 0.3),
+    3 : Colors.green.withValues(alpha: 0.3),
+    4 : Colors.grey.withValues(alpha: 0.3)
+  }
+;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -126,7 +135,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                 decoration: BoxDecoration(
                                   color: selecionado
                                       ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.surface,
+                                      : coresNotas[nota]!,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: selecionado

@@ -24,7 +24,7 @@ class _HomeAdmState extends State<HomeAdm> {
       appBar: AppBar(
         backgroundColor: corFundo,
         foregroundColor: cores.onSecondary,
-        leading: Icon(Icons.arrow_back, color: corLetras),
+        actions: [],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
