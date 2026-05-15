@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/home_professor.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
@@ -156,7 +157,13 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
 
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                            HomeProfessor(),
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

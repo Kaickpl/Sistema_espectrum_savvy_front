@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/home_aluno.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
@@ -166,8 +167,15 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
 
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                      //Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home());
-                    }},
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                            const HomeAluno(),
+                          ),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,

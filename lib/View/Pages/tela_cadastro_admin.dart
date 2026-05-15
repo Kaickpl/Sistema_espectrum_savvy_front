@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/home_adm.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
@@ -21,175 +22,210 @@ class _CadastroAdminState extends State<CadastroAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme
+          .of(context)
+          .colorScheme
+          .onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro Administrador"),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
-            child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    LogoContainer(nomePage: 'Cadastro Administrador',imagem: "assets/Images/Logo.png",),
-                    SizedBox(height: 12),
-                    CategoriaAtributos(nome: "Dados Administrador",icone: Icons.person,),
-                    SizedBox(height: 12,),
-                    CampoTexto(
-                      label: "Nome Completo",
-                      hintText: "Digite seu nome completo",
-                      keyboardType: TextInputType.name,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Digite seu nome";
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 8),
-                    CampoTexto(
-                      label: "Email",
-                      hintText: "Digite seu email",
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Digite seu email";
-                        if (!value.contains("@")) return "Email inválido";
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 8),
-                    CampoTexto(
-                      label: "Número de Telefone",
-                      hintText: "(11) 99999-9999",
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "O campo número não pode ser vazio";
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 8),
-                    CampoTexto(
-                      label: "CPF",
-                      hintText: "000.000.000-00",
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Digite seu CPF";
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 12),
-
-                    CategoriaAtributos(nome: "Dados Profissionais ",icone: Icons.work,),
-                    SizedBox(height: 12,),
-
-                    CampoTexto(
-                      label: "CRP (Conselho Regional de Psicologia)",
-                      hintText: "00/00000",
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Digite seu CRP";
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 8),
-                    CampoTexto(
-                      label: "Matrícula",
-                      hintText: "Digite sua matrícula",
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Digite sua matrícula";
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 12),
-
-                    CategoriaAtributos(nome: "Dados de Seguraça ",icone: Icons.security,),
-                    SizedBox(height: 12,),
-
-
-                    CampoTexto(
-                      label: "Senha",
-                      hintText: "Digite sua senha",
-                      keyboardType: TextInputType.text,
-                      obscureText: obscureTextSenha,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Digite sua senha";
-                        return null;
-                      },
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            obscureTextSenha = !obscureTextSenha;
-                          });
-                        },
-                        icon: Icon(
-                          obscureTextSenha
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-
-                    CampoTexto(
-                      label: "Confirmar Senha",
-                      hintText: "Repita sua senha",
-                      keyboardType: TextInputType.text,
-                      obscureText: obscureTextConfirma,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) return "Confirme sua senha";
-                        return null;
-                      },
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            obscureTextConfirma = !obscureTextConfirma;
-                          });
-                        },
-                        icon: Icon(
-                          obscureTextConfirma
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 12,),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
-                      child: ConteinerTermoDeUsoPrivacidade(),
-                    ),
-
-                    SizedBox(height: 12,),
-
-                    SizedBox(
-
-                    child: ElevatedButton(
-
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home());
-                      }},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        padding: EdgeInsets.symmetric(vertical: 16,horizontal: 40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        "Cadastrar",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onSurface),
-                      ),
-                    ),
-                    ),
-                    SizedBox(height: 16),
-
-                    RodaPe(),
-
-                  ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LogoContainer(nomePage: 'Cadastro Administrador',
+                  imagem: "assets/Images/Logo.png",),
+                SizedBox(height: 12),
+                CategoriaAtributos(
+                  nome: "Dados Administrador", icone: Icons.person,),
+                SizedBox(height: 12,),
+                CampoTexto(
+                  label: "Nome Completo",
+                  hintText: "Digite seu nome completo",
+                  keyboardType: TextInputType.name,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Digite seu nome";
+                    return null;
+                  },
                 ),
-              ),
+                SizedBox(height: 8),
+                CampoTexto(
+                  label: "Email",
+                  hintText: "Digite seu email",
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Digite seu email";
+                    if (!value.contains("@")) return "Email inválido";
+                    return null;
+                  },
+                ),
+                SizedBox(height: 8),
+                CampoTexto(
+                  label: "Número de Telefone",
+                  hintText: "(11) 99999-9999",
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "O campo número não pode ser vazio";
+                    return null;
+                  },
+                ),
+                SizedBox(height: 8),
+                CampoTexto(
+                  label: "CPF",
+                  hintText: "000.000.000-00",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return "Digite seu CPF";
+                    return null;
+                  },
+                ),
+                SizedBox(height: 12),
+
+                CategoriaAtributos(
+                  nome: "Dados Profissionais ", icone: Icons.work,),
+                SizedBox(height: 12,),
+
+                CampoTexto(
+                  label: "CRP (Conselho Regional de Psicologia)",
+                  hintText: "00/00000",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return "Digite seu CRP";
+                    return null;
+                  },
+                ),
+                SizedBox(height: 8),
+                CampoTexto(
+                  label: "Matrícula",
+                  hintText: "Digite sua matrícula",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Digite sua matrícula";
+                    return null;
+                  },
+                ),
+                SizedBox(height: 12),
+
+                CategoriaAtributos(
+                  nome: "Dados de Seguraça ", icone: Icons.security,),
+                SizedBox(height: 12,),
+
+
+                CampoTexto(
+                  label: "Senha",
+                  hintText: "Digite sua senha",
+                  keyboardType: TextInputType.text,
+                  obscureText: obscureTextSenha,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Digite sua senha";
+                    return null;
+                  },
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        obscureTextSenha = !obscureTextSenha;
+                      });
+                    },
+                    icon: Icon(
+                      obscureTextSenha
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+
+                CampoTexto(
+                  label: "Confirmar Senha",
+                  hintText: "Repita sua senha",
+                  keyboardType: TextInputType.text,
+                  obscureText: obscureTextConfirma,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Confirme sua senha";
+                    return null;
+                  },
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        obscureTextConfirma = !obscureTextConfirma;
+                      });
+                    },
+                    icon: Icon(
+                      obscureTextConfirma
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12,),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.055),
+                  child: ConteinerTermoDeUsoPrivacidade(),
+                ),
+
+                SizedBox(height: 12,),
+
+                SizedBox(
+
+                  child: ElevatedButton(
+
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                            const HomeAdm(),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme
+                          .of(context)
+                          .colorScheme
+                          .primary,
+                      foregroundColor: Theme
+                          .of(context)
+                          .colorScheme
+                          .onPrimary,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "Cadastrar",
+                      style: TextStyle(fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme
+                              .of(context)
+                              .colorScheme
+                              .onSurface),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+
+                RodaPe(),
+
+              ],
             ),
           ),
-      );
+        ),
+      ),
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/home_responsavel.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
@@ -141,7 +142,13 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
 
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                             HomeResponsavel(),
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

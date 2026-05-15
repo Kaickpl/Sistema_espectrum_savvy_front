@@ -1,5 +1,7 @@
+import 'package:espectrum_front/Config/tema_claro.dart';
 import 'package:espectrum_front/Config/tema_escuro.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
+import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
       return MaterialApp(
         title: "Espectrum Savvy" ,
-        theme: TemaEscuro.tema,
-        home: PaginaProtocolo(),
+        theme: TemaClaro.tema,
+        home: PaginaInicial(),
       );
     }
 } 
