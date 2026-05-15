@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: "Espectrum Savvy",
       theme: TemaClaro.tema,
       darkTheme: TemaEscuro.tema,
-      home: HomeProfessor(),
+      home: PaginaProtocolo(),
     );
   }
 }
