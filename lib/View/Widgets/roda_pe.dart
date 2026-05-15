@@ -14,7 +14,7 @@ class RodaPe extends StatelessWidget {
           Flexible(
           child: Text(
             '© Aplicativo Desenvolvido \n pela Turma 2026.1',
-            style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onPrimary),
+            style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.right,
           ),
     ),
@@ -30,7 +30,7 @@ class RodaPe extends StatelessWidget {
 
           child: Text(
             'Universidade de Pernambuco \n Professor Élisson Rocha',
-            style: TextStyle(fontSize: 10,color: Theme.of(context).colorScheme.onPrimary),
+            style: TextStyle(fontSize: 10,color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.left,
           ),
           ),

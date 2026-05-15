@@ -1,7 +1,9 @@
-import 'package:espectrum_front/View/Pages/cadastro_admin.dart';
-import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_admin.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_responsavel.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
-import 'package:espectrum_front/View/Widgets/categoria_cadastro.dart';
+import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,8 +15,8 @@ class TelaCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBarPadrao(nome: "Seleção Perfis"),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBarPadrao(nome: "Seleção Perfis",),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -29,7 +31,7 @@ class TelaCadastro extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  LogoContainer(nomePage: "Seleção de cadastro"),
+                  LogoContainer(nomePage: "Seleção de cadastro",imagem: "assets/Images/Logo.png",),
                   SizedBox(height: 20),
 
                   CategoriaCadastro(
@@ -38,7 +40,7 @@ class TelaCadastro extends StatelessWidget {
                         "Gerencie usuários, permissões e configurações do sistema",
                     gradiente: [
                       Theme.of(context).colorScheme.tertiary,
-                      Theme.of(context).colorScheme.secondary,
+                      Theme.of(context).colorScheme.tertiary,
                     ],
                     destino: CadastroAdmin(),
                     icone: FaIcon(FontAwesomeIcons.userShield),
@@ -47,13 +49,12 @@ class TelaCadastro extends StatelessWidget {
                   SizedBox(height: 8),
                   CategoriaCadastro(
                     nome: "Estágiario",
-                    descricao:
-                        "Acompanhe atividades e registre desenvolvimento do paciente",
+                    descricao: "Acompanhe atividades e registre desenvolvimento do paciente",
                     gradiente: [
-                      Theme.of(context).colorScheme.tertiary,
+                      Theme.of(context).colorScheme.secondary,
                       Theme.of(context).colorScheme.secondary,
                     ],
-                    destino: TrocarSenha(),
+                    destino: CadastroEstagiario(),
                     icone: FaIcon(FontAwesomeIcons.brain),
                   ),
 
@@ -61,26 +62,24 @@ class TelaCadastro extends StatelessWidget {
 
                   CategoriaCadastro(
                     nome: "Professor",
-                    descricao:
-                        "Acompanhe o seu aluno, podendo realizar o teste socially savvy durante as aulas",
+                    descricao: "Acompanhe o seu aluno, podendo realizar o teste socially savvy durante as aulas",
                     gradiente: [
                       Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.tertiary,
+                      Theme.of(context).colorScheme.primary,
                     ],
-                    destino: TrocarSenha(),
+                    destino: CadastroProfessor(),
                     icone: Icon(Icons.school),
                   ),
 
                   SizedBox(height: 8),
                   CategoriaCadastro(
                     nome: "Responsável",
-                    descricao:
-                        "Acompanhe o progresso e atividades do seu filho",
+                    descricao: "Acompanhe o progresso e atividades do seu filho",
                     gradiente: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.tertiary,
+                      Theme.of(context).colorScheme.onTertiary,
+                      Theme.of(context).colorScheme.onTertiary,
                     ],
-                    destino: TrocarSenha(),
+                    destino: CadastroResponsavel(),
                     icone: Icon(Icons.people),
                   ),
                   SizedBox(height: 20),

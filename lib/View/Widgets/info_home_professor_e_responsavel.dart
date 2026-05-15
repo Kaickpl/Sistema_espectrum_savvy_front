@@ -24,7 +24,7 @@ class InfoHomeProfessorEResponsavel extends StatelessWidget{
               children: [
                 LogoContainer(
                   nomePage:
-                      "Você está logado com um perfil de ${nomePerfil}.\n Acompanhe o desenvolvimento da(s) criança(s)\n e realize o protocolo em contextos sociais!",
+                      "Você está logado com um perfil de ${nomePerfil}.\n Acompanhe o desenvolvimento da(s) criança(s)\n e realize o protocolo em contextos sociais!", imagem: "assets/Images/Logo.png",
                 ),
                 SizedBox(height: 16),
                 Text(

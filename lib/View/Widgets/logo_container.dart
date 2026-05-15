@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LogoContainer extends StatelessWidget {
-  const LogoContainer({super.key, required this.nomePage});
+  const LogoContainer({super.key, required this.nomePage, required this.imagem});
 
   final String nomePage;
+  final String imagem;
 
   @override
   Widget build(BuildContext context) {

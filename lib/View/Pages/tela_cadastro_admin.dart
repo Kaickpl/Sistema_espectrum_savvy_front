@@ -1,4 +1,4 @@
-import 'package:espectrum_front/View/Widgets/categoria_atributos.dart';
+import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro Administrador"),
       body: SafeArea(
         bottom: false,
@@ -31,7 +31,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    LogoContainer(nomePage: 'Cadastro Administrador'),
+                    LogoContainer(nomePage: 'Cadastro Administrador',imagem: "assets/Images/Logo.png",),
                     SizedBox(height: 12),
                     CategoriaAtributos(nome: "Dados Administrador",icone: Icons.person,),
                     SizedBox(height: 12,),
@@ -75,7 +75,11 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 12),
+
+                    CategoriaAtributos(nome: "Dados Profissionais ",icone: Icons.work,),
+                    SizedBox(height: 12,),
+
                     CampoTexto(
                       label: "CRP (Conselho Regional de Psicologia)",
                       hintText: "00/00000",
@@ -95,7 +99,11 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 12),
+
+                    CategoriaAtributos(nome: "Dados de Seguraça ",icone: Icons.security,),
+                    SizedBox(height: 12,),
+
 
                     CampoTexto(
                       label: "Senha",
@@ -143,14 +151,40 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
-
+                    SizedBox(height: 12,),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
+                      padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
                       child: ConteinerTermoDeUsoPrivacidade(),
                     ),
-                    SizedBox(height: 8),
+
+                    SizedBox(height: 12,),
+
+                    SizedBox(
+
+                    child: ElevatedButton(
+
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home());
+                      }},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        padding: EdgeInsets.symmetric(vertical: 16,horizontal: 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "Cadastrar",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    ),
+                    ),
+                    SizedBox(height: 16),
+
                     RodaPe(),
+
                   ],
                 ),
               ),
