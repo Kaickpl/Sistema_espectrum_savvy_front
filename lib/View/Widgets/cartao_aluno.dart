@@ -79,7 +79,7 @@ class CartaoAluno extends StatelessWidget {
                     onPressed: () {},
                     child: Text(
                       'Vincular novo paciente',
-                      style: TextStyle(color: cores.onTertiary),
+                      style: TextStyle(color: cores.surface),
                     ),
                   ),
                 ),

@@ -33,6 +33,12 @@ class HomeResponsavel extends StatelessWidget {
                   idade: 2,
                   status: "Em Progresso",
                   corStatus: Colors.yellow,
+                  onContinuar: () {
+                    print('a');
+                  },
+                  onHistorico: () {
+                    print('a');
+                  },
                 ),
               ],
             ),
