@@ -212,19 +212,14 @@ class _TelaSuporteState extends State<TelaSuporte> {
                         if (_formKey.currentState!
                             .validate()) {
 
-                          Navigator.push(
-                            context,
-
-                            MaterialPageRoute(
-                              builder: (context) =>
-                              const PaginaInicial(),
-                            ),
+                          Navigator.pop(
+                            context
                           );
                         }
                       },
 
                       child: Text(
-                        "Entrar",
+                        "Enviar",
 
                         style: TextStyle(
                           color:

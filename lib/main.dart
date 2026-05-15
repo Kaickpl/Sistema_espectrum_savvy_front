@@ -3,6 +3,7 @@ import 'package:espectrum_front/View/Pages/relatorio_evolucao.dart';
 import 'package:espectrum_front/View/Pages/home_adm.dart';
 import 'package:espectrum_front/Config/tema_escuro.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
+import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Pages/tela_perfis.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: "Espectrum Savvy",
       debugShowCheckedModeBanner: false,
       theme: TemaClaro.tema,
-      home: RelatorioEvolucao(),
+      home: PaginaInicial(),
     );
   }
 }
