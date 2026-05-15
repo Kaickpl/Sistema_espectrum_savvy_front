@@ -32,14 +32,12 @@ class CampoTexto extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface, // ✅ cor escura
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 6),
           DecoratedBox(
             decoration: BoxDecoration(
-              boxShadow: [BoxShadow(color: Colors.black54.withOpacity(0.15),
-              blurRadius: 8)],
             ),
             child: TextFormField(
               controller: controller,
@@ -49,7 +47,7 @@ class CampoTexto extends StatelessWidget {
                 hintText: hintText,
                 suffixIcon: suffixIcon,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -61,18 +59,17 @@ class CampoTexto extends StatelessWidget {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    // ✅ borda azul ao focar
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                     width: 1.5,
                   ),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.red),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 1.5),
                 ),
               ),
               validator: validator,

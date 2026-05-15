@@ -9,21 +9,21 @@ class CategoriaAtributos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 180), // 👈 ajuste esse valor
+      padding: const EdgeInsets.only(right: 160),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055, vertical: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.tertiary,
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icone, color: Theme.of(context).colorScheme.onSurface, size: 18),
+            Icon(icone, color: Theme.of(context).colorScheme.onPrimary, size: 18),
             SizedBox(width: 6),
             Text(nome,
               style: TextStyle(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),
