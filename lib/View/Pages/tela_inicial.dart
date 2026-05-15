@@ -209,9 +209,6 @@ class _PaginaInicialState extends State<PaginaInicial> {
                         ),
                       ),
                     ),
-
-
-
                     RodaPe(),
                   ],
                 ),

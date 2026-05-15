@@ -23,12 +23,15 @@ class HomeAluno extends StatelessWidget {
               width: 64,
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: cores.primary, 
+                color: cores.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Image.asset("assets/Images/Logo.png", fit: BoxFit.fitWidth),
+              child: Image.asset(
+                "assets/Images/Logo.png",
+                fit: BoxFit.fitWidth,
+              ),
             ),
-            
+
             // boas vindas
             SizedBox(
               height: 193,
@@ -40,7 +43,7 @@ class HomeAluno extends StatelessWidget {
                   Text(
                     'Bem vindo ao Espectrum Savvy!',
                     style: TextStyle(
-                      fontSize: 22, 
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: cores.onSurface,
                     ),
@@ -50,8 +53,8 @@ class HomeAluno extends StatelessWidget {
                     'Nosso App tem como intuito ajudar no preenchimento e realização do protocolo Socially Savvy',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 15, 
-                      fontWeight: FontWeight.w300, 
+                      fontSize: 15,
+                      fontWeight: FontWeight.w300,
                       color: cores.onSurface.withOpacity(0.6),
                     ),
                   ),
@@ -64,7 +67,7 @@ class HomeAluno extends StatelessWidget {
               height: 145,
               width: 343,
               decoration: BoxDecoration(
-                color: cores.onPrimary.withOpacity(0.3), 
+                color: cores.onPrimary.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -73,14 +76,14 @@ class HomeAluno extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(Icons.info, color: cores.tertiary), 
+                        Icon(Icons.info, color: cores.tertiary),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             'Dúvidas quanto ao protocolo?',
                             style: TextStyle(
-                              fontSize: 15, 
-                              fontWeight: FontWeight.w100, 
+                              fontSize: 15,
+                              fontWeight: FontWeight.w100,
                               color: cores.tertiary,
                             ),
                           ),
@@ -96,10 +99,7 @@ class HomeAluno extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [
-                          cores.tertiary, 
-                          cores.secondary,
-                        ],
+                        colors: [cores.tertiary, cores.secondary],
                       ),
                     ),
                     child: ElevatedButton(
@@ -116,7 +116,7 @@ class HomeAluno extends StatelessWidget {
                         style: TextStyle(fontSize: 14, color: Colors.white),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -133,7 +133,7 @@ class HomeAluno extends StatelessWidget {
               height: 96,
               width: 343,
               decoration: BoxDecoration(
-                color: cores.primary, 
+                color: cores.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -152,10 +152,12 @@ class HomeAluno extends StatelessWidget {
                         child: LinearProgressIndicator(
                           backgroundColor: cores.onPrimary.withOpacity(0.3),
                           value: 0.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(cores.secondary),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            cores.secondary,
+                          ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -168,7 +170,7 @@ class HomeAluno extends StatelessWidget {
               height: 70,
               width: 343,
               decoration: BoxDecoration(
-                color: cores.surface, 
+                color: cores.surface,
                 borderRadius: BorderRadius.circular(10),
               ),
               padding: const EdgeInsets.all(15),
@@ -186,18 +188,18 @@ class HomeAluno extends StatelessWidget {
 
             const SizedBox(height: 20),
             CartaoPacienteHome(
-              nomePaciente: 'gabi', 
-              data: DateTime(2026, 12, 25, 20, 30), 
-              nivel: 3, 
+              nomePaciente: 'gabi',
+              data: DateTime(2026, 12, 25, 20, 30),
+              nivel: 3,
               idade: 2,
               status: 'em progresso',
               corStatus: const Color.fromARGB(255, 216, 163, 71),
             ),
             const SizedBox(height: 20),
             CartaoPacienteHome(
-              nomePaciente: 'aaaa', 
-              data: DateTime(2026, 12, 25, 20, 30), 
-              nivel: 1, 
+              nomePaciente: 'aaaa',
+              data: DateTime(2026, 12, 25, 20, 30),
+              nivel: 1,
               idade: 5,
               status: 'em progresso',
               corStatus: const Color.fromARGB(255, 216, 163, 71),
