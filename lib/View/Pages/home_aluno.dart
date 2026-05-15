@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
@@ -223,9 +224,17 @@ class HomeAluno extends StatelessWidget {
               onHistorico: () => print('Histórico João'),
             ),
             const SizedBox(height: 20),
-            
+
             const SizedBox(height: 20),
-          BotaoGrande(texto: "Iniciar Protocolo", caminho: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PaginaProtocolo())))
+            BotaoGrande(
+              texto: "Iniciar Protocolo",
+              caminho: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SelecaoPaciente(),
+                ),
+              ),
+            ),
           ],
         ),
       ),

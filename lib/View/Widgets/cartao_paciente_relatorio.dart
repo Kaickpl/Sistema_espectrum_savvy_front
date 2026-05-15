@@ -22,7 +22,7 @@ class CartaoPacienteRelatorio extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Container(
-        width: double.infinity, 
+        width: double.infinity,
         decoration: BoxDecoration(
           color: cores.surface,
           borderRadius: BorderRadius.circular(24),
@@ -37,7 +37,7 @@ class CartaoPacienteRelatorio extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min, 
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Linha do Paciente
               Row(
@@ -155,14 +155,14 @@ class CartaoPacienteRelatorio extends StatelessWidget {
                             Text(
                               'Exportar',
                               style: TextStyle(
-                                color: cores.onTertiary,
+                                color: cores.surface,
                                 fontSize: 10,
                               ),
                             ),
                             Text(
                               'PDF',
                               style: TextStyle(
-                                color: cores.onTertiary,
+                                color: cores.surface,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
