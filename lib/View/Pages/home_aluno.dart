@@ -2,6 +2,7 @@ import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
 import 'package:flutter/material.dart';
+import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 
 class HomeAluno extends StatelessWidget {
   const HomeAluno({super.key});
@@ -222,7 +223,9 @@ class HomeAluno extends StatelessWidget {
               onHistorico: () => print('Histórico João'),
             ),
             const SizedBox(height: 20),
-            const BotaoGrande(texto: 'Iniciar protocolo'),
+            
+            const SizedBox(height: 20),
+          BotaoGrande(texto: "Iniciar Protocolo", caminho: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PaginaProtocolo())))
           ],
         ),
       ),

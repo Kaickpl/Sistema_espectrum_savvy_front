@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:flutter/material.dart';
 
@@ -100,7 +101,7 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
           ),
           SizedBox(height: 30),
 
-          BotaoGrande(texto: "Iniciar Protocolo")
+          BotaoGrande(texto: "Iniciar Protocolo", caminho: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaProtocolo())))
           
   
         ],

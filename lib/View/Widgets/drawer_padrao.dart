@@ -1,4 +1,5 @@
 import 'package:espectrum_front/View/Pages/home_adm.dart';
+import 'package:espectrum_front/View/Pages/tela_suporte.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/main.dart';
 
@@ -53,7 +54,7 @@ class DrawerPadrao extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomeAdm(),));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TelaSuporte(),));
               //Adicionar aquyr a logica de abrir a tela de suporte
             },
           ),
