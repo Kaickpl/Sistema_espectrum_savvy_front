@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
@@ -21,10 +22,9 @@ class HomeResponsavel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                
-                InfoHomeProfessorEResponsavel(nomePerfil: "Responsável",),
+                InfoHomeProfessorEResponsavel(nomePerfil: "Responsável"),
 
-                SizedBox(height: 20,),
+                SizedBox(height: 20),
 
                 CartaoPacienteHome(
                   nomePaciente: "João Silva",
@@ -40,8 +40,16 @@ class HomeResponsavel extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: Padding(padding: EdgeInsetsGeometry.all(17), child: BotaoGrande(texto: "Iniciar Protocolo"),)
-,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsetsGeometry.all(17),
+        child: BotaoGrande(
+          texto: "Iniciar Protocolo",
+          caminho: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PaginaProtocolo()),
+          ),
+        ),
+      ),
     );
   }
 }

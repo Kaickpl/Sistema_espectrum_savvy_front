@@ -230,8 +230,8 @@ class _HomeAdmState extends State<HomeAdm> {
                   ),
                   // gerenciar pacientes
                   BotaoAcoesRapidas(
-                    titulo: 'Cadastrar novo terapeuta',
-                    subtitulo: 'Adicionar profissional ao sistema',
+                    titulo: 'Gerenciar Pacientes',
+                    subtitulo: 'Editar e organizar pacientes',
                     icone: Icon(Icons.groups, color: corTerciaria),
                     corFundo: corFundo,
                     corLetra: corLetras,
