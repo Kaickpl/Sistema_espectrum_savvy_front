@@ -104,7 +104,7 @@ class TelaVerificarEmail extends StatelessWidget {
 
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => TrocarSenha())
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => TelaTrocarSenha())
                           );
                         }
                       },

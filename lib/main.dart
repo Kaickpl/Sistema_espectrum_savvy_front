@@ -3,6 +3,7 @@ import 'package:espectrum_front/View/Pages/home_aluno.dart';
 import 'package:espectrum_front/View/Pages/tela_cadastro_paciente.dart';
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Pages/tela_perfis.dart';
+import 'package:espectrum_front/View/Pages/tela_suporte.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ void main () {
       return MaterialApp(
         title: "Espectrum Savvy" ,
         theme: TemaClaro.tema,
-        home: PaginaInicial(),
+        home: TelaSuporte(),
       );
     }
 }
