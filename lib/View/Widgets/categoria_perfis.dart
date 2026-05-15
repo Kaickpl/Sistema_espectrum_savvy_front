@@ -67,7 +67,7 @@ class CategoriaCadastro extends StatelessWidget {
                 Text(
                   descricao,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 11,
                     color: Colors.grey,
                   ),
                 ),
