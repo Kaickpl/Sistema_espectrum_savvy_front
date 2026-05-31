@@ -19,9 +19,9 @@ class LogoContainer extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           "Socially Savvy",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.tertiary),
         ),
-        Text(nomePage),
+        Text(nomePage, style: TextStyle(color: Theme.of(context).colorScheme.tertiary),),
       ],
     );
   }

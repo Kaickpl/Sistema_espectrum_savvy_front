@@ -36,21 +36,17 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
 
                 const SizedBox(height: 12),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.055,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 385),
+            ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 355),
                     child: Align(
                       alignment: Alignment.centerLeft,
+
                       child: CategoriaAtributos(
                         nome: "Dados do Paciente",
                         icone: Icons.person,
                       ),
                     ),
                   ),
-                ),
 
                 const SizedBox(height: 12),
 
@@ -120,7 +116,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                               hintText: "00/00/0000",
 
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).colorScheme.onPrimary,
 
                               suffixIcon: const Icon(Icons.calendar_month),
 
@@ -202,12 +198,9 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
 
                 SizedBox(height: 12),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.055,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 495),
+
+            ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 355),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: CategoriaAtributos(
@@ -216,7 +209,6 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                       ),
                     ),
                   ),
-                ),
 
                 SizedBox(height: 12),
 
@@ -248,12 +240,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                 ),
 
                 const SizedBox(height: 12),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.055,
-                  ),
-                  child: ConstrainedBox(
+            ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 355),
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -263,7 +250,6 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                       ),
                     ),
                   ),
-                ),
 
                 const SizedBox(height: 12),
 
@@ -358,9 +344,11 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                 ),
                 SizedBox(height: 12,),
 
-                Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.center,
+                Wrap(
+                  alignment:
+                  WrapAlignment.center,
+                  spacing: 12,
+                  runSpacing:12 ,
                   children: [
                     ElevatedButton(
                       onPressed: () {

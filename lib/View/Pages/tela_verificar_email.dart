@@ -2,6 +2,7 @@ import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
 
+import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
 import '../Widgets/logo_container.dart';
 import '../Widgets/roda_pe.dart';
@@ -20,6 +21,8 @@ class TelaVerificarEmail extends StatelessWidget {
       appBar: AppBarPadrao(
         nome: 'Verificar Email',
       ),
+      drawer: DrawerPadrao(),
+
 
       body: SafeArea(
         bottom: false,

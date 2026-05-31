@@ -200,10 +200,11 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
                 ),
                 onPressed: () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CadastroPaciente(),
-                    ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const CadastroPaciente(),
+                      ),
                   );
                 },
                 child: Text(
