@@ -84,7 +84,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                 CampoTexto(
                   label: "Escola",
                   hintText: "Digite a escola",
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   validator: (value) {
                     if (value == null || value.isEmpty) return "O campo não pode ser em vazio";
                     return null;

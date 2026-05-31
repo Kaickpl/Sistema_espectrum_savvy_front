@@ -2,6 +2,7 @@ import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
 
+import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
 import '../Widgets/icon_text.dart';
 import '../Widgets/roda_pe.dart';
@@ -28,6 +29,8 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
       appBar: AppBarPadrao(
         nome: 'Trocar Senha',
       ),
+      drawer: DrawerPadrao(),
+
 
       body: SafeArea(
         bottom: false,

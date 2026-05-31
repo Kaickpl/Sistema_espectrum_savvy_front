@@ -47,7 +47,7 @@ class CampoTexto extends StatelessWidget {
                 hintText: hintText,
                 suffixIcon: suffixIcon,
                 filled: true,
-                fillColor: Theme.of(context).scaffoldBackgroundColor,
+                fillColor: Theme.of(context).colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
