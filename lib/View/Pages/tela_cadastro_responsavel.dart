@@ -161,7 +161,7 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
                     ),
                     child: Text(
                       "Cadastrar",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onSurface),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.onPrimary),
                     ),
                   ),
                 ),

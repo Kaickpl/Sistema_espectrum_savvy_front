@@ -384,7 +384,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                           FontWeight.bold,
                           color: Theme.of(context)
                               .colorScheme
-                              .onSurface,
+                              .onPrimary,
                         ),
                       ),
                     ),

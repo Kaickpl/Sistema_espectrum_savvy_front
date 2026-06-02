@@ -64,7 +64,7 @@ class CategoriaCadastro extends StatelessWidget {
                       color: Theme
                           .of(context)
                           .colorScheme
-                          .surface
+                          .onPrimary
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -75,7 +75,7 @@ class CategoriaCadastro extends StatelessWidget {
                     color: Theme
                         .of(context)
                         .colorScheme
-                        .surface,
+                        .onPrimary,
                   ),
                 ),
               ],

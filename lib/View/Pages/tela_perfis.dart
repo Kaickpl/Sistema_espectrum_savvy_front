@@ -20,7 +20,8 @@ class TelaCadastro extends StatelessWidget {
           .of(context)
           .scaffoldBackgroundColor,
       appBar: AppBarPadrao(nome: "Seleção Perfis",),
-      drawer: DrawerPadrao(),
+
+      endDrawer: DrawerPadrao(),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -61,7 +62,7 @@ class TelaCadastro extends StatelessWidget {
                         .tertiary,
                   ],
                   destino: CadastroAdmin(),
-                  icone: FaIcon(FontAwesomeIcons.userShield),
+                  icone: FaIcon(FontAwesomeIcons.userShield,color: Theme.of(context).colorScheme.onPrimary,),
                 ),
               ),
 
@@ -85,7 +86,7 @@ class TelaCadastro extends StatelessWidget {
                         .secondary,
                   ],
                   destino: CadastroEstagiario(),
-                  icone: FaIcon(FontAwesomeIcons.brain),
+                  icone: FaIcon(FontAwesomeIcons.brain,color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),
 
@@ -106,7 +107,7 @@ class TelaCadastro extends StatelessWidget {
                         .onError,
                   ],
                   destino: CadastroProfessor(),
-                  icone: Icon(Icons.school),
+                  icone: Icon(Icons.school,color: Theme.of(context).colorScheme.onPrimary),
                 ),
                 ),
 
@@ -127,7 +128,7 @@ class TelaCadastro extends StatelessWidget {
                         .onTertiary,
                   ],
                   destino: CadastroResponsavel(),
-                  icone: Icon(Icons.people),
+                  icone: Icon(Icons.people,color: Theme.of(context).colorScheme.onPrimary),
                 ),
                   ),
                 SizedBox(height: 20),
