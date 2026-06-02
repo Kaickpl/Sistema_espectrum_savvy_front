@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 class BotaoGrande extends StatelessWidget {
   final String texto;
+  final VoidCallback caminho;
+
   const BotaoGrande({
     super.key,
-    required this.texto
+    required this.texto,
+    required this.caminho
   });
 
   @override
@@ -31,9 +34,8 @@ class BotaoGrande extends StatelessWidget {
             borderRadius: BorderRadius.circular(10)
           ),
         ),
-        onPressed: () {
-        print('Botão pressionada!');
-      }, child: Text(texto, style: TextStyle(fontSize: 19, color: Colors.white),)),
+        onPressed: caminho,
+        child: Text(texto, style: TextStyle(fontSize: 19, color: Colors.white),)),
     );
   }
 }

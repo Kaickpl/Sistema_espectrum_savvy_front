@@ -33,8 +33,8 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
   final Map<int, Color> coresNotas = {
     0 : Colors.red.withValues(alpha: 0.3),
-    1 : Colors.amber.withValues(alpha: 0.3),
-    2 : Colors.orange.withValues(alpha: 0.3),
+    1 : Colors.orange.withValues(alpha: 0.3),
+    2 : Colors.amber.withValues(alpha: 0.3),
     3 : Colors.green.withValues(alpha: 0.3),
     4 : Colors.grey.withValues(alpha: 0.3)
   }

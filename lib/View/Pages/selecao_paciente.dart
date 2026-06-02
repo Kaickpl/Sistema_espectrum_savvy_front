@@ -1,3 +1,4 @@
+import 'package:espectrum_front/View/Pages/tela_cadastro_paciente.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
@@ -198,7 +199,13 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
                   ),
                 ),
                 onPressed: () {
-                  print('Botão pressionada!');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const CadastroPaciente(),
+                      ),
+                  );
                 },
                 child: Text(
                   'Adicionar Paciente',
@@ -217,7 +224,8 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
                   nivel: pacienteAtual['nivel'],
                   idade: pacienteAtual['idade'],
                   status: pacienteAtual['status'],
-                  corStatus: definirCorStatus(pacienteAtual['status']),
+                  corStatus: definirCorStatus(pacienteAtual['status']), onContinuar: () { print('a'); }, onHistorico: () { print('a'); },
+                  
                 );
               },
               separatorBuilder: (context, index) => SizedBox(height: 10),

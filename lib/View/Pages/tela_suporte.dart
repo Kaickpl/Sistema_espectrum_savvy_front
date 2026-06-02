@@ -4,6 +4,7 @@ import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:espectrum_front/View/Widgets/widget_input_acesso.dart';
 import 'package:flutter/material.dart';
 
+import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
 
 class TelaSuporte extends StatefulWidget {
@@ -34,6 +35,7 @@ class _TelaSuporteState extends State<TelaSuporte> {
       Theme.of(context).colorScheme.onPrimary,
 
       appBar: AppBarPadrao(nome: 'Suporte'),
+      drawer: DrawerPadrao(),
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -212,19 +214,14 @@ class _TelaSuporteState extends State<TelaSuporte> {
                         if (_formKey.currentState!
                             .validate()) {
 
-                          Navigator.push(
-                            context,
-
-                            MaterialPageRoute(
-                              builder: (context) =>
-                              const PaginaInicial(),
-                            ),
+                          Navigator.pop(
+                            context
                           );
                         }
                       },
 
                       child: Text(
-                        "Entrar",
+                        "Enviar",
 
                         style: TextStyle(
                           color:

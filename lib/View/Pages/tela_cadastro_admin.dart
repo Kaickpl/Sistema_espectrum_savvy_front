@@ -213,7 +213,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                           color: Theme
                               .of(context)
                               .colorScheme
-                              .onSurface),
+                              .onPrimary),
                     ),
                   ),
                 ),

@@ -19,7 +19,7 @@ class CategoriaCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.primary,
       borderRadius: BorderRadius.circular(16),
       elevation: 1,
       child: InkWell(
@@ -58,17 +58,24 @@ class CategoriaCadastro extends StatelessWidget {
               children: [
                 Text(
                   nome,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .onPrimary
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   descricao,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .onPrimary,
                   ),
                 ),
               ],

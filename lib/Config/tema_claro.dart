@@ -5,17 +5,18 @@ class TemaClaro{
     colorScheme: ColorScheme(
       brightness: Brightness.light,
       primary: Color(0xFF6366F1),
-      onPrimary: const Color(0xFFFFFFFF),
+      onPrimary: Color(0xFFFFFFFF),
       secondary: Color(0xFFAF89E4),
-      onSecondary: Colors.white,
-      tertiary: Color(0xFF2A7FDC),
-      onTertiary: Color(0xFF66A3EF),
-      error: Color(0xFFE53935),
-      onError: Colors.white,
-      surface: Color(0xFFF4F5FB),
-      onSurface: Color(0xFF1F2937),
+      onSecondary: Color(0xFF000000),
+      tertiary: Color(0xFF66A3EF),
+      onTertiary: Color(0xFF064485),
+      error: Color(0xFF970804),
+      onError: Color(0xFFFF6B6B),
+      surface: Color(0xFF345085),
+      onSurface: Color(0xFFA3A2A2),
+      surfaceContainer: Color(0xFF9FB8F3),
     ),
-    scaffoldBackgroundColor: Color(0xFFE5E7EB),
+    scaffoldBackgroundColor: Color(0xFFFFFFFF),
     // essa sim eh a cor do fundo
   );
 }

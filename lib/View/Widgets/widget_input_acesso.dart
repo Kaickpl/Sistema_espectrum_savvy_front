@@ -32,7 +32,7 @@ class CampoTexto extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).colorScheme.onSecondary,
             ),
           ),
           const SizedBox(height: 6),
@@ -43,11 +43,17 @@ class CampoTexto extends StatelessWidget {
               controller: controller,
               obscureText: obscureText,
               keyboardType: keyboardType,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary
+              ),
               decoration: InputDecoration(
                 hintText: hintText,
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
                 suffixIcon: suffixIcon,
                 filled: true,
-                fillColor: Theme.of(context).scaffoldBackgroundColor,
+                fillColor: Theme.of(context).colorScheme.surfaceContainer,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,

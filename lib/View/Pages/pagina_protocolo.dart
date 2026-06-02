@@ -21,16 +21,18 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
   late List<QuestaoModelo> questoesBrincadeira;
   late List<QuestaoModelo> questoesSocialEmocional;
 
-  int get totalRespondidasGeral{
+  int get totalRespondidasGeral {
     int cont = 0;
-    cont+= questoesAtencao.where((q) => q.estaRespondida).length;
-    cont+= questoesBrincadeira.where((q) => q.estaRespondida).length;
-    cont+= questoesSocialEmocional.where((q) => q.estaRespondida).length;
+    cont += questoesAtencao.where((q) => q.estaRespondida).length;
+    cont += questoesBrincadeira.where((q) => q.estaRespondida).length;
+    cont += questoesSocialEmocional.where((q) => q.estaRespondida).length;
     return cont;
   }
 
-  int get totalQuestoesGeral{
-    return questoesAtencao.length + questoesBrincadeira.length + questoesSocialEmocional.length;
+  int get totalQuestoesGeral {
+    return questoesAtencao.length +
+        questoesBrincadeira.length +
+        questoesSocialEmocional.length;
   }
 
   @override
@@ -40,38 +42,103 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-      questoesAtencao =  [
-        QuestaoModelo(id: 1, titulo: "Se atenta para o objeto apresentado?"),
-        QuestaoModelo(id: 2, titulo: "Repete o próprio comportamento para manter interação social?"),
-        QuestaoModelo(id: 3, titulo: "Repete ação com brinquedo para manter interação social?"),
-        QuestaoModelo(id: 4, titulo: "Usa contato visual para manter interação social?"),
-        QuestaoModelo(id: 5, titulo: "Segue um ponto ou gesticula em direção ao objeto?"),
-        QuestaoModelo(id: 6, titulo: "Fixa o olhar em objetos?"),
-        QuestaoModelo(id: 7, titulo: "Mostra outros objetos e estabelece contato visual para compartilhar interesse?"),
-        QuestaoModelo(id: 8, titulo: "Aponta para objetos e estabelece contato visual para compartilhar interesse?"),
-        QuestaoModelo(id: 9, titulo: "Comenta sobre o que está fazendo ou sobre o que o outro está fazendo?"),
+    questoesAtencao = [
+      QuestaoModelo(id: 1, titulo: "Se atenta para o objeto apresentado?"),
+      QuestaoModelo(
+        id: 2,
+        titulo: "Repete o próprio comportamento para manter interação social?",
+      ),
+      QuestaoModelo(
+        id: 3,
+        titulo: "Repete ação com brinquedo para manter interação social?",
+      ),
+      QuestaoModelo(
+        id: 4,
+        titulo: "Usa contato visual para manter interação social?",
+      ),
+      QuestaoModelo(
+        id: 5,
+        titulo: "Segue um ponto ou gesticula em direção ao objeto?",
+      ),
+      QuestaoModelo(id: 6, titulo: "Fixa o olhar em objetos?"),
+      QuestaoModelo(
+        id: 7,
+        titulo:
+            "Mostra outros objetos e estabelece contato visual para compartilhar interesse?",
+      ),
+      QuestaoModelo(
+        id: 8,
+        titulo:
+            "Aponta para objetos e estabelece contato visual para compartilhar interesse?",
+      ),
+      QuestaoModelo(
+        id: 9,
+        titulo:
+            "Comenta sobre o que está fazendo ou sobre o que o outro está fazendo?",
+      ),
     ];
 
-      questoesBrincadeira = [
-        QuestaoModelo(id: 1, titulo: "Brinca de forma funcional com os brinquedos?"),
-        QuestaoModelo(id: 2, titulo: "Engaja em brincadeiras de faz de conta simples?"),
-        QuestaoModelo(id: 3, titulo: "Brinca paralelamente de 5 a 10 min perto de pares com brinquedos de encaixe (blocos, caminhões, legos?)"),
-        QuestaoModelo(id: 4, titulo: "Brinca cooperativamente (da direções para o par e aceita direções do outro) por 5 a 10 min com brinquedo de encaixe?"),
-        QuestaoModelo(id: 5, titulo: "Aceita turnos como parte de um jogo e sustenta a atenção até completar o jogo?"),
-        QuestaoModelo(id: 6, titulo: "Participa de brincadeiras de áreas extenas com um grupo até o fim da atividade?")
+    questoesBrincadeira = [
+      QuestaoModelo(
+        id: 1,
+        titulo: "Brinca de forma funcional com os brinquedos?",
+      ),
+      QuestaoModelo(
+        id: 2,
+        titulo: "Engaja em brincadeiras de faz de conta simples?",
+      ),
+      QuestaoModelo(
+        id: 3,
+        titulo:
+            "Brinca paralelamente de 5 a 10 min perto de pares com brinquedos de encaixe (blocos, caminhões, legos?)",
+      ),
+      QuestaoModelo(
+        id: 4,
+        titulo:
+            "Brinca cooperativamente (da direções para o par e aceita direções do outro) por 5 a 10 min com brinquedo de encaixe?",
+      ),
+      QuestaoModelo(
+        id: 5,
+        titulo:
+            "Aceita turnos como parte de um jogo e sustenta a atenção até completar o jogo?",
+      ),
+      QuestaoModelo(
+        id: 6,
+        titulo:
+            "Participa de brincadeiras de áreas extenas com um grupo até o fim da atividade?",
+      ),
     ];
 
-      questoesSocialEmocional = [
-        QuestaoModelo(id: 1, titulo: "Reconhece emoções nos outros e nele mesmo?"),
-        QuestaoModelo(id: 2, titulo: "Dá uma simples explicação de seu próprio estado emocional ou do outro quando questionado?"),
-        QuestaoModelo(id: 3, titulo: "Demonstra empatica pelos outros?"),
-        QuestaoModelo(id: 4, titulo: "Expressa emoções negativas sem exibir comportamentos desafiadores?"),
-        QuestaoModelo(id: 5, titulo: "Expressa níveis apropriados de entusiasmo sobre as ações ou em relação aos outros?"),
-        QuestaoModelo(id: 6, titulo: "Antecipa como um par deve responder ao seu comportamente e responde de acordo?")
+    questoesSocialEmocional = [
+      QuestaoModelo(
+        id: 1,
+        titulo: "Reconhece emoções nos outros e nele mesmo?",
+      ),
+      QuestaoModelo(
+        id: 2,
+        titulo:
+            "Dá uma simples explicação de seu próprio estado emocional ou do outro quando questionado?",
+      ),
+      QuestaoModelo(id: 3, titulo: "Demonstra empatica pelos outros?"),
+      QuestaoModelo(
+        id: 4,
+        titulo:
+            "Expressa emoções negativas sem exibir comportamentos desafiadores?",
+      ),
+      QuestaoModelo(
+        id: 5,
+        titulo:
+            "Expressa níveis apropriados de entusiasmo sobre as ações ou em relação aos outros?",
+      ),
+      QuestaoModelo(
+        id: 6,
+        titulo:
+            "Antecipa como um par deve responder ao seu comportamente e responde de acordo?",
+      ),
     ];
-    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,10 +160,13 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                   totalDeQuestoes: totalQuestoesGeral,
                   iconePrincipal: Icons.assignment,
                   tituloPrincipal: "Protocolo de Atendimento",
-                  subtitulo: "Protocolo Socially Savvy para análise\n do comportamento social no\n contexto da criança",
-                  textoInstrucoes: "Este protocolo foi desenvolvido para auxiliar na análise do comportamento social de crianças em diferentes contextos.",
+                  subtitulo:
+                      "Protocolo Socially Savvy para análise\n do comportamento social no\n contexto da criança",
+                  textoInstrucoes:
+                      "Este protocolo foi desenvolvido para auxiliar na análise do comportamento social de crianças em diferentes contextos.",
                   tituloComentario: "Comentários sobre o protocolo",
-                  dicaTextoComentario: "Anote aqui suas observações gerais sobre o protocolo, comportamento da criança, etc.",
+                  dicaTextoComentario:
+                      "Anote aqui suas observações gerais sobre o protocolo, comportamento da criança, etc.",
                   controller: _comentariosController,
                 ),
 
@@ -107,7 +177,7 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                   iconeCategoria: Icons.announcement,
                   questoesDestaCategoria: questoesAtencao,
                   aoAtualizar: () {
-                    setState((){});
+                    setState(() {});
                   },
                 ),
 
@@ -116,8 +186,7 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                   nomeCategoria: "Brincadeira Compartilhada",
                   questoesDestaCategoria: questoesBrincadeira,
                   aoAtualizar: () {
-                    setState(() {
-                    });
+                    setState(() {});
                   },
                 ),
 
@@ -126,11 +195,9 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                   nomeCategoria: "Social/Emocional",
                   questoesDestaCategoria: questoesSocialEmocional,
                   aoAtualizar: () {
-                    setState(() {
-                    });
+                    setState(() {});
                   },
                 ),
-
               ],
             ),
           ),
@@ -145,7 +212,9 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -165,7 +234,9 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
 
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
