@@ -1,3 +1,6 @@
+import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
 import 'package:espectrum_front/View/Widgets/cartao_acoes_rapidas.dart';
 import 'package:espectrum_front/View/Widgets/cartao_aluno.dart';
 import 'package:espectrum_front/View/Widgets/cartao_relatorio.dart';
@@ -15,324 +18,301 @@ class _HomeAdmState extends State<HomeAdm> {
   Widget build(BuildContext context) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
-    final coresPrimaria = cores.primary;
-    final corSecundaria = cores.secondary;
-    final corTerciaria = cores.tertiary;
-    final corLetras = cores.onSurface;
     final corFundo = tema.scaffoldBackgroundColor;
+
     return Scaffold(
+      backgroundColor: corFundo,
       appBar: AppBar(
         backgroundColor: corFundo,
-        foregroundColor: cores.onSecondary,
-        actions: [],
+        elevation: 0,
+        foregroundColor: cores.onSurface,
+        actions: const [],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 146,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bem-vindo de volta',
+                    style: TextStyle(
+                      color: cores.onSurface.withOpacity(0.5),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Painel administrativo',
+                    style: tema.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: cores.onSurface,
+                    ),
+                  ),
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Bem-vindo de volta',
-                      style: TextStyle(
-                        color: corLetras.withOpacity(0.4),
-                        fontSize: 18,
-                      ),
-                    ),
-                    Text(
-                      'Painel administrativo',
-                      style: TextStyle(fontSize: 28),
-                    ),
-                  ],
+            ),
+
+            const SizedBox(height: 16),
+
+            _buildSectionTitle(cores, 'Resumo Geral'),
+            const SizedBox(height: 12),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.68,
+              children: [
+                _buildCardInformativo(
+                  context,
+                  titulo: '148',
+                  subtitulo: 'Total de pacientes',
+                  icone: Icons.group,
+                  corIcone: cores.primary,
                 ),
-              ),
+                _buildCardInformativo(
+                  context,
+                  titulo: '34',
+                  subtitulo: 'Protocolos em Aberto',
+                  icone: Icons.note_add,
+                  corIcone: cores.secondary,
+                ),
+                _buildCardInformativo(
+                  context,
+                  titulo: '92',
+                  subtitulo: 'Relatórios gerados',
+                  icone: Icons.bar_chart,
+                  corIcone: cores.tertiary,
+                ),
+              ],
             ),
-            // resumo geral
-            Container(
-              height: 200,
-              width: 350,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Resumo Geral',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: corLetras.withOpacity(0.6),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // total de pacientes
-                      Container(
-                        height: 170,
-                        width: 115,
-                        decoration: BoxDecoration(
-                          color: cores.surface.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: corLetras.withOpacity(0.1),
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: coresPrimaria.withOpacity(0.4),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Icon(Icons.group, color: coresPrimaria),
-                              ),
-                            ),
-                            Text('148', style: TextStyle(fontSize: 25)),
-                            Text(
-                              'Total de pacientes',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: corLetras.withOpacity(0.4),
-                              ),
-                            ),
-                          ],
-                        ),
+
+            const SizedBox(height: 28),
+
+            _buildSectionTitle(cores, 'Ações rápidas'),
+            const SizedBox(height: 12),
+            Column(
+              children: [
+                BotaoAcoesRapidas(
+                  titulo: 'Cadastrar novo terapeuta',
+                  subtitulo: 'Adicionar profissional ao sistema',
+                  icone: Icon(Icons.person_add, color: cores.onPrimary),
+                  corFundo: cores.primary,
+                  corLetra: cores.onPrimary,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CadastroEstagiario(),
                       ),
-                      // protocolos em aberto
-                      Container(
-                        height: 170,
-                        width: 115,
-                        decoration: BoxDecoration(
-                          color: cores.surface.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: corLetras.withOpacity(0.1),
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: corSecundaria.withOpacity(0.4),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Icon(
-                                  Icons.note_add,
-                                  color: corSecundaria,
-                                ),
-                              ),
-                            ),
-                            Text('34', style: TextStyle(fontSize: 25)),
-                            Text(
-                              'Protocolos   em Aberto',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: corLetras.withOpacity(0.4),
-                              ),
-                            ),
-                          ],
-                        ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                BotaoAcoesRapidas(
+                  titulo: 'Cadastrar novo professor',
+                  subtitulo: 'Adicionar professor ao sistema',
+                  icone: Icon(Icons.school, color: cores.onSecondary),
+                  corFundo: cores.secondary,
+                  corLetra: cores.onSecondary,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CadastroProfessor(),
                       ),
-                      //relatorios gerados
-                      Container(
-                        height: 170,
-                        width: 115,
-                        decoration: BoxDecoration(
-                          color: cores.surface.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: corLetras.withOpacity(0.1),
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: corTerciaria.withOpacity(0.4),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Icon(
-                                  Icons.bar_chart,
-                                  color: corTerciaria,
-                                ),
-                              ),
-                            ),
-                            Text('92', style: TextStyle(fontSize: 25)),
-                            Text(
-                              'Relatórios gerados',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: corLetras.withOpacity(0.4),
-                              ),
-                            ),
-                          ],
-                        ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                BotaoAcoesRapidas(
+                  titulo: 'Gerenciar Pacientes',
+                  subtitulo: 'Editar e organizar pacientes',
+                  icone: Icon(Icons.groups, color: cores.onTertiary),
+                  corFundo: cores.tertiary,
+                  corLetra: cores.onTertiary,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TelaVincularPacientes(),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    );
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            //ações rapidas
-            Container(
-              width: 350,
-              height: 330,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Ações rapidas',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: corLetras.withOpacity(0.6),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // cadastrar novo terapeuta
-                  BotaoAcoesRapidas(
-                    titulo: 'Cadastrar novo terapeuta',
-                    subtitulo: 'Adicionar profissional ao sistema',
-                    icone: Icon(Icons.person_add, color: cores.onPrimary),
-                    corFundo: coresPrimaria,
-                    corLetra: cores.onPrimary,
-                    onTap: () {
-                      print('Navegar pra tela de cadastrar novo terapeuta');
-                    },
-                  ),
-                  // gerenciar pacientes
-                  BotaoAcoesRapidas(
-                    titulo: 'Gerenciar Pacientes',
-                    subtitulo: 'Editar e organizar pacientes',
-                    icone: Icon(Icons.groups, color: corTerciaria),
-                    corFundo: corFundo,
-                    corLetra: corLetras,
-                    onTap: () {
-                      print('ir pra tela de gerenciar pacietes');
-                    },
-                  ),
-                  // configurações do sistema
-                  BotaoAcoesRapidas(
-                    titulo: 'Configurações do sistema',
-                    subtitulo: 'Preferências e permissões',
-                    icone: Icon(Icons.settings, color: coresPrimaria),
-                    corFundo: corFundo,
-                    corLetra: corLetras,
-                    onTap: () {
-                      print('ir pra configurações do sistema');
-                    },
-                  ),
-                ],
-              ),
+
+            const SizedBox(height: 28),
+
+            _buildSectionHeader(
+              cores,
+              'RELATÓRIOS RECENTES',
+              () => print('ir pra pagina de ver todos os relatorios'),
             ),
-            //relatorios recentes
-            Container(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('RELATÓRIOS RECENTES'),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {
-                          print('ir pra pagina de ver todos os relatorios');
-                        },
-                        child: Text(
-                          'Ver todos',
-                          style: TextStyle(color: coresPrimaria),
-                        ),
-                      ),
-                    ],
-                  ),
-                  CartaoRelatorio(
-                    titulo: 'Relatório Mensal - Maio 2025',
-                    status: 'Concluído',
-                    data: DateTime(25, 07, 08),
-                    nomeTerapeuta: 'Dr. Marcos Souza',
-                  ),
-                  CartaoRelatorio(
-                    titulo: 'Relatório Mensal - Maio 2025',
-                    status: 'Em progresso',
-                    data: DateTime(25, 07, 08),
-                    nomeTerapeuta: 'Dr. Pedro Alves',
-                  ),
-                  CartaoRelatorio(
-                    titulo: 'Relatório Mensal - Maio 2025',
-                    status: 'Concluído',
-                    data: DateTime(25, 07, 8),
-                    nomeTerapeuta: 'Dra. Ana Lima',
-                  ),
-                ],
-              ),
+            const SizedBox(height: 8),
+            Column(
+              children: [
+                CartaoRelatorio(
+                  titulo: 'Relatório Mensal - Maio 2025',
+                  status: 'Concluído',
+                  data: DateTime(25, 07, 08),
+                  nomeTerapeuta: 'Dr. Marcos Souza',
+                ),
+                const SizedBox(height: 8),
+                CartaoRelatorio(
+                  titulo: 'Relatório Mensal - Maio 2025',
+                  status: 'Em progresso',
+                  data: DateTime(25, 07, 08),
+                  nomeTerapeuta: 'Dr. Pedro Alves',
+                ),
+                const SizedBox(height: 8),
+                CartaoRelatorio(
+                  titulo: 'Relatório Mensal - Maio 2025',
+                  status: 'Concluído',
+                  data: DateTime(25, 07, 8),
+                  nomeTerapeuta: 'Dra. Ana Lima',
+                ),
+              ],
             ),
-            //gestao de alunos
-            Container(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Gestão de alunos'),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {
-                          print('ir pra pagina de ver todos os relatorios');
-                        },
-                        child: Text(
-                          'Ver todos',
-                          style: TextStyle(color: coresPrimaria),
-                        ),
-                      ),
-                    ],
-                  ),
-                  CartaoAluno(nome: 'Ana Souza', numPacientes: 4),
-                  CartaoAluno(nome: 'Carlos Mendes', numPacientes: 0),
-                ],
-              ),
+
+            const SizedBox(height: 28),
+
+            _buildSectionHeader(
+              cores,
+              'GESTÃO DE ALUNOS',
+              () => print('ir pra pagina de ver todos os alunos'),
             ),
+            const SizedBox(height: 8),
+            Column(
+              children: const [
+                CartaoAluno(nome: 'Ana Souza', numPacientes: 4),
+                SizedBox(height: 8),
+                CartaoAluno(nome: 'Carlos Mendes', numPacientes: 0),
+              ],
+            ),
+            const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(ColorScheme cores, String titulo) {
+    return Text(
+      titulo,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: cores.onSurface.withOpacity(0.85),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(
+    ColorScheme cores,
+    String titulo,
+    VoidCallback onVerTodos,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          titulo,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.8,
+            color: cores.onSurface.withOpacity(0.5),
+          ),
+        ),
+        TextButton(
+          onPressed: onVerTodos,
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size(0, 0),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            'Ver todos',
+            style: TextStyle(
+              color: cores.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCardInformativo(
+    BuildContext context, {
+    required String titulo,
+    required String subtitulo,
+    required IconData icone,
+    required Color corIcone,
+  }) {
+    final tema = Theme.of(context);
+    final cores = tema.colorScheme;
+    final isDark = tema.brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+      decoration: BoxDecoration(
+        color: isDark
+            ? cores.surface.withOpacity(0.5)
+            : cores.surfaceContainer.withOpacity(0.18),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: cores.onSurface.withOpacity(0.06), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: cores.primary.withOpacity(isDark ? 0.06 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 42,
+            width: 42,
+            decoration: BoxDecoration(
+              color: corIcone.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Icon(icone, color: corIcone, size: 22),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            titulo,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: cores.onSurface,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitulo,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11,
+              color: cores.onSurface.withOpacity(0.5),
+            ),
+          ),
+        ],
       ),
     );
   }
