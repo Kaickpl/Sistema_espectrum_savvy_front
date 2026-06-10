@@ -89,48 +89,7 @@ class TelaCadastro extends StatelessWidget {
                   icone: FaIcon(FontAwesomeIcons.brain,color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),
-
-                SizedBox(height: 8),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
-                  child: CategoriaCadastro(
-                  nome: "Professor",
-                  descricao: "Acompanhe o seu aluno, podendo realizar o teste socially savvy durante as aulas",
-                  gradiente: [
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .onError,
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .onError,
-                  ],
-                  destino: CadastroProfessor(),
-                  icone: Icon(Icons.school,color: Theme.of(context).colorScheme.onPrimary),
-                ),
-                ),
-
-                SizedBox(height: 8),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.055),
-                    child: CategoriaCadastro(
-                  nome: "Responsável",
-                  descricao: "Acompanhe o progresso e atividades do seu filho",
-                  gradiente: [
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .onTertiary,
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .onTertiary,
-                  ],
-                  destino: CadastroResponsavel(),
-                  icone: Icon(Icons.people,color: Theme.of(context).colorScheme.onPrimary),
-                ),
-                  ),
+               
                 SizedBox(height: 20),
                 RodaPe(),
                 ],
