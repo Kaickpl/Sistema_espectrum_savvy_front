@@ -2,6 +2,7 @@ import 'package:espectrum_front/Config/tema_claro.dart';
 import 'package:espectrum_front/Config/tema_escuro.dart';
 
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/tela_splash.dart';
 
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
           theme: TemaClaro.tema,
           darkTheme: TemaEscuro.tema,
 
-          home: PaginaInicial(),
+          home: const TelaSplash(),
         );
       },
     );
