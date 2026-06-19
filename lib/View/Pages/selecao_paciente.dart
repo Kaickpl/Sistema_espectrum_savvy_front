@@ -4,6 +4,8 @@ import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
 import 'package:flutter/material.dart';
 
+import '../Widgets/drawer_padrao.dart';
+
 class SelecaoPaciente extends StatefulWidget {
   const SelecaoPaciente({super.key});
 
@@ -90,6 +92,7 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
 
     return Scaffold(
       appBar: CabecalhoPadrao(titulo: 'Seleção de paciente'),
+      endDrawer: DrawerPadrao(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,

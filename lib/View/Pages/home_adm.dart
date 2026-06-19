@@ -6,6 +6,8 @@ import 'package:espectrum_front/View/Widgets/cartao_aluno.dart';
 import 'package:espectrum_front/View/Widgets/cartao_relatorio.dart';
 import 'package:flutter/material.dart';
 
+import '../Widgets/drawer_padrao.dart';
+
 class HomeAdm extends StatefulWidget {
   const HomeAdm({super.key});
 
@@ -28,6 +30,7 @@ class _HomeAdmState extends State<HomeAdm> {
         foregroundColor: cores.onSurface,
         actions: const [],
       ),
+      endDrawer: DrawerPadrao(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(

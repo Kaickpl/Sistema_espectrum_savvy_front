@@ -20,8 +20,6 @@ class TelaCadastro extends StatelessWidget {
           .of(context)
           .scaffoldBackgroundColor,
       appBar: AppBarPadrao(nome: "Seleção Perfis",),
-
-      endDrawer: DrawerPadrao(),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(

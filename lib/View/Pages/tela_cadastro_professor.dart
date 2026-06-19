@@ -1,5 +1,6 @@
 import 'package:espectrum_front/View/Pages/home_professor.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
+import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro"),
+      endDrawer: DrawerPadrao(),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(

@@ -8,6 +8,8 @@ import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 
+import '../Widgets/drawer_padrao.dart';
+
 class HomeAluno extends StatelessWidget {
   const HomeAluno({super.key});
 
@@ -21,6 +23,7 @@ class HomeAluno extends StatelessWidget {
     return Scaffold(
       backgroundColor: tema.scaffoldBackgroundColor,
       appBar: CabecalhoPadrao(titulo: 'Socially Savvy'),
+      endDrawer: DrawerPadrao(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

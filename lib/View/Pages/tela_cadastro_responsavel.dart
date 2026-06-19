@@ -67,9 +67,7 @@ class _CadastroResponsavelState extends State<CadastroResponsavel> {
                   ),
                 ),
                 SizedBox(height: 12),
-
                 RodaPe(),
-
               ],
             ),
           ),

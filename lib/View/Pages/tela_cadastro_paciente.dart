@@ -18,7 +18,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController dataNascimentoController =
-      TextEditingController();
+  TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +39,11 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
 
                 const SizedBox(height: 12),
 
+                // ✅ Corrigido: ConstrainedBox + Align consistente
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 355),
                   child: Align(
                     alignment: Alignment.centerLeft,
-
                     child: CategoriaAtributos(
                       nome: "Dados do Paciente",
                       icone: Icons.person,
@@ -59,7 +59,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   keyboardType: TextInputType.name,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "O campo não pode ser em vazio";
+                      return "O campo não pode ser vazio";
                     }
                     return null;
                   },
@@ -73,7 +73,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "O campo não pode ser em vazio";
+                      return "O campo não pode ser vazio";
                     }
                     return null;
                   },
@@ -81,6 +81,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
 
                 const SizedBox(height: 12),
 
+                // ── Campo Data de Nascimento ──────────────────────────────
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.055,
@@ -105,51 +106,46 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                           decoration: BoxDecoration(
                             boxShadow: [
                               BoxShadow(
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.08),
                                 blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-
                           child: TextFormField(
                             controller: dataNascimentoController,
                             readOnly: true,
-
                             decoration: InputDecoration(
                               hintText: "00/00/0000",
-
                               filled: true,
-                              fillColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
-
+                              fillColor:
+                              Theme.of(context).colorScheme.onPrimary,
                               suffixIcon: const Icon(Icons.calendar_month),
-
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide.none,
                               ),
-
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide.none,
                               ),
-
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color:
+                                  Theme.of(context).colorScheme.primary,
                                   width: 1.5,
                                 ),
                               ),
-
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
                                   color: Theme.of(context).colorScheme.error,
                                 ),
                               ),
-
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
@@ -158,26 +154,63 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                                 ),
                               ),
                             ),
-
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Selecione a data";
                               }
                               return null;
                             },
-
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime(1900),
                                 lastDate: DateTime.now(),
+                                locale: const Locale('pt', 'BR'),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: ColorScheme.light(
+                                        primary: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        onPrimary: Colors.white,
+                                        onSurface:
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        surface: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ),
+                                      dialogTheme: DialogThemeData(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(24),
+                                        ),
+                                        elevation: 8,
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
                               );
 
                               if (pickedDate != null) {
                                 setState(() {
                                   dataNascimentoController.text =
-                                      "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                  "${pickedDate.day.toString().padLeft(2, '0')}/"
                                       "${pickedDate.month.toString().padLeft(2, '0')}/"
                                       "${pickedDate.year}";
                                 });
@@ -189,7 +222,9 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     ),
                   ),
                 ),
-                SizedBox(height: 12),
+                // ─────────────────────────────────────────────────────────
+
+                const SizedBox(height: 12),
 
                 CampoTexto(
                   label: "Escola",
@@ -197,34 +232,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   keyboardType: TextInputType.text,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "O campo não pode ser em vazio";
-                    }
-                    return null;
-                  },
-                ),
-
-                SizedBox(height: 12),
-
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 355),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: CategoriaAtributos(
-                      nome: "Dados Responsável",
-                      icone: Icons.supervisor_account,
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: 12),
-
-                CampoTexto(
-                  label: "Nome do Responsável",
-                  hintText: "Nome completo do responsável",
-                  keyboardType: TextInputType.name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "O campo não pode ser em vazio";
+                      return "O campo não pode ser vazio";
                     }
                     return null;
                   },
@@ -232,19 +240,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
 
                 const SizedBox(height: 12),
 
-                CampoTexto(
-                  label: "Número do Responsável",
-                  hintText: "(00) 00000-0000",
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "O campo não pode ser em vazio";
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 12),
+                // ✅ Corrigido: ConstrainedBox + Align consistente
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 355),
                   child: Align(
@@ -264,7 +260,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   keyboardType: TextInputType.streetAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "O campo não pode ser em vazio";
+                      return "O campo não pode ser vazio";
                     }
                     return null;
                   },
@@ -332,67 +328,91 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   hintText: "Apto, bloco, etc. (opcional)",
                   keyboardType: TextInputType.text,
                 ),
-                SizedBox(height: 12),
-                CategoriaAtributos(
-                  nome: "Dados Responsável      ",
-                  icone: Icons.person,
+
+                const SizedBox(height: 12),
+
+                // ✅ Corrigido: ConstrainedBox + Align consistente
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 355),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: CategoriaAtributos(
+                      nome: "Dados do Responsável",
+                      icone: Icons.person,
+                    ),
+                  ),
                 ),
-                SizedBox(height: 12),
+
+                // ✅ Corrigido: SizedBox que estava faltando
+                const SizedBox(height: 12),
+
                 CampoTexto(
-                  label: "Nome Completo",
-                  hintText: "Digite o nome completo",
+                  label: "Nome do Responsável",
+                  hintText: "Nome completo do responsável",
                   keyboardType: TextInputType.name,
                   validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
+                    if (value == null || value.isEmpty) {
+                      return "O campo não pode ser vazio";
+                    }
                     return null;
                   },
                 ),
-                SizedBox(height: 12),
+
+                const SizedBox(height: 12),
+
+                CampoTexto(
+                  label: "Telefone do Responsável",
+                  hintText: "(00) 00000-0000",
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "O campo não pode ser vazio";
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
                 CampoTexto(
                   label: "Email",
                   hintText: "Digite o email",
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
+                    if (value == null || value.isEmpty) {
+                      return "O campo não pode ser vazio";
+                    }
                     if (!value.contains("@")) return "Email inválido";
                     return null;
                   },
                 ),
-                SizedBox(height: 12),
+
+                const SizedBox(height: 12),
+
                 CampoTexto(
-                  label: "Número de Telefone",
-                  hintText: "(11) 99999-9999",
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
-                CampoTexto(
-                  label: "CPF",
+                  label: "CPF do Responsável",
                   hintText: "000.000.000-00",
                   keyboardType: TextInputType.number,
                   validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
+                    if (value == null || value.isEmpty) {
+                      return "O campo não pode ser vazio";
+                    }
                     return null;
                   },
                 ),
-                SizedBox(height: 12),
 
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.055,
                   ),
-                  child: ConteinerTermoDeUsoPrivacidade(),
+                  child: const ConteinerTermoDeUsoPrivacidade(),
                 ),
-                SizedBox(height: 12),
 
+                const SizedBox(height: 20),
+
+                // ✅ Corrigido: removido SizedBox(width:12) inútil dentro do Wrap
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 12,
@@ -405,10 +425,10 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(
-                          context,
-                        ).colorScheme.onPrimary,
+                        backgroundColor:
+                        Theme.of(context).colorScheme.primary,
+                        foregroundColor:
+                        Theme.of(context).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 16,
@@ -426,8 +446,6 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                         ),
                       ),
                     ),
-
-                    SizedBox(width: 12),
 
                     OutlinedButton(
                       onPressed: () {
@@ -453,9 +471,9 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   ],
                 ),
 
-                SizedBox(height: 12),
+                const SizedBox(height: 24),
 
-                RodaPe(),
+                const RodaPe(),
               ],
             ),
           ),
