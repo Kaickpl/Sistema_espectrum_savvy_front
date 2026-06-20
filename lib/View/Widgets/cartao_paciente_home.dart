@@ -10,7 +10,6 @@ class CartaoPacienteHome extends StatelessWidget {
   final String status;
   final Color corStatus;
 
-  // Adicionando as funções de callback
   final VoidCallback onContinuar;
   final VoidCallback onHistorico;
 
@@ -28,16 +27,17 @@ class CartaoPacienteHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Definindo as cores padrão para facilitar a manutenção
-    const corPrimaria = Color.fromRGBO(99, 102, 241, 1);
-
+    final tema = Theme.of(context);
+    final cores = tema.colorScheme;
+    
+    
     return Container(
       width: 375,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cores.onPrimary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color.fromARGB(130, 197, 197, 197),
+          color: cores.onSurface,
           width: 1,
         ),
         boxShadow: [
@@ -65,13 +65,13 @@ class CartaoPacienteHome extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Última avaliação:',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color:cores.onSurface),
                   ),
                   Text(
                     '${data.day}/${data.month}/${data.year}',
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: cores.onSurface),
                   ),
                 ],
               ),
@@ -108,12 +108,12 @@ class CartaoPacienteHome extends StatelessWidget {
             children: [
               _buildChip(
                 'Nível $nivel',
-                const Color.fromRGBO(224, 242, 241, 1),
+                cores.onPrimary,
               ),
               const SizedBox(width: 8),
-              _buildChip('TEA', const Color.fromRGBO(243, 244, 246, 1)),
+              _buildChip('TEA', cores.onPrimary),
               const SizedBox(width: 8),
-              _buildChip('$idade Anos', const Color.fromRGBO(243, 244, 246, 1)),
+              _buildChip('$idade Anos', cores.onPrimary),
             ],
           ),
           const SizedBox(height: 24),
@@ -131,11 +131,11 @@ class CartaoPacienteHome extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.play_arrow, color: Colors.white),
+                  icon: Icon(Icons.play_arrow, color: cores.onPrimary),
                   label: const Text('Continuar'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: corPrimaria,
-                    foregroundColor: Colors.white,
+                    backgroundColor: cores.primary,
+                    foregroundColor: cores.onPrimary,
                     minimumSize: const Size(0, 52), // Altura do botão
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -156,13 +156,13 @@ class CartaoPacienteHome extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.description, color: corPrimaria),
+                  icon: Icon(Icons.description, color: cores.primary),
                   label: const Text('Histórico'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: corPrimaria,
+                    foregroundColor: cores.primary,
                     minimumSize: const Size(0, 52),
-                    side: const BorderSide(
-                      color: Color.fromRGBO(226, 232, 240, 1),
+                    side: BorderSide(
+                      color: cores.onPrimary,
                       width: 2,
                     ),
                     shape: RoundedRectangleBorder(
