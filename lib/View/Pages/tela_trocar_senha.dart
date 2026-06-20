@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
-import '../Widgets/icon_text.dart';
 import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
+import '../Widgets/validadorsenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
   const TelaTrocarSenha({super.key});
@@ -18,8 +18,17 @@ class TelaTrocarSenha extends StatefulWidget {
 class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
   bool obscureTextSenha = true;
   bool obscureTextConfirma = true;
+  final _senhaController = TextEditingController();
+  final _confirmaController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _senhaController.dispose();
+    _confirmaController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,14 +95,8 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                               hintText: "Digite sua senha",
                               keyboardType: TextInputType.text,
                               obscureText: obscureTextSenha,
-
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Digite sua senha";
-                                }
-
-                                return null;
-                              },
+                              controller: _senhaController,
+                              validator: validarSenhaForte,
 
                               suffixIcon: IconButton(
                                 onPressed: () {
@@ -111,17 +114,23 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                               ),
                             ),
 
-                            SizedBox(height: 12),
+                            ValidadorSenha(controller: _senhaController),
+
+                            SizedBox(height: 4),
 
                             CampoTexto(
                               label: "Confirmar Senha",
                               hintText: "Repita sua senha",
                               keyboardType: TextInputType.text,
                               obscureText: obscureTextConfirma,
+                              controller: _confirmaController,
 
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "Confirme sua senha";
+                                }
+                                if (value != _senhaController.text) {
+                                  return "As senhas não coincidem";
                                 }
 
                                 return null;
@@ -141,33 +150,6 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                       : Icons.visibility,
                                 ),
                               ),
-                            ),
-                            Padding(padding: EdgeInsets.only(
-                              left: 15,
-                              right: 15,
-                              top: 15,
-                              bottom: MediaQuery.of(context).viewInsets.bottom,
-                            ),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.90,
-
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  children: [
-                                    IconText(texto: 'Mínimo de 8 caracteres', icone: Icons.check_circle,),
-                                    SizedBox(height: 3,),
-                                    IconText(texto: 'Mínimo de uma letra maiúscula', icone: Icons.check_circle,),
-                                    SizedBox(height: 3,),
-                                    IconText(texto: 'Mínimo de uma letra minúscula', icone: Icons.check_circle,),
-                                    SizedBox(height: 3,),
-                                    IconText(texto: 'Mínimo de um número', icone: Icons.check_circle,),
-
-                                  ],
-                                ),
-                            ),
                             ),
 
 
