@@ -21,7 +21,7 @@ class TelaVerificarEmail extends StatelessWidget {
       appBar: AppBarPadrao(
         nome: 'Verificar Email',
       ),
-      drawer: DrawerPadrao(),
+      endDrawer: DrawerPadrao(),
 
 
       body: SafeArea(

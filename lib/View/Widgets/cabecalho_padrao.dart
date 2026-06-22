@@ -13,16 +13,16 @@ class CabecalhoPadrao extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: Theme.of(context).colorScheme.onSecondary,
       elevation: 0,
       actionsIconTheme: IconThemeData(color: Theme.of(context).colorScheme.onBackground),
+      actions: [
+
+      ],
       shape: Border(
         bottom: BorderSide(color: Color.fromARGB(255, 193, 195, 199), width: 1)),
       title: Text(
         titulo,
         style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
       ),
-      leading: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Image.asset("assets/Images/Logo.png", fit: BoxFit.contain),
-      ),
+
     );
   }
 

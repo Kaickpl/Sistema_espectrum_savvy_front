@@ -99,17 +99,6 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     return null;
                   },
                 ),
-                SizedBox(height: 8),
-                CampoTexto(
-                  label: "Matrícula",
-                  hintText: "Digite sua matrícula",
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Digite sua matrícula";
-                    return null;
-                  },
-                ),
                 SizedBox(height: 12),
 
                 CategoriaAtributos(
@@ -213,7 +202,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                           color: Theme
                               .of(context)
                               .colorScheme
-                              .onSurface),
+                              .onPrimary),
                     ),
                   ),
                 ),

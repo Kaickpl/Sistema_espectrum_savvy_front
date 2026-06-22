@@ -44,7 +44,7 @@ class _ConteinerTermoDeUsoPrivacidadeState
                   color: Theme
                       .of(context)
                       .colorScheme
-                      .onSurface,
+                      .onSecondary,
                   fontSize: 13,
                 ),
                 children: [

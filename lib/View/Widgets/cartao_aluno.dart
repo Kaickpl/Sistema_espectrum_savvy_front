@@ -1,8 +1,11 @@
+// cartao_aluno.dart
 import 'package:flutter/material.dart';
+import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
 
 class CartaoAluno extends StatelessWidget {
   final String nome;
   final int numPacientes;
+
   const CartaoAluno({
     super.key,
     required this.nome,
@@ -11,112 +14,110 @@ class CartaoAluno extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cores = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: cores.surface.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          children: [
-            // perfil aluno
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: cores.primary.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Icon(Icons.person, color: cores.primary),
-                  ),
+    final tema = Theme.of(context);
+    final cores = tema.colorScheme;
+    final isDark = tema.brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark
+            ? cores.surface.withOpacity(0.45)
+            : cores.surfaceContainer.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cores.onSurface.withOpacity(0.06)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 48,
+                width: 48,
+                decoration: BoxDecoration(
+                  color: cores.primary.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(50),
                 ),
-                Column(
+                child: Icon(Icons.person, color: cores.primary, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(nome, style: TextStyle(fontSize: 18)),
+                    Text(
+                      nome,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: cores.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.group),
-                        Text('${numPacientes} Pacientes'),
+                        Icon(
+                          Icons.group,
+                          size: 16,
+                          color: cores.onSurface.withOpacity(0.5),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$numPacientes pacientes',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: cores.onSurface.withOpacity(0.5),
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.delete,
-                    color: const Color.fromARGB(130, 193, 70, 61),
-                  ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: cores.error.withOpacity(0.7),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cores.tertiary,
+                foregroundColor: cores.onTertiary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        TelaVincularPacientes(nomeAlunoPreSelecionado: nome),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.link, size: 18),
+              label: const Text(
+                'Vincular',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 340,
-                  height: 55,
-                  decoration: BoxDecoration(
-                    color: cores.tertiary,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      'Vincular novo paciente',
-                      style: TextStyle(color: cores.surface),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: 55,
-                        width: 335,
-                        decoration: BoxDecoration(
-                          color: cores.surface.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            'Trocar paciente',
-                            style: TextStyle(color: cores.onSurface),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

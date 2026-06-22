@@ -1,9 +1,14 @@
 import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/tela_cadastro_responsavel.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
+import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
+
+import '../Widgets/drawer_padrao.dart';
 
 class HomeAluno extends StatelessWidget {
   const HomeAluno({super.key});
@@ -12,10 +17,13 @@ class HomeAluno extends StatelessWidget {
   Widget build(BuildContext context) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
+    final emProgressoCor = Colors.orange;
+    final aguardandoCor = Colors.blue;
 
     return Scaffold(
       backgroundColor: tema.scaffoldBackgroundColor,
       appBar: CabecalhoPadrao(titulo: 'Socially Savvy'),
+      endDrawer: DrawerPadrao(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -172,7 +180,6 @@ class HomeAluno extends StatelessWidget {
               height: 70,
               width: 343,
               decoration: BoxDecoration(
-                color: cores.surface,
                 borderRadius: BorderRadius.circular(10),
               ),
               padding: const EdgeInsets.all(15),
@@ -195,7 +202,7 @@ class HomeAluno extends StatelessWidget {
               nivel: 2,
               idade: 3,
               status: 'Em progresso',
-              corStatus: Colors.orange,
+              corStatus: emProgressoCor,
               onContinuar: () => print('Continuando Ismael'),
               onHistorico: () => print('Histórico Ismael'),
             ),
@@ -208,7 +215,7 @@ class HomeAluno extends StatelessWidget {
               nivel: 1,
               idade: 5,
               status: 'Aguardando',
-              corStatus: Colors.blue,
+              corStatus: aguardandoCor,
               onContinuar: () => print('Iniciando Maria'),
               onHistorico: () => print('Histórico Maria'),
             ),
@@ -219,7 +226,7 @@ class HomeAluno extends StatelessWidget {
               nivel: 3,
               idade: 7,
               status: 'Em progresso',
-              corStatus: Colors.orange,
+              corStatus: emProgressoCor,
               onContinuar: () => print('Continuando João'),
               onHistorico: () => print('Histórico João'),
             ),
@@ -232,6 +239,16 @@ class HomeAluno extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SelecaoPaciente(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            BotaoGrande(
+              texto: "Cadastrar professor",
+              caminho: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CadastroProfessor(),
                 ),
               ),
             ),
