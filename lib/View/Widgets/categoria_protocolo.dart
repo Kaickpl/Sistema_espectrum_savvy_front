@@ -69,7 +69,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
         child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.30),
             borderRadius: BorderRadius.circular(8),
           ),
             child: Row(
@@ -93,7 +93,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -112,7 +112,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
                         fontSize: 14,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSecondary.withOpacity(0.6),
                       ),
                     ),
             ],

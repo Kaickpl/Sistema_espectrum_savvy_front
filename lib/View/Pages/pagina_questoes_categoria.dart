@@ -132,8 +132,10 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
 
                   Text(
                     "Questões",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Theme.of(context).colorScheme.onSecondary),
                   ),
+
+                  SizedBox(height: 12),
 
                   ListView.builder(
                     shrinkWrap: true,

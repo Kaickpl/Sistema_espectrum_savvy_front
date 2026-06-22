@@ -5,7 +5,8 @@ class WidgetQuestaoSanfona extends StatefulWidget {
   final QuestaoModelo questao;
   final VoidCallback AoResponder;
 
-  final ExpansibleController controlador;
+  // Corrigido o tipo para o controlador nativo do Flutter
+  final ExpansionTileController controlador;
   final Function(bool) aoMudarEstadoSanfona;
 
   const WidgetQuestaoSanfona({
@@ -31,39 +32,41 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
     4: "N/A (não aplicável)",
   };
 
+  // Cores fixas da escala de semáforo (não mudam com o tema)
   final Map<int, Color> coresNotas = {
-    0 : Colors.red.withValues(alpha: 0.3),
-    1 : Colors.orange.withValues(alpha: 0.3),
-    2 : Colors.amber.withValues(alpha: 0.3),
-    3 : Colors.green.withValues(alpha: 0.3),
-    4 : Colors.grey.withValues(alpha: 0.3)
-  }
-;
+    0 : Colors.red,
+    1 : Colors.orange,
+    2 : Colors.amber,
+    3 : Colors.green,
+    4 : Colors.grey
+  };
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
+        // Fundo do cartão sempre obedece o surface do tema atual
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          // Borda sutil com base na cor do texto do cartão
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
         ),
       ),
       child: ExpansionTile(
         controller: widget.controlador,
         onExpansionChanged: widget.aoMudarEstadoSanfona,
-        shape: Border(),
-        collapsedShape: Border(),
+        shape: const Border(),
+        collapsedShape: const Border(),
         leading: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.question_mark_rounded,
+            Icons.help_outline,
             size: 16,
             color: Theme.of(context).colorScheme.onPrimary,
           ),
@@ -71,7 +74,12 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
         title: Text(
           widget.questao.titulo,
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 17, 
+            fontWeight: FontWeight.w500,
+            // Texto do título obedece o onSurface para dar contraste com o fundo
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
 
         trailing: Container(
@@ -79,33 +87,42 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
           height: 24,
           decoration: BoxDecoration(
             color: widget.questao.estaRespondida
-                ? Colors.green.withOpacity(0.2)
-                : Theme.of(context).colorScheme.surfaceVariant,
+                ? Colors.green.withValues(alpha: 0.2)
+                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: widget.questao.estaRespondida
-              ? Icon(Icons.check, size: 16, color: Colors.green)
-              : Icon(Icons.access_time_rounded),
+              ? const Icon(Icons.check, size: 16, color: Colors.green)
+              : Icon(
+                  Icons.access_time_rounded, 
+                  size: 16, 
+                  // Ícone do relógio pegando a cor de texto (onSurface) com opacidade
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
+                ),
         ),
 
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Selecione a pontuação",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 14, 
+                    fontWeight: FontWeight.bold, 
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 Column(
                   children: notasPossiveis.map((nota) {
                     bool selecionado = widget.questao.nota == nota;
 
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
@@ -115,16 +132,18 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                           widget.AoResponder();
                         },
                         child: Container(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
+                            // Se selecionado, fundo fica com 10% da cor da nota. Se não, fica transparente (mostrando a surface do cartão)
                             color: selecionado
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context,).colorScheme.surface.withOpacity(0.4),
+                                ? coresNotas[nota]!.withValues(alpha: 0.1)
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
+                              // Borda colorida se selecionado, senão uma borda neutra baseada no texto do tema
                               color: selecionado
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.transparent,
+                                  ? coresNotas[nota]!
+                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                             ),
                           ),
                           child: Row(
@@ -133,14 +152,15 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                 width: 36,
                                 height: 36,
                                 decoration: BoxDecoration(
+                                  // Bolinha totalmente colorida se selecionada
                                   color: selecionado
-                                      ? Theme.of(context).colorScheme.primary
-                                      : coresNotas[nota]!,
+                                      ? coresNotas[nota]
+                                      : Colors.transparent,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: selecionado
-                                        ? Theme.of(context).colorScheme.onPrimary
-                                        : Theme.of(context).colorScheme.onSurface
+                                        ? Colors.transparent
+                                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
                                   ),
                                 ),
                                 child: Center(
@@ -148,29 +168,32 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                     nota.toString(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      // Se selecionado, o número na bolinha colorida fica branco. Senão, fica com a cor do texto do tema.
                                       color: selecionado
-                                      ? Theme.of(context).colorScheme.onPrimary
+                                      ? Colors.white
                                       : Theme.of(context).colorScheme.onSurface
                                     ),
                                   ),
                                 ),
                               ),
 
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
 
                               Expanded(
                                 child: Text(
                                   descricoesNotas[nota] ?? "",
                                   style: TextStyle(
                                     fontSize: 14,
-                                  color: selecionado
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: selecionado
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                                    // Se selecionado, o texto de descrição pega a cor do semáforo. Senão, usa a cor de texto padrão do tema atual.
+                                    color: selecionado
+                                      ? coresNotas[nota]
+                                      : Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: selecionado
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                   ),
-                                ))
+                                )
+                              )
                             ],
                           ),
                         ),
