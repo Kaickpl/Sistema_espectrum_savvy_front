@@ -1,35 +1,54 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+class ApiClient {
+  static const String _baseUrl = 'http://10.0.2.2:8080';
 
-/// Configuração central do endereço do backend.
-///
-/// - Rodando no Chrome/Web: usa `localhost` automaticamente, já que o
-///   navegador roda na mesma máquina do backend.
-/// - Rodando em um celular físico (Android/iOS): o celular NÃO enxerga
-///   "localhost" como sendo o seu computador. Você precisa colocar abaixo
-///   o IP da sua máquina na mesma rede Wi-Fi do celular.
-///
-/// Como descobrir seu IP local:
-///   Windows  -> abra o cmd e rode `ipconfig`           (campo "IPv4 Address")
-///   Mac/Linux-> abra o terminal e rode `ifconfig` ou `ip a` (interface Wi-Fi)
-///
-/// Requisitos para o teste no celular físico funcionar:
-///   1. Celular e computador na MESMA rede Wi-Fi.
-///   2. Backend rodando (`./mvnw spring-boot:run`), escutando na porta 8080.
-///   3. Firewall do computador liberando a porta 8080 (ou desativado durante o teste).
-class ApiConfig {
-  ApiConfig._();
+  static Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
-  /// IP local da máquina rodando o backend. Só é usado quando o app
-  /// roda fora da Web (ex: celular físico, emulador). TROQUE AQUI.
-  static const String _ipLocalDoBackend = '192.168.0.100';
+  // ── GET ──────────────────────────────────────────────────────────
+  static Future<http.Response> get(String path) {
+    return http.get(
+      Uri.parse('$_baseUrl$path'),
+      headers: _headers,
+    );
+  }
 
-  static const int _porta = 8080;
+  // ── POST ─────────────────────────────────────────────────────────
+  static Future<http.Response> post(String path, Map<String, dynamic> body) {
+    return http.post(
+      Uri.parse('$_baseUrl$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+  }
 
-  /// URL base usada em todas as chamadas HTTP ao backend.
-  static String get baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:$_porta';
-    }
-    return 'http://$_ipLocalDoBackend:$_porta';
+  // ── PUT ──────────────────────────────────────────────────────────
+  static Future<http.Response> put(String path, Map<String, dynamic> body) {
+    return http.put(
+      Uri.parse('$_baseUrl$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+  }
+
+  // ── DELETE ───────────────────────────────────────────────────────
+  static Future<http.Response> delete(String path) {
+    return http.delete(
+      Uri.parse('$_baseUrl$path'),
+      headers: _headers,
+    );
+  }
+
+  // ── PATCH ────────────────────────────────────────────────────────
+  static Future<http.Response> patch(String path,
+      [Map<String, dynamic>? body]) {
+    return http.patch(
+      Uri.parse('$_baseUrl$path'),
+      headers: _headers,
+      body: body != null ? jsonEncode(body) : null,
+    );
   }
 }

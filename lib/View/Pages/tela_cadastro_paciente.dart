@@ -20,6 +20,16 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
   final TextEditingController dataNascimentoController =
   TextEditingController();
 
+  // ── Estado selecionado no dropdown ──────────────────────
+  String? _estadoSelecionado;
+
+  final List<String> _estados = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+    'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+    'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+  ];
+  // ────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,20 +47,10 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   imagem: "assets/Images/Logo.png",
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
 
-                // ✅ Corrigido: ConstrainedBox + Align consistente
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 355),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: CategoriaAtributos(
-                      nome: "Dados do Paciente",
-                      icone: Icons.person,
-                    ),
-                  ),
-                ),
-
+                // ── Seção: Dados do Paciente ──────────────────────────────
+                _buildSectionHeader(context, "Dados do Paciente", Icons.person),
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -64,7 +64,6 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -78,7 +77,6 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 12),
 
                 // ── Campo Data de Nascimento ──────────────────────────────
@@ -96,33 +94,26 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onSurface,
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
-
                         const SizedBox(height: 6),
-
                         DecoratedBox(
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.08),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
+                          decoration: const BoxDecoration(),
                           child: TextFormField(
                             controller: dataNascimentoController,
                             readOnly: true,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
                             decoration: InputDecoration(
                               hintText: "00/00/0000",
+                              hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              ),
                               filled: true,
                               fillColor:
-                              Theme.of(context).colorScheme.onPrimary,
+                              Theme.of(context).colorScheme.surfaceContainer,
                               suffixIcon: const Icon(Icons.calendar_month),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -135,8 +126,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color:
-                                  Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).scaffoldBackgroundColor,
                                   width: 1.5,
                                 ),
                               ),
@@ -175,8 +165,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                                             .colorScheme
                                             .primary,
                                         onPrimary: Colors.white,
-                                        onSurface:
-                                        Theme.of(context)
+                                        onSurface: Theme.of(context)
                                             .colorScheme
                                             .onSurface,
                                         surface: Theme.of(context)
@@ -238,20 +227,23 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   },
                 ),
 
+                const SizedBox(height: 24),
+
+                // ── Seção: Endereço ───────────────────────────────────────
+                _buildSectionHeader(context, "Endereço", Icons.location_on),
                 const SizedBox(height: 12),
 
-                // ✅ Corrigido: ConstrainedBox + Align consistente
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 355),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: CategoriaAtributos(
-                      nome: "Endereço",
-                      icone: Icons.location_on,
-                    ),
-                  ),
+                CampoTexto(
+                  label: "CEP",
+                  hintText: "00000-000",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Digite o CEP";
+                    }
+                    return null;
+                  },
                 ),
-
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -265,48 +257,44 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 12),
 
+                // ── Número + Complemento ──────────────────────────────────
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.055,
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CampoTexto(
-                          label: "Número",
-                          hintText: "123",
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Digite o número";
-                            }
-                            return null;
-                          },
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 355),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: CampoTexto(
+                            label: "Número",
+                            hintText: "123",
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Obrigatório";
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      Expanded(
-                        child: CampoTexto(
-                          label: "CEP",
-                          hintText: "00000-000",
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Digite o CEP";
-                            }
-                            return null;
-                          },
+                        const SizedBox(width: 12),
+                        Flexible(
+                          flex: 3,
+                          child: CampoTexto(
+                            label: "Complemento",
+                            hintText: "Apto, bloco... (opcional)",
+                            keyboardType: TextInputType.text,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -320,30 +308,135 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 12),
 
-                CampoTexto(
-                  label: "Complemento",
-                  hintText: "Apto, bloco, etc. (opcional)",
-                  keyboardType: TextInputType.text,
-                ),
+                // ── Cidade + Estado ───────────────────────────────────────
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.055,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 355),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          child: CampoTexto(
+                            label: "Cidade",
+                            hintText: "Nome da cidade",
+                            keyboardType: TextInputType.text,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Digite a cidade";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
 
-                const SizedBox(height: 12),
-
-                // ✅ Corrigido: ConstrainedBox + Align consistente
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 355),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: CategoriaAtributos(
-                      nome: "Dados do Responsável",
-                      icone: Icons.person,
+                        // ── Dropdown Estado ───────────────────────────────
+                        Flexible(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Estado",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                  Theme.of(context).colorScheme.onSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              DecoratedBox(
+                                decoration: const BoxDecoration(),
+                                child: DropdownButtonFormField<String>(
+                                  value: _estadoSelecionado,
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSecondary,
+                                  ),
+                                  hint: Text(
+                                    "UF",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSecondary,
+                                    ),
+                                  ),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor:
+                                    Theme.of(context).colorScheme.surfaceContainer,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(
+                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(
+                                        color:
+                                        Theme.of(context).colorScheme.error,
+                                      ),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: BorderSide(
+                                        color:
+                                        Theme.of(context).colorScheme.error,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                  items: _estados.map((String uf) {
+                                    return DropdownMenuItem<String>(
+                                      value: uf,
+                                      child: Text(uf),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() => _estadoSelecionado = value);
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Selecione";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // ─────────────────────────────────────────────────
+                      ],
                     ),
                   ),
                 ),
+                // ─────────────────────────────────────────────────────────
 
-                // ✅ Corrigido: SizedBox que estava faltando
+                const SizedBox(height: 24),
+
+                // ── Seção: Dados do Responsável ───────────────────────────
+                _buildSectionHeader(
+                    context, "Dados do Responsável", Icons.supervisor_account),
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -357,7 +450,19 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
 
+                CampoTexto(
+                  label: "CPF do Responsável",
+                  hintText: "000.000.000-00",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "O campo não pode ser vazio";
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -371,7 +476,6 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 12),
 
                 CampoTexto(
@@ -387,21 +491,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   },
                 ),
 
-                const SizedBox(height: 12),
-
-                CampoTexto(
-                  label: "CPF do Responsável",
-                  hintText: "000.000.000-00",
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "O campo não pode ser vazio";
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
 
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -410,9 +500,8 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   child: const ConteinerTermoDeUsoPrivacidade(),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                // ✅ Corrigido: removido SizedBox(width:12) inútil dentro do Wrap
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 12,
@@ -421,7 +510,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          //
+                          // salvar
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -446,11 +535,8 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                         ),
                       ),
                     ),
-
                     OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 30,
@@ -478,6 +564,18 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Helper para o cabeçalho de cada seção — evita repetição de código
+  Widget _buildSectionHeader(
+      BuildContext context, String nome, IconData icone) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 355),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: CategoriaAtributos(nome: nome, icone: icone),
       ),
     );
   }

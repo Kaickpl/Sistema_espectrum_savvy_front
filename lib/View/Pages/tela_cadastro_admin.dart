@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../Widgets/app_bar_padrao.dart';
 import '../Widgets/widget_termo_uso_privacidade.dart';
 import '../Widgets/widget_input_acesso.dart';
+import '../Widgets/ValidadorSenha.dart';
 
 class CadastroAdmin extends StatefulWidget {
   const CadastroAdmin({super.key});
@@ -18,6 +19,15 @@ class _CadastroAdminState extends State<CadastroAdmin> {
   final _formKey = GlobalKey<FormState>();
   bool obscureTextSenha = true;
   bool obscureTextConfirma = true;
+  final _senhaController = TextEditingController();
+  final _confirmaController = TextEditingController();
+
+  @override
+  void dispose() {
+    _senhaController.dispose();
+    _confirmaController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +109,17 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     return null;
                   },
                 ),
+                SizedBox(height: 8),
+                CampoTexto(
+                  label: "Matrícula",
+                  hintText: "Digite sua matrícula",
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Digite sua matrícula";
+                    return null;
+                  },
+                ),
                 SizedBox(height: 12),
 
                 CategoriaAtributos(
@@ -111,11 +132,8 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                   hintText: "Digite sua senha",
                   keyboardType: TextInputType.text,
                   obscureText: obscureTextSenha,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Digite sua senha";
-                    return null;
-                  },
+                  controller: _senhaController,
+                  validator: validarSenhaForte,
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
@@ -129,16 +147,20 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     ),
                   ),
                 ),
-                SizedBox(height: 8),
+                ValidadorSenha(controller: _senhaController),
+                SizedBox(height: 4),
 
                 CampoTexto(
                   label: "Confirmar Senha",
                   hintText: "Repita sua senha",
                   keyboardType: TextInputType.text,
                   obscureText: obscureTextConfirma,
+                  controller: _confirmaController,
                   validator: (value) {
                     if (value == null || value.isEmpty)
                       return "Confirme sua senha";
+                    if (value != _senhaController.text)
+                      return "As senhas não coincidem";
                     return null;
                   },
                   suffixIcon: IconButton(

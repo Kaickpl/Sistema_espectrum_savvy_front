@@ -279,7 +279,7 @@ String? validarSenhaForte(String? value) {
   if (!RegExp(r'[0-9]').hasMatch(value)) {
     return "Adicione ao menos um número";
   }
-  if (!RegExp(r'[@#$%&*!?.]').hasMatch(value)) {
+  if (!RegExp(r'[@#$%&*!?]').hasMatch(value)) {
     return "Adicione um caractere especial (@#\$%&*!?)";
   }
   return null;

@@ -1,4 +1,4 @@
-import 'package:espectrum_front/View/Pages/tela_perfis.dart';
+import 'package:espectrum_front/View/Pages/tela_perfis_cadatro.dart';
 import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Pages/tela_verificar_email.dart';
 import 'package:espectrum_front/View/Widgets/widget_termo_uso_privacidade.dart';

@@ -1,4 +1,5 @@
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/tela_perfil.dart';
 import 'package:espectrum_front/View/Pages/tela_suporte.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/main.dart';
@@ -72,6 +73,22 @@ class DrawerPadrao extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   _DrawerItem(
+                    icone: Icons.person,
+                    titulo: "Perfil",
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TelaPerfil(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const _Divisor(),
+
+                  _DrawerItem(
                     icone: Icons.support_agent_rounded,
                     titulo: "Suporte e Ajuda",
                     onTap: () {
@@ -84,7 +101,6 @@ class DrawerPadrao extends StatelessWidget {
                       );
                     },
                   ),
-
                   const _Divisor(),
 
                   // ── Modo escuro ───────────────────────────────────
