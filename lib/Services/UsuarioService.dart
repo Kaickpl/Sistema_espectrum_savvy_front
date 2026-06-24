@@ -6,12 +6,7 @@ class UsuarioService {
       '/auth/verificar-email?email=${Uri.encodeComponent(email)}',
     );
 
-    if (response.statusCode != 200) {
-      final msg = response.body.isNotEmpty
-          ? response.body
-          : 'Email não encontrado';
-      throw Exception(msg);
-    }
+    _validar(response, 'Email não encontrado');
   }
 
   static Future<void> recuperarSenha({
@@ -25,11 +20,14 @@ class UsuarioService {
       'confirmaSenha': confirmaSenha,
     });
 
-    if (response.statusCode != 200) {
-      final msg = response.body.isNotEmpty
-          ? response.body
-          : 'Erro ao trocar senha';
-      throw Exception(msg);
-    }
+    _validar(response, 'Erro ao trocar senha');
+  }
+
+  /// Valida resposta de endpoints que retornam TEXTO puro (não JSON).
+  static void _validar(response, String mensagemPadrao) {
+    if (response.statusCode >= 200 && response.statusCode < 300) return;
+
+    final msg = response.body.isNotEmpty ? response.body : mensagemPadrao;
+    throw Exception(msg);
   }
 }
