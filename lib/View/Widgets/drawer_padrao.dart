@@ -4,6 +4,8 @@ import 'package:espectrum_front/View/Pages/tela_suporte.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/main.dart';
 
+import '../../Services/AuthService.dart';
+
 class DrawerPadrao extends StatelessWidget {
   /// Defina como [false] nas telas de login, cadastro e recuperação de senha.
   final bool mostrarLogout;
@@ -13,11 +15,12 @@ class DrawerPadrao extends StatelessWidget {
     this.mostrarLogout = true,
   });
 
-  void _logout(BuildContext context) {
+  void _logout(BuildContext context) async {
     Navigator.pop(context); // fecha o drawer
 
-    // TODO: limpe o token/sessão aqui antes de navegar
+    await AuthService.logout();
 
+    if (!context.mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const PaginaInicial()),
           (route) => false, // remove todo o histórico de navegação
