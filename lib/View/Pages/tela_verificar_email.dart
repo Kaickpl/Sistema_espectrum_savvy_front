@@ -2,27 +2,68 @@ import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
 
+import '../../Services/UsuarioService.dart';
 import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
-import '../Widgets/logo_container.dart';
 import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
 
-class TelaVerificarEmail extends StatelessWidget {
-  TelaVerificarEmail({super.key});
+class TelaVerificarEmail extends StatefulWidget {
+  const TelaVerificarEmail({super.key});
 
+  @override
+  State<TelaVerificarEmail> createState() => _TelaVerificarEmailState();
+}
+
+class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  bool _carregando = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _verificarEmail() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _carregando = true);
+
+    try {
+      await UsuarioService.verificarEmail(_emailController.text.trim());
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              TelaTrocarSenha(email: _emailController.text.trim()),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      appBar: AppBarPadrao(
-        nome: 'Verificar Email',
-      ),
+      appBar: AppBarPadrao(nome: 'Verificar Email'),
       endDrawer: DrawerPadrao(),
-
 
       body: SafeArea(
         bottom: false,
@@ -40,18 +81,20 @@ class TelaVerificarEmail extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
 
-
                 children: [
-
                   Icon(
                     Icons.email,
                     size: 60,
-                    color: Theme.of(context).colorScheme.primary
+                    color: Theme.of(context).colorScheme.primary,
                   ),
 
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
 
-                  Text("Digite seu e-mail cadastrado para verificarmos se você possui uma conta em nosso sistema",style: TextStyle(fontSize: 16),textAlign: TextAlign.center,),
+                  Text(
+                    "Digite seu e-mail cadastrado para verificarmos se você possui uma conta em nosso sistema",
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
 
                   SizedBox(height: 20),
 
@@ -73,16 +116,15 @@ class TelaVerificarEmail extends StatelessWidget {
                           label: "Email",
                           hintText: "Digite seu email",
                           keyboardType: TextInputType.emailAddress,
+                          controller: _emailController,
 
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Digite seu email";
                             }
-
                             if (!value.contains("@")) {
                               return "Email inválido";
                             }
-
                             return null;
                           },
                         ),
@@ -99,28 +141,29 @@ class TelaVerificarEmail extends StatelessWidget {
                           horizontal: 100,
                           vertical: 24,
                         ),
-
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
 
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => TelaTrocarSenha())
-                          );
-                        }
-                      },
+                      onPressed: _carregando ? null : _verificarEmail,
 
-                      child: Text(
-                        "Entrar",
-
-                        style: TextStyle(
-                          color:
-                          Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: _carregando
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            )
+                          : Text(
+                              "Continuar",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
 
