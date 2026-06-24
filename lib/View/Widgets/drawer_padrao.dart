@@ -1,7 +1,10 @@
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/tela_perfil.dart';
 import 'package:espectrum_front/View/Pages/tela_suporte.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/main.dart';
+
+import '../../Services/AuthService.dart';
 
 class DrawerPadrao extends StatelessWidget {
   /// Defina como [false] nas telas de login, cadastro e recuperação de senha.
@@ -12,11 +15,12 @@ class DrawerPadrao extends StatelessWidget {
     this.mostrarLogout = true,
   });
 
-  void _logout(BuildContext context) {
+  void _logout(BuildContext context) async {
     Navigator.pop(context); // fecha o drawer
 
-    // TODO: limpe o token/sessão aqui antes de navegar
+    await AuthService.logout();
 
+    if (!context.mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const PaginaInicial()),
           (route) => false, // remove todo o histórico de navegação
@@ -72,6 +76,22 @@ class DrawerPadrao extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   _DrawerItem(
+                    icone: Icons.person,
+                    titulo: "Perfil",
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TelaPerfil(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const _Divisor(),
+
+                  _DrawerItem(
                     icone: Icons.support_agent_rounded,
                     titulo: "Suporte e Ajuda",
                     onTap: () {
@@ -84,7 +104,6 @@ class DrawerPadrao extends StatelessWidget {
                       );
                     },
                   ),
-
                   const _Divisor(),
 
                   // ── Modo escuro ───────────────────────────────────

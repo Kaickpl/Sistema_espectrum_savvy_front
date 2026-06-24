@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Services/UsuarioService.dart';
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,9 @@ import '../Widgets/widget_input_acesso.dart';
 import '../Widgets/validadorsenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
-  const TelaTrocarSenha({super.key});
+  final String email; // recebido da tela anterior
+
+  const TelaTrocarSenha({super.key, required this.email});
 
   @override
   State<TelaTrocarSenha> createState() => _TelaTrocarSenhaState();
@@ -18,9 +21,10 @@ class TelaTrocarSenha extends StatefulWidget {
 class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
   bool obscureTextSenha = true;
   bool obscureTextConfirma = true;
+  bool _carregando = false;
+
   final _senhaController = TextEditingController();
   final _confirmaController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -30,16 +34,51 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
     super.dispose();
   }
 
+  Future<void> _trocarSenha() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _carregando = true);
+
+    try {
+      await UsuarioService.recuperarSenha(
+        email: widget.email,
+        novaSenha: _senhaController.text,
+        confirmaSenha: _confirmaController.text,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Senha alterada com sucesso!')));
+
+      // Vai para a tela inicial e limpa o histórico de navegação
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const PaginaInicial()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      appBar: AppBarPadrao(
-        nome: 'Trocar Senha',
-      ),
+      appBar: AppBarPadrao(nome: 'Trocar Senha'),
       drawer: DrawerPadrao(),
-
 
       body: SafeArea(
         bottom: false,
@@ -101,11 +140,9 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    obscureTextSenha =
-                                    !obscureTextSenha;
+                                    obscureTextSenha = !obscureTextSenha;
                                   });
                                 },
-
                                 icon: Icon(
                                   obscureTextSenha
                                       ? Icons.visibility_off
@@ -132,18 +169,15 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                 if (value != _senhaController.text) {
                                   return "As senhas não coincidem";
                                 }
-
                                 return null;
                               },
 
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    obscureTextConfirma =
-                                    !obscureTextConfirma;
+                                    obscureTextConfirma = !obscureTextConfirma;
                                   });
                                 },
-
                                 icon: Icon(
                                   obscureTextConfirma
                                       ? Icons.visibility_off
@@ -151,8 +185,6 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                 ),
                               ),
                             ),
-
-
                           ],
                         ),
                       ),
@@ -168,35 +200,29 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                           horizontal: 100,
                           vertical: 24,
                         ),
-
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
 
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                              const PaginaInicial(),
+                      onPressed: _carregando ? null : _trocarSenha,
+
+                      child: _carregando
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            )
+                          : Text(
+                              "Salvar",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          );
-                        }
-                      },
-
-                      child: Text(
-                        "Entrar",
-
-                        style: TextStyle(
-                          color:
-                          Theme.of(context)
-                              .colorScheme
-                              .onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ),
                   ),
 
