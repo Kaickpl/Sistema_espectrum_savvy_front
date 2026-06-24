@@ -5,7 +5,6 @@ import 'package:espectrum_front/View/Widgets/cartao_acoes_rapidas.dart';
 import 'package:espectrum_front/View/Widgets/cartao_aluno.dart';
 import 'package:espectrum_front/View/Widgets/cartao_relatorio.dart';
 import 'package:flutter/material.dart';
-
 import '../Widgets/drawer_padrao.dart';
 
 class HomeAdm extends StatefulWidget {
@@ -113,7 +112,7 @@ class _HomeAdmState extends State<HomeAdm> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CadastroEstagiario(),
+                        builder: (context) => const CadastroEstagiario(modoAdmin: true),
                       ),
                     );
                   },
@@ -158,7 +157,7 @@ class _HomeAdmState extends State<HomeAdm> {
             _buildSectionHeader(
               cores,
               'RELATÓRIOS RECENTES',
-              () => print('ir pra pagina de ver todos os relatorios'),
+                  () => print('ir pra pagina de ver todos os relatorios'),
             ),
             const SizedBox(height: 8),
             Column(
@@ -191,7 +190,7 @@ class _HomeAdmState extends State<HomeAdm> {
             _buildSectionHeader(
               cores,
               'GESTÃO DE ALUNOS',
-              () => print('ir pra pagina de ver todos os alunos'),
+                  () => print('ir pra pagina de ver todos os alunos'),
             ),
             const SizedBox(height: 8),
             Column(
@@ -220,10 +219,10 @@ class _HomeAdmState extends State<HomeAdm> {
   }
 
   Widget _buildSectionHeader(
-    ColorScheme cores,
-    String titulo,
-    VoidCallback onVerTodos,
-  ) {
+      ColorScheme cores,
+      String titulo,
+      VoidCallback onVerTodos,
+      ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -257,12 +256,12 @@ class _HomeAdmState extends State<HomeAdm> {
   }
 
   Widget _buildCardInformativo(
-    BuildContext context, {
-    required String titulo,
-    required String subtitulo,
-    required IconData icone,
-    required Color corIcone,
-  }) {
+      BuildContext context, {
+        required String titulo,
+        required String subtitulo,
+        required IconData icone,
+        required Color corIcone,
+      }) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
     final isDark = tema.brightness == Brightness.dark;
