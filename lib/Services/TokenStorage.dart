@@ -22,6 +22,10 @@ class TokenStorage {
     await _storage.write(key: _keyPerfil, value: perfil);
   }
 
+  static Future<void> atualizarToken(String token) async {
+    await _storage.write(key: _keyToken, value: token);
+  }
+
   static Future<String?> lerToken() => _storage.read(key: _keyToken);
 
   static Future<String?> lerIdUsuario() => _storage.read(key: _keyIdUsuario);

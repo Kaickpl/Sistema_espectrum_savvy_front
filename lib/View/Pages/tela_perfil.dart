@@ -1,4 +1,10 @@
+import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Model/Enum/Perfil.dart';
+import 'package:espectrum_front/Model/UsuarioModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../Services/TokenStorage.dart';
+import '../../Services/UsuarioService.dart';
 import '../Widgets/app_bar_padrao.dart';
 import '../Widgets/categoria_input.dart';
 import '../Widgets/drawer_padrao.dart';
@@ -6,180 +12,95 @@ import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
 
 // ─────────────────────────────────────────────────────────────
-// Enum de tipo de perfil – espelha o Perfil.java do backend
+// Aparência por perfil – usa o enum compartilhado Model/Enum/Perfil.dart
 // ─────────────────────────────────────────────────────────────
-enum TipoPerfil { admin, terapeuta, professor, responsavel }
-
-extension TipoPerfilExt on TipoPerfil {
-  String get rotulo {
-    switch (this) {
-      case TipoPerfil.admin:
-        return 'Administrador';
-      case TipoPerfil.terapeuta:
-        return 'Terapeuta';
-      case TipoPerfil.professor:
-        return 'Professor';
-      case TipoPerfil.responsavel:
-        return 'Responsável';
-    }
-  }
-
+extension _PerfilUiExt on Perfil {
   IconData get icone {
     switch (this) {
-      case TipoPerfil.admin:
+      case Perfil.roleAdmin:
         return Icons.admin_panel_settings_rounded;
-      case TipoPerfil.terapeuta:
+      case Perfil.roleTerapeuta:
         return Icons.psychology_rounded;
-      case TipoPerfil.professor:
+      case Perfil.roleProfessor:
         return Icons.school_rounded;
-      case TipoPerfil.responsavel:
+      case Perfil.roleResponsavel:
         return Icons.family_restroom_rounded;
     }
   }
 
   Color cor(ColorScheme cs) {
     switch (this) {
-      case TipoPerfil.admin:
+      case Perfil.roleAdmin:
         return cs.tertiary;
-      case TipoPerfil.terapeuta:
+      case Perfil.roleTerapeuta:
         return cs.secondary;
-      case TipoPerfil.professor:
+      case Perfil.roleProfessor:
         return cs.primary;
-      case TipoPerfil.responsavel:
+      case Perfil.roleResponsavel:
         return const Color(0xFF4CAF50);
     }
   }
 }
 
 // ─────────────────────────────────────────────────────────────
-// Modelo leve só para a camada de UI (sem backend ainda)
-// Quando integrar: substituir por UsuarioResponseDTO
-// ─────────────────────────────────────────────────────────────
-class _DadosMockPerfil {
-  final String nome;
-  final String email;
-  final String telefone;
-  final String cpf;
-  final Map<String, String> camposExtras;
-
-  const _DadosMockPerfil({
-    required this.nome,
-    required this.email,
-    required this.telefone,
-    required this.cpf,
-    required this.camposExtras,
-  });
-}
-
-const _mockPorTipo = {
-  TipoPerfil.admin: _DadosMockPerfil(
-    nome: 'Ana Silva Santos',
-    email: 'ana.silva@espectrum.com',
-    telefone: '(81) 99999-1234',
-    cpf: '***.***.***-90',
-    camposExtras: {
-      'Matrícula': '2024001',
-      'Nível de acesso': 'Administrador Geral',
-    },
-  ),
-  TipoPerfil.terapeuta: _DadosMockPerfil(
-    nome: 'Dr. Pedro Alves',
-    email: 'pedro.alves@espectrum.com',
-    telefone: '(81) 98888-4321',
-    cpf: '***.***.***-21',
-    camposExtras: {
-      'CRP': '06/98765',
-      'Especialidade': 'Psicologia Infantil',
-      'Pacientes vinculados': '12 pacientes',
-    },
-  ),
-  TipoPerfil.professor: _DadosMockPerfil(
-    nome: 'Maria Oliveira',
-    email: 'maria.oliveira@espectrum.com',
-    telefone: '(81) 97777-5678',
-    cpf: '***.***.***-43',
-    camposExtras: {
-      'Disciplina': 'Educação Especial',
-      'Escola': 'E.M. João Paulo II',
-      'Turma': '3º Ano A',
-    },
-  ),
-  TipoPerfil.responsavel: _DadosMockPerfil(
-    nome: 'Carlos Mendes',
-    email: 'carlos.mendes@gmail.com',
-    telefone: '(81) 96666-9012',
-    cpf: '***.***.***-65',
-    camposExtras: {
-      'Relação': 'Pai',
-      'Paciente vinculado': 'Lucas Mendes',
-    },
-  ),
-};
-
-// ─────────────────────────────────────────────────────────────
 // TELA PRINCIPAL
 // ─────────────────────────────────────────────────────────────
 
 class TelaPerfil extends StatefulWidget {
-  /// Recebe o tipo vindo do login.
-  /// Quando integrar com o backend, passe o perfil real aqui.
-  final TipoPerfil tipoPerfil;
-
-  const TelaPerfil({
-    super.key,
-    this.tipoPerfil = TipoPerfil.admin, // padrão só para demo
-  });
+  const TelaPerfil({super.key});
 
   @override
   State<TelaPerfil> createState() => _TelaPerfilState();
 }
 
 class _TelaPerfilState extends State<TelaPerfil> {
-  late TipoPerfil _perfilAtual;
-  bool _contaAtiva = true;
-
-  // Controllers editáveis
-  final _nomeController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _telefoneController = TextEditingController();
+  bool _carregando = true;
+  UsuarioModel? _usuario;
 
   @override
   void initState() {
     super.initState();
-    _perfilAtual = widget.tipoPerfil;
-    _carregarDados();
+    _carregarPerfil();
   }
 
-  @override
-  void dispose() {
-    _nomeController.dispose();
-    _emailController.dispose();
-    _telefoneController.dispose();
-    super.dispose();
-  }
-
-  void _carregarDados() {
-    final d = _mockPorTipo[_perfilAtual]!;
-    _nomeController.text = d.nome;
-    _emailController.text = d.email;
-    _telefoneController.text = d.telefone;
+  Future<void> _carregarPerfil() async {
+    setState(() => _carregando = true);
+    try {
+      final token = await TokenStorage.lerToken();
+      final usuario = await UsuarioService.buscarPerfil(token ?? '');
+      if (!mounted) return;
+      setState(() => _usuario = usuario);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      _mostrarSnack(e.message, Theme.of(context).colorScheme.error);
+    } catch (_) {
+      if (!mounted) return;
+      _mostrarSnack(
+        "Não foi possível carregar o perfil. Tente novamente.",
+        Theme.of(context).colorScheme.error,
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
   }
 
   String get _iniciais {
-    final partes = _nomeController.text.trim().split(' ');
+    final nome = _usuario?.nome.trim() ?? '';
+    final partes = nome.split(' ').where((p) => p.isNotEmpty).toList();
     if (partes.length >= 2) {
       return '${partes.first[0]}${partes.last[0]}'.toUpperCase();
     }
-    return partes.isNotEmpty && partes.first.isNotEmpty
-        ? partes.first[0].toUpperCase()
-        : '?';
+    return partes.isNotEmpty ? partes.first[0].toUpperCase() : '?';
   }
 
   // ── Diálogo de edição ──
   void _abrirEdicao() {
-    final tmpNome = TextEditingController(text: _nomeController.text);
-    final tmpEmail = TextEditingController(text: _emailController.text);
-    final tmpTel = TextEditingController(text: _telefoneController.text);
+    final usuario = _usuario;
+    if (usuario == null) return;
+
+    final tmpNome = TextEditingController(text: usuario.nome);
+    final tmpEmail = TextEditingController(text: usuario.email);
+    final tmpTel = TextEditingController(text: usuario.numeroTelefone);
     final formKey = GlobalKey<FormState>();
 
     showDialog(
@@ -187,96 +108,139 @@ class _TelaPerfilState extends State<TelaPerfil> {
       barrierDismissible: false,
       builder: (ctx) {
         final cores = Theme.of(ctx).colorScheme;
-        return AlertDialog(
-          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: cores.primary.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(Icons.edit_rounded, color: cores.primary, size: 20),
+
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            bool salvando = false;
+
+            Future<void> salvar() async {
+              if (!formKey.currentState!.validate()) return;
+              setDialogState(() => salvando = true);
+              try {
+                final token = await TokenStorage.lerToken();
+                final atualizado = await UsuarioService.editarPerfil(
+                  token: token ?? '',
+                  nome: tmpNome.text.trim(),
+                  email: tmpEmail.text.trim(),
+                  numeroTelefone: tmpTel.text.trim(),
+                );
+                if (!mounted) return;
+                setState(() => _usuario = atualizado);
+                Navigator.pop(ctx);
+                _mostrarSnack('Perfil atualizado com sucesso!', cores.primary);
+              } on ApiException catch (e) {
+                setDialogState(() => salvando = false);
+                _mostrarSnack(e.message, cores.error);
+              } catch (_) {
+                setDialogState(() => salvando = false);
+                _mostrarSnack(
+                  'Não foi possível salvar. Tente novamente.',
+                  cores.error,
+                );
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(width: 12),
-              Text(
-                'Editar Perfil',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: cores.onSecondary,
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              title: Row(
                 children: [
-                  CampoTexto(
-                    label: 'Nome Completo',
-                    hintText: 'Digite seu nome',
-                    controller: tmpNome,
-                    validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Informe o nome' : null,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: cores.primary.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.edit_rounded,
+                      color: cores.primary,
+                      size: 20,
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  CampoTexto(
-                    label: 'E-mail',
-                    hintText: 'Digite seu e-mail',
-                    controller: tmpEmail,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Informe o e-mail' : null,
-                  ),
-                  const SizedBox(height: 12),
-                  CampoTexto(
-                    label: 'Telefone',
-                    hintText: '(00) 00000-0000',
-                    controller: tmpTel,
-                    keyboardType: TextInputType.phone,
-                    validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Informe o telefone' : null,
+                  const SizedBox(width: 12),
+                  Text(
+                    'Editar Perfil',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: cores.onSecondary,
+                    ),
                   ),
                 ],
               ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(
-                'Cancelar',
-                style: TextStyle(color: cores.onSurface.withOpacity(0.6)),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CampoTexto(
+                        label: 'Nome Completo',
+                        hintText: 'Digite seu nome',
+                        controller: tmpNome,
+                        validator: (v) =>
+                            (v == null || v.isEmpty) ? 'Informe o nome' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      CampoTexto(
+                        label: 'E-mail',
+                        hintText: 'Digite seu e-mail',
+                        controller: tmpEmail,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Informe o e-mail';
+                          if (!v.contains('@')) return 'Email inválido';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      CampoTexto(
+                        label: 'Telefone',
+                        hintText: '(00) 00000-0000',
+                        controller: tmpTel,
+                        keyboardType: TextInputType.phone,
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'Informe o telefone'
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  setState(() {
-                    _nomeController.text = tmpNome.text;
-                    _emailController.text = tmpEmail.text;
-                    _telefoneController.text = tmpTel.text;
-                  });
-                  Navigator.pop(ctx);
-                  _mostrarSnack('Perfil atualizado com sucesso!', cores.primary);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: cores.primary,
-                foregroundColor: cores.onPrimary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text('Salvar alterações'),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: salvando ? null : () => Navigator.pop(ctx),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: cores.onSurface.withOpacity(0.6)),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: salvando ? null : salvar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: cores.primary,
+                    foregroundColor: cores.onPrimary,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: salvando
+                      ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: cores.onPrimary,
+                          ),
+                        )
+                      : const Text('Salvar alterações'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -284,55 +248,101 @@ class _TelaPerfilState extends State<TelaPerfil> {
 
   // ── Diálogo de confirmação de status ──
   void _confirmarAlteracaoStatus() {
+    final usuario = _usuario;
+    if (usuario == null) return;
+
     final cores = Theme.of(context).colorScheme;
-    final desativar = _contaAtiva;
+    final desativar = usuario.isActive;
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          desativar ? 'Desativar conta?' : 'Reativar conta?',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, color: cores.onSecondary),
-        ),
-        content: Text(
-          desativar
-              ? 'Sua conta será desativada e o acesso ao sistema será suspenso. Deseja continuar?'
-              : 'Sua conta será reativada e você voltará a ter acesso completo. Deseja continuar?',
-          style: TextStyle(color: cores.onSurface.withOpacity(0.7)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancelar',
-                style: TextStyle(color: cores.onSurface.withOpacity(0.6))),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() => _contaAtiva = !_contaAtiva);
-              Navigator.pop(ctx);
-              _mostrarSnack(
-                _contaAtiva
-                    ? 'Conta reativada com sucesso!'
-                    : 'Conta desativada com sucesso!',
-                _contaAtiva ? const Color(0xFF4CAF50) : cores.error,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-              desativar ? cores.error : const Color(0xFF4CAF50),
-              foregroundColor: Colors.white,
-              elevation: 0,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            bool processando = false;
+
+            Future<void> confirmar() async {
+              setDialogState(() => processando = true);
+              try {
+                final token = await TokenStorage.lerToken();
+                final atualizado = desativar
+                    ? await UsuarioService.desativarConta(token ?? '')
+                    : await UsuarioService.reativarConta(token ?? '');
+                if (!mounted) return;
+                setState(() => _usuario = atualizado);
+                Navigator.pop(ctx);
+                _mostrarSnack(
+                  atualizado.isActive
+                      ? 'Conta reativada com sucesso!'
+                      : 'Conta desativada com sucesso!',
+                  atualizado.isActive ? const Color(0xFF4CAF50) : cores.error,
+                );
+              } on ApiException catch (e) {
+                setDialogState(() => processando = false);
+                _mostrarSnack(e.message, cores.error);
+              } catch (_) {
+                setDialogState(() => processando = false);
+                _mostrarSnack(
+                  'Não foi possível concluir a operação.',
+                  cores.error,
+                );
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            child: Text(desativar ? 'Sim, desativar' : 'Sim, reativar'),
-          ),
-        ],
-      ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Text(
+                desativar ? 'Desativar conta?' : 'Reativar conta?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: cores.onSecondary,
+                ),
+              ),
+              content: Text(
+                desativar
+                    ? 'Sua conta será desativada e o acesso ao sistema será suspenso. Deseja continuar?'
+                    : 'Sua conta será reativada e você voltará a ter acesso completo. Deseja continuar?',
+                style: TextStyle(color: cores.onSurface.withOpacity(0.7)),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: processando ? null : () => Navigator.pop(ctx),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: cores.onSurface.withOpacity(0.6)),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: processando ? null : confirmar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: desativar
+                        ? cores.error
+                        : const Color(0xFF4CAF50),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: processando
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(desativar ? 'Sim, desativar' : 'Sim, reativar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -354,7 +364,42 @@ class _TelaPerfilState extends State<TelaPerfil> {
   @override
   Widget build(BuildContext context) {
     final cores = Theme.of(context).colorScheme;
-    final dados = _mockPorTipo[_perfilAtual]!;
+
+    if (_carregando) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBarPadrao(nome: 'Meu Perfil'),
+        endDrawer: const DrawerPadrao(),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final usuario = _usuario;
+    if (usuario == null) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBarPadrao(nome: 'Meu Perfil'),
+        endDrawer: const DrawerPadrao(),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline_rounded, size: 48, color: cores.error),
+              const SizedBox(height: 12),
+              Text(
+                'Não foi possível carregar o perfil.',
+                style: TextStyle(color: cores.onSurface),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _carregarPerfil,
+                child: const Text('Tentar novamente'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -366,12 +411,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
           child: Column(
             children: [
               // ── Banner com avatar ──
-              _buildBanner(cores),
-
-              const SizedBox(height: 16),
-
-              // ── Seletor de demo ──
-              _buildSeletorDemo(cores),
+              _buildBanner(cores, usuario),
 
               const SizedBox(height: 20),
 
@@ -382,47 +422,56 @@ class _TelaPerfilState extends State<TelaPerfil> {
                   children: [
                     // Dados pessoais
                     CategoriaAtributos(
-                        nome: 'Dados Pessoais', icone: Icons.person_rounded),
+                      nome: 'Dados Pessoais',
+                      icone: Icons.person_rounded,
+                    ),
                     const SizedBox(height: 12),
                     _InfoCard(
                       cores: cores,
                       campos: [
-                        _Campo(Icons.badge_rounded, 'Nome',
-                            _nomeController.text),
-                        _Campo(Icons.email_rounded, 'E-mail',
-                            _emailController.text),
-                        _Campo(Icons.phone_rounded, 'Telefone',
-                            _telefoneController.text),
-                        _Campo(Icons.fingerprint_rounded, 'CPF', dados.cpf),
+                        _Campo(Icons.badge_rounded, 'Nome', usuario.nome),
+                        _Campo(Icons.email_rounded, 'E-mail', usuario.email),
+                        _Campo(
+                          Icons.phone_rounded,
+                          'Telefone',
+                          usuario.numeroTelefone,
+                        ),
+                        _Campo(Icons.fingerprint_rounded, 'CPF', usuario.cpf),
                       ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Dados específicos do perfil
-                    CategoriaAtributos(
-                      nome: 'Dados ${_perfilAtual.rotulo}',
-                      icone: _perfilAtual.icone,
-                    ),
-                    const SizedBox(height: 12),
-                    _InfoCard(
-                      cores: cores,
-                      campos: _camposEspecificos(dados.camposExtras),
                     ),
 
                     const SizedBox(height: 20),
 
                     // Status da conta
                     CategoriaAtributos(
-                        nome: 'Status da Conta',
-                        icone: Icons.shield_rounded),
+                      nome: 'Status da Conta',
+                      icone: Icons.shield_rounded,
+                    ),
                     const SizedBox(height: 12),
-                    _CardStatus(cores: cores, ativo: _contaAtiva),
+                    _CardStatus(cores: cores, ativo: usuario.isActive),
+
+                    if (usuario.tipo == Perfil.roleAdmin &&
+                        (usuario.codigoConvite ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      CategoriaAtributos(
+                        nome: 'Código de Convite',
+                        icone: Icons.qr_code_rounded,
+                      ),
+                      const SizedBox(height: 12),
+                      _CardCodigoConvite(
+                        cores: cores,
+                        codigo: usuario.codigoConvite!,
+                        onCopiado: () => _mostrarSnack(
+                          'Código copiado!',
+                          const Color(0xFF4CAF50),
+                        ),
+                      ),
+                    ],
 
                     const SizedBox(height: 20),
 
                     // Botões de ação
-                    _buildBotoesAcao(cores),
+                    _buildBotoesAcao(cores, usuario),
 
                     const SizedBox(height: 24),
                   ],
@@ -438,9 +487,10 @@ class _TelaPerfilState extends State<TelaPerfil> {
   }
 
   // ── Banner superior ──
-  Widget _buildBanner(ColorScheme cores) {
-    final statusColor =
-    _contaAtiva ? const Color(0xFF4CAF50) : const Color(0xFFFF6B6B);
+  Widget _buildBanner(ColorScheme cores, UsuarioModel usuario) {
+    final statusColor = usuario.isActive
+        ? const Color(0xFF4CAF50)
+        : const Color(0xFFFF6B6B);
 
     return Container(
       width: double.infinity,
@@ -449,10 +499,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            cores.primary,
-            cores.secondary.withOpacity(0.85),
-          ],
+          colors: [cores.primary, cores.secondary.withOpacity(0.85)],
         ),
       ),
       child: Column(
@@ -488,7 +535,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
           const SizedBox(height: 14),
 
           Text(
-            _nomeController.text,
+            usuario.nome,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -504,22 +551,22 @@ class _TelaPerfilState extends State<TelaPerfil> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.18),
                   borderRadius: BorderRadius.circular(20),
-                  border:
-                  Border.all(color: Colors.white.withOpacity(0.4)),
+                  border: Border.all(color: Colors.white.withOpacity(0.4)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(_perfilAtual.icone,
-                        color: Colors.white, size: 15),
+                    Icon(usuario.tipo.icone, color: Colors.white, size: 15),
                     const SizedBox(width: 6),
                     Text(
-                      _perfilAtual.rotulo,
+                      usuario.tipo.displayName,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -531,8 +578,10 @@ class _TelaPerfilState extends State<TelaPerfil> {
               ),
               const SizedBox(width: 10),
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.25),
                   borderRadius: BorderRadius.circular(20),
@@ -551,7 +600,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      _contaAtiva ? 'Ativa' : 'Inativa',
+                      usuario.isActive ? 'Ativa' : 'Inativa',
                       style: TextStyle(
                         color: statusColor,
                         fontSize: 12,
@@ -568,116 +617,11 @@ class _TelaPerfilState extends State<TelaPerfil> {
     );
   }
 
-  // ── Seletor de demo (remover ao integrar com backend) ──
-  Widget _buildSeletorDemo(ColorScheme cores) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: cores.surfaceContainer.withOpacity(0.25),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cores.primary.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.tune_rounded, size: 14, color: cores.primary),
-              const SizedBox(width: 6),
-              Text(
-                'Modo demonstração — selecione o perfil:',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: cores.primary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: TipoPerfil.values.map((tipo) {
-              final sel = tipo == _perfilAtual;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(() {
-                    _perfilAtual = tipo;
-                    _carregarDados();
-                  }),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    padding: const EdgeInsets.symmetric(vertical: 9),
-                    decoration: BoxDecoration(
-                      color: sel ? cores.primary : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
-                      border: sel
-                          ? null
-                          : Border.all(
-                          color: cores.primary.withOpacity(0.3)),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          tipo.icone,
-                          size: 18,
-                          color: sel
-                              ? cores.onPrimary
-                              : cores.primary.withOpacity(0.6),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          tipo.rotulo.split(' ').first,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight:
-                            sel ? FontWeight.bold : FontWeight.normal,
-                            color: sel
-                                ? cores.onPrimary
-                                : cores.primary.withOpacity(0.6),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<_Campo> _camposEspecificos(Map<String, String> extras) {
-    const _iconesExtras = {
-      'Matrícula': Icons.badge_outlined,
-      'Nível de acesso': Icons.admin_panel_settings_outlined,
-      'CRP': Icons.assignment_ind_rounded,
-      'Especialidade': Icons.psychology_outlined,
-      'Pacientes vinculados': Icons.groups_rounded,
-      'Disciplina': Icons.book_rounded,
-      'Escola': Icons.account_balance_rounded,
-      'Turma': Icons.class_rounded,
-      'Relação': Icons.family_restroom_rounded,
-      'Paciente vinculado': Icons.child_care_rounded,
-    };
-
-    return extras.entries.map((e) {
-      return _Campo(
-        _iconesExtras[e.key] ?? Icons.label_rounded,
-        e.key,
-        e.value,
-      );
-    }).toList();
-  }
-
   // ── Botões de ação ──
-  Widget _buildBotoesAcao(ColorScheme cores) {
-    final statusColor =
-    _contaAtiva ? cores.error : const Color(0xFF4CAF50);
+  Widget _buildBotoesAcao(ColorScheme cores, UsuarioModel usuario) {
+    final statusColor = usuario.isActive
+        ? cores.error
+        : const Color(0xFF4CAF50);
 
     return Column(
       children: [
@@ -693,7 +637,8 @@ class _TelaPerfilState extends State<TelaPerfil> {
               foregroundColor: cores.onPrimary,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
           ),
         ),
@@ -704,17 +649,19 @@ class _TelaPerfilState extends State<TelaPerfil> {
           child: OutlinedButton.icon(
             onPressed: _confirmarAlteracaoStatus,
             icon: Icon(
-              _contaAtiva
+              usuario.isActive
                   ? Icons.person_off_rounded
                   : Icons.person_rounded,
             ),
             label: Text(
-                _contaAtiva ? 'Desativar Conta' : 'Reativar Conta'),
+              usuario.isActive ? 'Desativar Conta' : 'Reativar Conta',
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: statusColor,
               side: BorderSide(color: statusColor, width: 1.5),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
           ),
         ),
@@ -775,8 +722,7 @@ class _InfoCard extends StatelessWidget {
                       color: cores.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child:
-                    Icon(campo.icone, color: cores.primary, size: 18),
+                    child: Icon(campo.icone, color: cores.primary, size: 18),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -807,10 +753,7 @@ class _InfoCard extends StatelessWidget {
                 ],
               ),
               if (idx < campos.length - 1)
-                Divider(
-                  height: 20,
-                  color: cores.primary.withOpacity(0.08),
-                ),
+                Divider(height: 20, color: cores.primary.withOpacity(0.08)),
             ],
           );
         }).toList(),
@@ -856,9 +799,7 @@ class _CardStatus extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              ativo
-                  ? Icons.verified_user_rounded
-                  : Icons.person_off_rounded,
+              ativo ? Icons.verified_user_rounded : Icons.person_off_rounded,
               color: cor,
               size: 22,
             ),
@@ -904,6 +845,87 @@ class _CardStatus extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Cartão com o código de convite do admin, usado por outros perfis
+/// para se vincularem a ele no cadastro.
+class _CardCodigoConvite extends StatelessWidget {
+  final ColorScheme cores;
+  final String codigo;
+  final VoidCallback onCopiado;
+
+  const _CardCodigoConvite({
+    required this.cores,
+    required this.codigo,
+    required this.onCopiado,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? cores.surface.withOpacity(0.6) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cores.tertiary.withOpacity(0.35)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: cores.tertiary.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.qr_code_rounded, color: cores.tertiary, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Use este código para vincular outros perfis',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: cores.onSurface.withOpacity(0.5),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  codigo,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: cores.onSecondary,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.copy_rounded, color: cores.tertiary),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: codigo));
+              onCopiado();
+            },
           ),
         ],
       ),
