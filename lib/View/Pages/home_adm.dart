@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print, deprecated_member_use
-
 import 'package:espectrum_front/Model/AdminDashboardModel.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/TerapeutaResumoModel.dart';
@@ -27,6 +25,11 @@ class _HomeAdmState extends State<HomeAdm> {
   bool _carregando = true;
   AdminDashboardModel? _dashboard;
   List<TerapeutaResumoModel> _terapeutas = [];
+
+  static const int _maxTerapeutasNaHome = 4;
+
+  List<TerapeutaResumoModel> get _terapeutasPreview =>
+      _terapeutas.take(_maxTerapeutasNaHome).toList();
 
   @override
   void initState() {
@@ -361,7 +364,7 @@ class _HomeAdmState extends State<HomeAdm> {
             }),
             const SizedBox(height: 8),
             Column(
-              children: _terapeutas.isEmpty
+              children: _terapeutasPreview.isEmpty
                   ? [
                       Text(
                         'Nenhum terapeuta cadastrado ainda.',
@@ -372,14 +375,16 @@ class _HomeAdmState extends State<HomeAdm> {
                       ),
                     ]
                   : [
-                      for (int i = 0; i < _terapeutas.length; i++) ...[
+                      for (int i = 0; i < _terapeutasPreview.length; i++) ...[
                         CartaoAluno(
-                          nome: _terapeutas[i].nome,
-                          numPacientes: _terapeutas[i].quantidadePacientes,
-                          onDelete: () =>
-                              _confirmarDesativacaoTerapeuta(_terapeutas[i]),
+                          nome: _terapeutasPreview[i].nome,
+                          numPacientes:
+                              _terapeutasPreview[i].quantidadePacientes,
+                          onDelete: () => _confirmarDesativacaoTerapeuta(
+                            _terapeutasPreview[i],
+                          ),
                         ),
-                        if (i < _terapeutas.length - 1)
+                        if (i < _terapeutasPreview.length - 1)
                           const SizedBox(height: 8),
                       ],
                     ],

@@ -1,6 +1,4 @@
 // tela_gerenciar_terapeutas.dart
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/TerapeutaModel.dart';
@@ -19,6 +17,29 @@ class _TelaGerenciarTerapeutasState extends State<TelaGerenciarTerapeutas> {
   bool _carregando = true;
   List<TerapeutaModel> _terapeutas = [];
   final Set<String> _processando = {};
+
+  String _busca = '';
+  String _filtroStatus = 'TODOS';
+
+  List<TerapeutaModel> get _terapeutasFiltrados {
+    return _terapeutas.where((t) {
+      final nomeCompativel = t.nome.toLowerCase().contains(
+        _busca.toLowerCase(),
+      );
+
+      final statusCompativel = switch (_filtroStatus) {
+        'PENDENTE' => t.statusCadastro == 'PENDENTE',
+        'APROVADO' =>
+          t.statusCadastro != 'PENDENTE' &&
+              t.statusCadastro != 'REJEITADO' &&
+              t.ativo,
+        'DESATIVADO' => !t.ativo,
+        _ => true,
+      };
+
+      return nomeCompativel && statusCompativel;
+    }).toList();
+  }
 
   @override
   void initState() {
@@ -231,6 +252,8 @@ class _TelaGerenciarTerapeutasState extends State<TelaGerenciarTerapeutas> {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
     final corFundo = tema.scaffoldBackgroundColor;
+    final isDark = tema.brightness == Brightness.dark;
+    final terapeutasFiltrados = _terapeutasFiltrados;
 
     return Scaffold(
       backgroundColor: corFundo,
@@ -242,30 +265,111 @@ class _TelaGerenciarTerapeutasState extends State<TelaGerenciarTerapeutas> {
       ),
       body: _carregando
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _carregarTerapeutas,
-              child: _terapeutas.isEmpty
-                  ? ListView(
-                      children: [
-                        const SizedBox(height: 120),
-                        Center(
-                          child: Text(
-                            'Nenhum terapeuta cadastrado ainda.',
-                            style: TextStyle(
-                              color: cores.onSurface.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _terapeutas.length,
-                      itemBuilder: (context, index) {
-                        return _buildCardTerapeuta(context, _terapeutas[index]);
-                      },
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? cores.surface.withOpacity(0.45)
+                          : cores.surfaceContainer.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: cores.onSurface.withOpacity(0.06),
+                      ),
                     ),
+                    child: TextField(
+                      onChanged: (value) => setState(() => _busca = value),
+                      style: TextStyle(color: cores.onSurface),
+                      decoration: InputDecoration(
+                        hintText: 'Buscar terapeuta por nome...',
+                        hintStyle: TextStyle(
+                          color: cores.onSurface.withOpacity(0.4),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: cores.onSurface.withOpacity(0.4),
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 36,
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildChipFiltro(cores, 'TODOS', 'Todos'),
+                      const SizedBox(width: 8),
+                      _buildChipFiltro(cores, 'PENDENTE', 'Pendentes'),
+                      const SizedBox(width: 8),
+                      _buildChipFiltro(cores, 'APROVADO', 'Aprovados'),
+                      const SizedBox(width: 8),
+                      _buildChipFiltro(cores, 'DESATIVADO', 'Desativados'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: _carregarTerapeutas,
+                    child: terapeutasFiltrados.isEmpty
+                        ? ListView(
+                            children: [
+                              const SizedBox(height: 120),
+                              Center(
+                                child: Text(
+                                  _terapeutas.isEmpty
+                                      ? 'Nenhum terapeuta cadastrado ainda.'
+                                      : 'Nenhum terapeuta encontrado.',
+                                  style: TextStyle(
+                                    color: cores.onSurface.withOpacity(0.5),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: terapeutasFiltrados.length,
+                            itemBuilder: (context, index) {
+                              return _buildCardTerapeuta(
+                                context,
+                                terapeutasFiltrados[index],
+                              );
+                            },
+                          ),
+                  ),
+                ),
+              ],
             ),
+    );
+  }
+
+  Widget _buildChipFiltro(ColorScheme cores, String valor, String label) {
+    final selecionado = _filtroStatus == valor;
+
+    return ChoiceChip(
+      label: Text(label),
+      selected: selecionado,
+      onSelected: (_) => setState(() => _filtroStatus = valor),
+      showCheckmark: false,
+      labelStyle: TextStyle(
+        color: selecionado ? cores.onPrimary : cores.onSurface.withOpacity(0.7),
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+      ),
+      backgroundColor: cores.surfaceContainer.withOpacity(0.18),
+      selectedColor: cores.primary,
+      side: BorderSide(color: cores.onSurface.withOpacity(0.06)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 
