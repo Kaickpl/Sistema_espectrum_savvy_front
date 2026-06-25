@@ -39,8 +39,16 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
   String? _periodoSelecionado;
 
   final List<String> _periodos = [
-    '1º Período', '2º Período', '3º Período', '4º Período', '5º Período',
-    '6º Período', '7º Período', '8º Período', '9º Período', '10º Período',
+    '1º Período',
+    '2º Período',
+    '3º Período',
+    '4º Período',
+    '5º Período',
+    '6º Período',
+    '7º Período',
+    '8º Período',
+    '9º Período',
+    '10º Período',
     'Despriorizado',
   ];
   // ────────────────────────────────────────────────────────
@@ -96,10 +104,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
         );
 
         if (!mounted) return;
-        _mostrarSnack(
-          "Estagiário cadastrado com sucesso!",
-          Colors.green,
-        );
+        _mostrarSnack("Estagiário cadastrado com sucesso!", Colors.green);
         Navigator.pop(context);
       } else {
         await TerapeutaService.autoCadastro(
@@ -120,7 +125,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
         );
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const PaginaInicial()),
-              (route) => false,
+          (route) => false,
         );
       }
     } on ApiException catch (e) {
@@ -244,6 +249,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                       }
                       return null;
                     },
+                    maxLines: 1,
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -278,8 +284,9 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                         ),
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor:
-                          Theme.of(context).colorScheme.surfaceContainer,
+                          fillColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainer,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -332,8 +339,8 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                     ],
                   ),
                 ),
-                // ─────────────────────────────────────────────────────────
 
+                // ─────────────────────────────────────────────────────────
                 const SizedBox(height: 12),
 
                 CategoriaAtributos(
@@ -361,6 +368,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                           : Icons.visibility,
                     ),
                   ),
+                  maxLines: 1,
                 ),
                 ValidadorSenha(controller: _senhaController),
                 const SizedBox(height: 4),
@@ -392,6 +400,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                           : Icons.visibility,
                     ),
                   ),
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -419,21 +428,21 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                   ),
                   child: _carregando
                       ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        )
                       : Text(
-                    "Cadastrar",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
+                          "Cadastrar",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 12),
 

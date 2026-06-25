@@ -182,6 +182,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                         controller: tmpNome,
                         validator: (v) =>
                             (v == null || v.isEmpty) ? 'Informe o nome' : null,
+                        maxLines: 1,
                       ),
                       const SizedBox(height: 12),
                       CampoTexto(
@@ -194,6 +195,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                           if (!v.contains('@')) return 'Email inválido';
                           return null;
                         },
+                        maxLines: 1,
                       ),
                       const SizedBox(height: 12),
                       CampoTexto(
@@ -204,6 +206,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                         validator: (v) => (v == null || v.isEmpty)
                             ? 'Informe o telefone'
                             : null,
+                        maxLines: 1,
                       ),
                     ],
                   ),
