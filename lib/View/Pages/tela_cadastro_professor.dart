@@ -120,7 +120,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 CampoTexto(
@@ -134,7 +134,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                     if (!value.contains("@")) return "Email inválido";
                     return null;
                   },
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 CampoTexto(
@@ -147,7 +147,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 CampoTexto(
@@ -160,7 +160,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
 
@@ -180,7 +180,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
 
@@ -210,7 +210,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                           : Icons.visibility,
                     ),
                   ),
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 ValidadorSenha(controller: _senhaController),
                 SizedBox(height: 4),
@@ -240,7 +240,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                           : Icons.visibility,
                     ),
                   ),
-                  maxLines: 4,
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 Padding(
