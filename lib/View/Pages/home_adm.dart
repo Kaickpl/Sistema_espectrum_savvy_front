@@ -377,6 +377,7 @@ class _HomeAdmState extends State<HomeAdm> {
                   : [
                       for (int i = 0; i < _terapeutasPreview.length; i++) ...[
                         CartaoAluno(
+                          id: _terapeutasPreview[i].id,
                           nome: _terapeutasPreview[i].nome,
                           numPacientes:
                               _terapeutasPreview[i].quantidadePacientes,
