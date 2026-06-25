@@ -127,7 +127,7 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
                             }
                             return null;
                           },
-                          maxLines: 4,
+                          maxLines: 1,
                         ),
                       ),
                     ),

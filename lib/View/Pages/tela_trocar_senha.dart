@@ -149,7 +149,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                       : Icons.visibility,
                                 ),
                               ),
-                              maxLines: 4,
+                              maxLines: 1,
                             ),
 
                             ValidadorSenha(controller: _senhaController),
@@ -185,7 +185,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                       : Icons.visibility,
                                 ),
                               ),
-                              maxLines: 4,
+                              maxLines: 1,
                             ),
                           ],
                         ),
