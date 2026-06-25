@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class TerapeutaModel {
   final String id;
   final String numeroTelefone;
@@ -6,6 +8,7 @@ class TerapeutaModel {
   final String? matricula;
   final int periodo;
   final String statusCadastro;
+  final bool ativo;
 
   TerapeutaModel({
     required this.id,
@@ -15,6 +18,7 @@ class TerapeutaModel {
     this.matricula,
     required this.periodo,
     required this.statusCadastro,
+    this.ativo = true,
   });
 
   factory TerapeutaModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +30,7 @@ class TerapeutaModel {
       matricula: json['matricula'],
       periodo: json['periodo'] ?? 0,
       statusCadastro: json['statusCadastro'],
+      ativo: json['ativo'] ?? true,
     );
   }
 }
