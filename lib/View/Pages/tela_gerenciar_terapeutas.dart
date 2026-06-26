@@ -6,7 +6,11 @@ import 'package:espectrum_front/Services/TerapeutaService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
 
 class TelaGerenciarTerapeutas extends StatefulWidget {
-  const TelaGerenciarTerapeutas({super.key});
+  /// Filtro de status já aplicado ao abrir a tela (ex: vindo do indicador
+  /// de notificação de solicitações pendentes no painel do admin).
+  final String filtroInicial;
+
+  const TelaGerenciarTerapeutas({super.key, this.filtroInicial = 'TODOS'});
 
   @override
   State<TelaGerenciarTerapeutas> createState() =>
@@ -44,6 +48,7 @@ class _TelaGerenciarTerapeutasState extends State<TelaGerenciarTerapeutas> {
   @override
   void initState() {
     super.initState();
+    _filtroStatus = widget.filtroInicial;
     _carregarTerapeutas();
   }
 

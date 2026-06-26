@@ -69,6 +69,20 @@ class TerapeutaService {
         .toList();
   }
 
+  /// Busca os terapeutas com cadastro pendente de aprovação, usados para
+  /// alimentar o indicador de notificação no painel do admin.
+  static Future<List<TerapeutaModel>> buscarPendentes(String token) async {
+    final response = await ApiClient.get(
+      '/terapeuta/admin/pendentes',
+      token: token,
+    );
+
+    final json = ApiService.decodeOrThrow(response) as List<dynamic>;
+    return json
+        .map((item) => TerapeutaModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
   /// Auto-cadastro público: exige o código de convite do administrador.
   static Future<TerapeutaModel> autoCadastro({
     required String nome,
