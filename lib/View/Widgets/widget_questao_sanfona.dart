@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
+import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 
 class WidgetQuestaoSanfona extends StatefulWidget {
-  final QuestaoModelo questao;
+  final AtividadeSessaoModel questao;
   final VoidCallback AoResponder;
 
   // Corrigido o tipo para o controlador nativo do Flutter
@@ -41,6 +42,8 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
     4 : Colors.grey
   };
 
+  bool get estaRespondida => widget.questao.pontuacao != null;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -73,7 +76,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
         ),
 
         title: Text(
-          widget.questao.titulo,
+          widget.questao.nomeAtividade,
           style: TextStyle(
             fontSize: 17, 
             fontWeight: FontWeight.w500,
@@ -86,12 +89,12 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: widget.questao.estaRespondida
+            color: estaRespondida
                 ? Colors.green.withValues(alpha: 0.2)
                 : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: widget.questao.estaRespondida
+          child: estaRespondida
               ? const Icon(Icons.check, size: 16, color: Colors.green)
               : Icon(
                   Icons.access_time_rounded, 
@@ -119,7 +122,9 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
                 Column(
                   children: notasPossiveis.map((nota) {
-                    bool selecionado = widget.questao.nota == nota;
+
+                  
+                    bool selecionado = estaRespondida && widget.questao.pontuacao == nota.toString();
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
@@ -127,7 +132,8 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
                           setState(() {
-                            widget.questao.nota = nota;
+                            widget.questao.valorPontuacao = nota;
+                            widget.questao.pontuacao = nota.toString();
                           });
                           widget.AoResponder();
                         },

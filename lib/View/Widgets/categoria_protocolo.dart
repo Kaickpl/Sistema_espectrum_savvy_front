@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 
@@ -15,7 +16,7 @@ class CategoriaProtocolo extends StatefulWidget {
 
   final IconData iconeCategoria;
   final String nomeCategoria;
-  final List<QuestaoModelo> questoesDestaCategoria;
+  final List<AtividadeSessaoModel> questoesDestaCategoria;
   final VoidCallback aoAtualizar;
 
   CategoriaProtocolo({
@@ -33,8 +34,7 @@ class CategoriaProtocolo extends StatefulWidget {
 class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
   String meuTextoSalvo = "";
 
-  int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.estaRespondida).length;
-  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
+int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.pontuacao != null).length;  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
 
   void abrirTelaDeQuestoes() async {
     final resultado = await Navigator.push(

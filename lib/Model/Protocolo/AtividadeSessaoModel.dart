@@ -1,8 +1,8 @@
 class AtividadeSessaoModel {
   final String id;
   final String nomeAtividade;
-  final String? pontuacao;
-  final int valorPontuacao;
+  String? pontuacao;
+  int valorPontuacao;
 
   AtividadeSessaoModel({
     required this.id,
