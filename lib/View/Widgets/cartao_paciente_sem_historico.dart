@@ -18,16 +18,15 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final tema = Theme.of(context);
+    final cores = tema.colorScheme;
     return Container(
       height: 260,
       width: 375,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(255, 255, 255, 1),
+        color: cores.onPrimary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color.fromARGB(130, 197, 197, 197),
-          width: 1,
-        ),
+        border: Border.all(color: cores.onSurface, width: 1),
       ),
       padding: EdgeInsets.all(10),
       child: Column(
@@ -45,11 +44,11 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
                   ),
                   Text(
                     'Última avaliação:',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: cores.onSurface),
                   ),
                   Text(
                     '${data.day}/${data.month}/${data.year}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: cores.onSurface),
                   ),
                 ],
               ),
@@ -79,13 +78,12 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
           SizedBox(height: 20),
           Row(
             children: [
-              
               SizedBox(width: 5),
               Container(
                 width: 60,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(243, 244, 246, 1),
+                  color: cores.onPrimary,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,
@@ -101,9 +99,13 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
           ),
           SizedBox(height: 30),
 
-          BotaoGrande(texto: "Iniciar Protocolo", caminho: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaProtocolo())))
-          
-  
+          BotaoGrande(
+            texto: "Iniciar Protocolo",
+            caminho: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PaginaProtocolo()),
+            ),
+          ),
         ],
       ),
     );
