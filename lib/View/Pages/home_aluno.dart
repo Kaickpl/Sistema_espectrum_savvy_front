@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 
 import '../Widgets/drawer_padrao.dart'; 
-// 🟢 NOVOS IMPORTS:
 import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
@@ -23,7 +22,6 @@ class HomeAluno extends StatefulWidget {
 }
 
 class _HomeAlunoState extends State<HomeAluno> {
-  // 🟢 Agora a lista é fortemente tipada com o seu Model!
   List<PacienteResumoModel> _pacientes = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -228,7 +226,6 @@ class _HomeAlunoState extends State<HomeAluno> {
 
             const SizedBox(height: 20),
 
-            // lista de testes header
             Container(
               height: 70,
               width: 343,
@@ -248,9 +245,7 @@ class _HomeAlunoState extends State<HomeAluno> {
               ),
             ),
 
-            const SizedBox(height: 10),
 
-            // 🟢 LÓGICA DE EXIBIÇÃO DINÂMICA DOS PACIENTES
             if (_isLoading)
               const CircularProgressIndicator()
             else if (_errorMessage != null)
@@ -258,9 +253,7 @@ class _HomeAlunoState extends State<HomeAluno> {
             else if (_pacientes.isEmpty)
               const Text("Você ainda não tem pacientes vinculados.", style: TextStyle(color: Colors.grey))
             else
-              // Espalha a lista dinâmica de Cartoes
               ..._pacientes.map((paciente) {
-                // 🟢 Agora lemos direto do objeto Model:
                 final String id = paciente.id;
                 final String nome = paciente.nome;
                 

@@ -77,6 +77,7 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
 
                 const SizedBox(height: 20),
 
+<<<<<<< HEAD
                 // 🟢 LÓGICA DE EXIBIÇÃO DINÂMICA
                 if (_isLoading)
                   const Center(child: CircularProgressIndicator())
@@ -115,6 +116,21 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
                       ),
                     );
                   }).toList(),
+=======
+                CartaoPacienteHome(
+                  nomePaciente: "João Silva",
+                  nivel: 3,
+                  idade: 2,
+                  status: "Em Progresso",
+                  corStatus: CoresPadrao.emProgressoCor,
+                  onContinuar: () {
+                    print('a');
+                  },
+                  onHistorico: () {
+                    print('a');
+                  },
+                ),
+>>>>>>> 1ce997520104cb49eac07116398eb9efb2cdf111
               ],
             ),
           ),
