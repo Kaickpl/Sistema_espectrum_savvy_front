@@ -41,8 +41,8 @@ class ProtocoloService {
   static Future<void> encerrarSessao(String sessaoId) async {
     final token = await TokenStorage.lerToken();
 
-    final response = await ApiClient.post(
-      '/api/sessao/$sessaoId/encerrar',
+    final response = await ApiClient.put(
+      '/api/sessao/$sessaoId/finalizar',
       {}, // Body vazio
       token: token,
     );

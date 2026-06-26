@@ -44,6 +44,14 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
   bool get estaRespondida => widget.questao.pontuacao != null;
 
+  // 🟢 NOVO: Função que descobre qual é a cor da nota atual da atividade
+  Color get _corSelecionada {
+    if (!estaRespondida) return Colors.grey;
+    // Tenta converter a pontuação atual em inteiro, se falhar volta pra verde como padrão
+    int nota = int.tryParse(widget.questao.pontuacao!) ?? 3;
+    return coresNotas[nota] ?? Colors.green;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -90,12 +98,12 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
           height: 24,
           decoration: BoxDecoration(
             color: estaRespondida
-                ? Colors.green.withValues(alpha: 0.2)
+                ? _corSelecionada.withValues(alpha: 0.2) // 🟢 Agora usa a cor dinâmica com fundo transparente
                 : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: estaRespondida
-              ? const Icon(Icons.check, size: 16, color: Colors.green)
+              ? Icon(Icons.check, size: 16, color: _corSelecionada) // 🟢 Ícone agora adota a cor correta
               : Icon(
                   Icons.access_time_rounded, 
                   size: 16, 

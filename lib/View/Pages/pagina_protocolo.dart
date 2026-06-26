@@ -7,7 +7,9 @@ import 'package:espectrum_front/Model/Protocolo/ProtocoloSessaoModel.dart';
 import 'package:espectrum_front/Services/ProtocoloService.dart';
 
 class PaginaProtocolo extends StatefulWidget {
-  const PaginaProtocolo({super.key});
+  final String pacienteId;
+  final String nomePaciente;
+  const PaginaProtocolo({super.key, required this.pacienteId, required this.nomePaciente});
 
   @override
   State<PaginaProtocolo> createState() => _PaginaProtocoloState();
@@ -37,6 +39,94 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+   Future<void> _finalizarSessao() async {
+    if (sessaoAtual == null) return;
+
+    // Calcula total de questões e quantas já foram respondidas
+    int totalQuestoes = 0;
+    int respondidas = 0;
+
+    for (var categoria in sessaoAtual!.categoriasSessao) {
+      totalQuestoes += categoria.atividades.length;
+      respondidas += categoria.atividades.where((ativ) => ativ.pontuacao != null).length;
+    }
+
+    // Calcula quantas questões ainda faltam
+    int questoesFaltantes = totalQuestoes - respondidas;
+
+    // Define a mensagem dinâmica do alerta
+    String mensagemAlerta = questoesFaltantes > 0 
+        ? "Ainda faltam $questoesFaltantes questões para serem respondidas.\n\nTem certeza que deseja finalizar o protocolo incompleto?"
+        : "Todas as questões foram respondidas!\n\nConfirma a finalização do protocolo?";
+
+    // Exibe o popup de confirmação
+    bool? confirmou = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Finalizar Protocolo", style: TextStyle(color: Colors.white)),
+          content: Text(mensagemAlerta, style: TextStyle(color: Colors.white)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false), // Retorna false se cancelar
+              child: const Text("Cancelar", style: TextStyle(color: Colors.grey, fontSize: 16)),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true), // Retorna true se confirmar
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text("Finalizar", style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Se o usuário cancelou ou clicou fora, interrompemos a execução aqui
+    if (confirmou != true) return;
+
+    try {
+      // Coloca a tela em modo de carregamento apenas se ele confirmou
+      setState(() { isLoading = true; });
+
+      // Chama a API para encerrar
+      await ProtocoloService.encerrarSessao(sessaoAtual!.id);
+
+      if (mounted) {
+        // Mostra o alerta de sucesso verde
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Protocolo finalizado com sucesso!"), 
+            backgroundColor: Colors.green
+          ),
+        );
+        
+        // 🟢 MAGIA AQUI: Volta limpando todas as telas até chegar na Home (primeira tela)
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() { isLoading = false; });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro ao finalizar a sessão: $e"), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleSalvar() async {
+    try {
+      // Exemplo: await ProtocoloService.salvarSessao(sessaoAtual!);
+      print("Salvando alterações...");
+      Navigator.pop(context);
+    } catch (e) {
+      print("Erro ao salvar: $e");
     }
   }
 
@@ -126,9 +216,7 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: _finalizarSessao,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
