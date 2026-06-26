@@ -8,6 +8,7 @@ class CampoTexto extends StatelessWidget {
   final Widget? suffixIcon;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final int maxLines;
 
   const CampoTexto({
     super.key,
@@ -18,6 +19,7 @@ class CampoTexto extends StatelessWidget {
     this.suffixIcon,
     this.obscureText = false,
     this.keyboardType,
+    this.maxLines = 1,
   });
 
   @override
@@ -37,14 +39,14 @@ class CampoTexto extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           DecoratedBox(
-            decoration: BoxDecoration(
-            ),
+            decoration: BoxDecoration(),
             child: TextFormField(
               controller: controller,
               obscureText: obscureText,
               keyboardType: keyboardType,
+              maxLines: maxLines,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
               decoration: InputDecoration(
                 hintText: hintText,
@@ -71,11 +73,16 @@ class CampoTexto extends StatelessWidget {
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 1.5),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error,
+                    width: 1.5,
+                  ),
                 ),
               ),
               validator: validator,

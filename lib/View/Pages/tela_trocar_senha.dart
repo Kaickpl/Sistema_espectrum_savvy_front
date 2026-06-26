@@ -1,4 +1,4 @@
-import 'package:espectrum_front/Services/UsuarioService.dart';
+import 'package:espectrum_front/Services/UsuarioServiceTrocarSenha.dart';
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
@@ -149,6 +149,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                       : Icons.visibility,
                                 ),
                               ),
+                              maxLines: 1,
                             ),
 
                             ValidadorSenha(controller: _senhaController),
@@ -184,6 +185,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                                       : Icons.visibility,
                                 ),
                               ),
+                              maxLines: 1,
                             ),
                           ],
                         ),

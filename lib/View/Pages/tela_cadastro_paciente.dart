@@ -204,6 +204,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -218,6 +219,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -572,6 +574,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -586,6 +589,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -611,6 +615,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                               }
                               return null;
                             },
+                            maxLines: 1,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -621,6 +626,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                             hintText: "Apto, bloco... (opcional)",
                             keyboardType: TextInputType.text,
                             controller: _complementoController,
+                            maxLines: 1,
                           ),
                         ),
                       ],
@@ -640,6 +646,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -666,6 +673,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                               }
                               return null;
                             },
+                            maxLines: 1,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -797,6 +805,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -811,6 +820,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -825,6 +835,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     }
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -840,6 +851,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                     if (!value.contains("@")) return "Email inválido";
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 const SizedBox(height: 12),
 
@@ -848,6 +860,7 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                   hintText: "Ex: Mãe, Pai, Tutor legal",
                   keyboardType: TextInputType.text,
                   controller: _grauParentescoController,
+                  maxLines: 1,
                 ),
 
                 const SizedBox(height: 20),

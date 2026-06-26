@@ -55,10 +55,8 @@ class _PaginaInicialState extends State<PaginaInicial> {
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => paginaHomePorPerfil(login.perfil),
-        ),
-            (route) => false,
+        MaterialPageRoute(builder: (_) => paginaHomePorPerfil(login.perfil)),
+        (route) => false,
       );
     } on ApiException catch (e) {
       _mostrarSnack(e.message, Theme.of(context).colorScheme.error);
@@ -87,7 +85,10 @@ class _PaginaInicialState extends State<PaginaInicial> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    LogoContainer(nomePage: "Sistema de Gestão Terapêutica",imagem: "assets/Images/Logo.png",),
+                    LogoContainer(
+                      nomePage: "Sistema de Gestão Terapêutica",
+                      imagem: "assets/Images/Logo.png",
+                    ),
 
                     SizedBox(height: 15),
 
@@ -123,10 +124,13 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                 keyboardType: TextInputType.emailAddress,
                                 controller: _emailController,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) return "Digite seu email";
-                                  if (!value.contains("@")) return "Email inválido";
+                                  if (value == null || value.isEmpty)
+                                    return "Digite seu email";
+                                  if (!value.contains("@"))
+                                    return "Email inválido";
                                   return null;
                                 },
+                                maxLines: 1,
                               ),
                               SizedBox(height: 8),
                               CampoTexto(
@@ -136,7 +140,8 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                 obscureText: obscureText,
                                 controller: _senhaController,
                                 validator: (valueSenha) {
-                                  if (valueSenha == null || valueSenha.isEmpty) return "Digite sua senha";
+                                  if (valueSenha == null || valueSenha.isEmpty)
+                                    return "Digite sua senha";
                                   return null;
                                 },
                                 suffixIcon: IconButton(
@@ -151,13 +156,14 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                         : Icons.visibility,
                                   ),
                                 ),
+                                maxLines: 1,
                               ),
 
                               SizedBox(height: 15),
 
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
                                     onPressed: () {
@@ -188,31 +194,34 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                           vertical: 12,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       ),
-                                      onPressed: _carregando ? null : _fazerLogin,
+                                      onPressed: _carregando
+                                          ? null
+                                          : _fazerLogin,
                                       child: _carregando
                                           ? SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onPrimary,
-                                        ),
-                                      )
+                                              width: 18,
+                                              height: 18,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onPrimary,
+                                              ),
+                                            )
                                           : Text(
-                                        "Entrar",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onPrimary,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                              "Entrar",
+                                              style: TextStyle(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onPrimary,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                     ),
                                   ),
                                 ],
@@ -237,10 +246,10 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   label: Text(
                                     "Entrar com o Google",
                                     style: TextStyle(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.secondary,
-                                        fontWeight: FontWeight.w900
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      fontWeight: FontWeight.w900,
                                     ),
                                   ),
                                 ),
@@ -254,14 +263,16 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                        const TelaCadastro(),
+                                            const TelaCadastro(),
                                       ),
                                     );
                                   },
                                   child: Text(
                                     "Criar conta",
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                     ),
                                   ),
                                 ),

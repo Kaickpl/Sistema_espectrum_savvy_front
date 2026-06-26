@@ -70,12 +70,15 @@ class _CadastroAdminState extends State<CadastroAdmin> {
         registroProfissional: _crpController.text.trim(),
       );
 
-      await AuthService.login(_emailController.text.trim(), _senhaController.text);
+      await AuthService.login(
+        _emailController.text.trim(),
+        _senhaController.text,
+      );
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomeAdm()),
-            (route) => false,
+        (route) => false,
       );
     } on ApiException catch (e) {
       _mostrarSnack(e.message, Theme.of(context).colorScheme.error);
@@ -92,10 +95,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBarPadrao(nome: "Cadastro Administrador"),
       body: SafeArea(
         bottom: false,
@@ -105,12 +105,16 @@ class _CadastroAdminState extends State<CadastroAdmin> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                LogoContainer(nomePage: 'Cadastro Administrador',
-                  imagem: "assets/Images/Logo.png",),
+                LogoContainer(
+                  nomePage: 'Cadastro Administrador',
+                  imagem: "assets/Images/Logo.png",
+                ),
                 SizedBox(height: 12),
                 CategoriaAtributos(
-                  nome: "Dados Administrador", icone: Icons.person,),
-                SizedBox(height: 12,),
+                  nome: "Dados Administrador",
+                  icone: Icons.person,
+                ),
+                SizedBox(height: 12),
                 CampoTexto(
                   label: "Nome Completo",
                   hintText: "Digite seu nome completo",
@@ -121,6 +125,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                       return "Digite seu nome";
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 SizedBox(height: 8),
                 CampoTexto(
@@ -134,6 +139,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     if (!value.contains("@")) return "Email inválido";
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 SizedBox(height: 8),
                 CampoTexto(
@@ -146,6 +152,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                       return "O campo número não pode ser vazio";
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 SizedBox(height: 8),
                 CampoTexto(
@@ -157,12 +164,15 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     if (value == null || value.isEmpty) return "Digite seu CPF";
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
 
                 CategoriaAtributos(
-                  nome: "Dados Profissionais ", icone: Icons.work,),
-                SizedBox(height: 12,),
+                  nome: "Dados Profissionais ",
+                  icone: Icons.work,
+                ),
+                SizedBox(height: 12),
 
                 CampoTexto(
                   label: "CRP (Conselho Regional de Psicologia)",
@@ -173,13 +183,15 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                     if (value == null || value.isEmpty) return "Digite seu CRP";
                     return null;
                   },
+                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
 
                 CategoriaAtributos(
-                  nome: "Dados de Seguraça ", icone: Icons.security,),
-                SizedBox(height: 12,),
-
+                  nome: "Dados de Seguraça ",
+                  icone: Icons.security,
+                ),
+                SizedBox(height: 12),
 
                 CampoTexto(
                   label: "Senha",
@@ -200,6 +212,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                           : Icons.visibility,
                     ),
                   ),
+                  maxLines: 1,
                 ),
                 ValidadorSenha(controller: _senhaController),
                 SizedBox(height: 4),
@@ -229,62 +242,54 @@ class _CadastroAdminState extends State<CadastroAdmin> {
                           : Icons.visibility,
                     ),
                   ),
+                  maxLines: 1,
                 ),
-                SizedBox(height: 12,),
+                SizedBox(height: 12),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.055),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.055,
+                  ),
                   child: ConteinerTermoDeUsoPrivacidade(),
                 ),
 
-                SizedBox(height: 12,),
+                SizedBox(height: 12),
 
                 SizedBox(
-
                   child: ElevatedButton(
-
                     onPressed: _carregando ? null : _cadastrar,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary,
-                      foregroundColor: Theme
-                          .of(context)
-                          .colorScheme
-                          .onPrimary,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 40),
+                        vertical: 16,
+                        horizontal: 40,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: _carregando
                         ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    )
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
                         : Text(
-                      "Cadastrar",
-                      style: TextStyle(fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .onPrimary),
-                    ),
+                            "Cadastrar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
                   ),
                 ),
                 SizedBox(height: 16),
 
                 RodaPe(),
-
               ],
             ),
           ),

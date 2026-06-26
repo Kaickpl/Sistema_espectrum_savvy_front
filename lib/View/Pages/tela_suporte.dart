@@ -1,4 +1,6 @@
-import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Services/SuporteService.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:espectrum_front/View/Widgets/widget_input_acesso.dart';
@@ -21,18 +23,82 @@ class _TelaSuporteState extends State<TelaSuporte> {
   bool funcionamento = false;
   bool resultados = false;
   bool outros = false;
+  bool _enviando = false;
 
-  final TextEditingController descricaoController =
-  TextEditingController();
+  final TextEditingController descricaoController = TextEditingController();
 
-  final TextEditingController emailController =
-  TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    descricaoController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
+  void _mostrarSnack(String msg, Color cor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        backgroundColor: cor,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  Future<void> _enviarSolicitacao() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final categorias = <String>{
+      if (loginConta) 'LOGIN_CONTA',
+      if (funcionamento) 'FUNCIONAMENTO_APP',
+      if (resultados) 'RESULTADOS_HISTORICO',
+      if (outros) 'OUTROS',
+    };
+
+    if (categorias.isEmpty) {
+      _mostrarSnack(
+        'Selecione ao menos uma categoria do problema.',
+        Theme.of(context).colorScheme.error,
+      );
+      return;
+    }
+
+    setState(() => _enviando = true);
+    try {
+      final token = await TokenStorage.lerToken();
+      await SuporteService.enviarSolicitacao(
+        token ?? '',
+        categorias: categorias,
+        descricao: descricaoController.text.trim(),
+        email: emailController.text.trim(),
+      );
+      if (!mounted) return;
+      _mostrarSnack(
+        'Solicitação enviada! Nossa equipe vai responder em breve.',
+        const Color(0xFF25A329),
+      );
+      Navigator.pop(context);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      _mostrarSnack(e.message, Theme.of(context).colorScheme.error);
+    } catch (_) {
+      if (!mounted) return;
+      _mostrarSnack(
+        'Não foi possível enviar sua solicitação. Tente novamente.',
+        Theme.of(context).colorScheme.error,
+      );
+    } finally {
+      if (mounted) setState(() => _enviando = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-      Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
 
       appBar: AppBarPadrao(nome: 'Suporte'),
       drawer: DrawerPadrao(),
@@ -46,33 +112,25 @@ class _TelaSuporteState extends State<TelaSuporte> {
               key: _formKey,
 
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-
                   Container(
                     padding: EdgeInsets.all(12),
 
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimary,
+                      color: Theme.of(context).colorScheme.onPrimary,
 
-                      borderRadius:
-                      BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
 
                     child: Row(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
                         Icon(
                           Icons.info,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
 
                         SizedBox(width: 8),
@@ -83,9 +141,7 @@ class _TelaSuporteState extends State<TelaSuporte> {
 
                             style: TextStyle(
                               fontSize: 12,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
@@ -98,9 +154,7 @@ class _TelaSuporteState extends State<TelaSuporte> {
                   Text(
                     "Categoria do problema",
 
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
 
                   SizedBox(height: 10),
@@ -108,18 +162,14 @@ class _TelaSuporteState extends State<TelaSuporte> {
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
 
-                      borderRadius:
-                      BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
                     ),
 
                     child: Column(
                       children: [
-
                         CheckboxListTile(
                           value: loginConta,
 
@@ -129,8 +179,7 @@ class _TelaSuporteState extends State<TelaSuporte> {
                             });
                           },
 
-                          title:
-                          Text("Login e Conta"),
+                          title: Text("Login e Conta"),
                         ),
 
                         Divider(height: 1),
@@ -144,9 +193,7 @@ class _TelaSuporteState extends State<TelaSuporte> {
                             });
                           },
 
-                          title: Text(
-                            "Funcionamento do App",
-                          ),
+                          title: Text("Funcionamento do App"),
                         ),
 
                         Divider(height: 1),
@@ -160,9 +207,7 @@ class _TelaSuporteState extends State<TelaSuporte> {
                             });
                           },
 
-                          title: Text(
-                            "Resultados e Histórico",
-                          ),
+                          title: Text("Resultados e Histórico"),
                         ),
 
                         Divider(height: 1),
@@ -184,14 +229,32 @@ class _TelaSuporteState extends State<TelaSuporte> {
                   SizedBox(height: 24),
 
                   CampoTexto(
+                    label: "Descreva o problema",
+                    hintText: "Conte com detalhes o que está acontecendo",
+                    controller: descricaoController,
+                    maxLines: 2,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Descreva o problema";
+                      }
+                      return null;
+                    },
+                  ),
+
+                  SizedBox(height: 24),
+
+                  CampoTexto(
                     label: "Email",
                     hintText: "Digite seu email",
+                    controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return "Digite seu email";
+                      if (value == null || value.isEmpty)
+                        return "Digite seu email";
                       if (!value.contains("@")) return "Email inválido";
                       return null;
                     },
+                    maxLines: 1,
                   ),
 
                   SizedBox(height: 30),
@@ -205,33 +268,30 @@ class _TelaSuporteState extends State<TelaSuporte> {
                         ),
 
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
 
-                      onPressed: () {
-                        if (_formKey.currentState!
-                            .validate()) {
+                      onPressed: _enviando ? null : _enviarSolicitacao,
 
-                          Navigator.pop(
-                            context
-                          );
-                        }
-                      },
+                      child: _enviando
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            )
+                          : Text(
+                              "Enviar",
 
-                      child: Text(
-                        "Enviar",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
 
-                        style: TextStyle(
-                          color:
-                          Theme.of(context)
-                              .colorScheme
-                              .onPrimary,
-
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
 

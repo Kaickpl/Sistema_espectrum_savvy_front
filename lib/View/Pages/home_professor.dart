@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Config/coresPadrao.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_sem_historico.dart';
@@ -28,7 +29,7 @@ class HomeProfessor extends StatelessWidget {
                   data: DateTime(2026, 12, 25, 24, 30),
                   idade: 2,
                   status: "Em Progresso",
-                  corStatus: Colors.yellow,
+                  corStatus: CoresPadrao.emProgressoCor,
                 ),
 
                 SizedBox(height: 12),
@@ -38,7 +39,7 @@ class HomeProfessor extends StatelessWidget {
                   data: DateTime(2026, 12, 27, 20, 30),
                   idade: 2,
                   status: "Em Progresso",
-                  corStatus: Colors.yellow,
+                  corStatus: CoresPadrao.emProgressoCor,
                 ),
 
                 SizedBox(height: 12),
@@ -48,7 +49,7 @@ class HomeProfessor extends StatelessWidget {
                   data: DateTime(2026, 12, 15, 20, 30),
                   idade: 2,
                   status: "Em Progresso",
-                  corStatus: Colors.yellow,
+                  corStatus: CoresPadrao.emProgressoCor,
                 ),
               ],
             ),

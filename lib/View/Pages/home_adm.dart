@@ -1,5 +1,12 @@
+import 'package:espectrum_front/Model/AdminDashboardModel.dart';
+import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Model/TerapeutaResumoModel.dart';
+import 'package:espectrum_front/Services/AdminService.dart';
+import 'package:espectrum_front/Services/TerapeutaService.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
 import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
 import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/tela_gerenciar_terapeutas.dart';
 import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
 import 'package:espectrum_front/View/Widgets/cartao_acoes_rapidas.dart';
 import 'package:espectrum_front/View/Widgets/cartao_aluno.dart';
@@ -15,11 +22,170 @@ class HomeAdm extends StatefulWidget {
 }
 
 class _HomeAdmState extends State<HomeAdm> {
+  bool _carregando = true;
+  AdminDashboardModel? _dashboard;
+  List<TerapeutaResumoModel> _terapeutas = [];
+
+  static const int _maxTerapeutasNaHome = 4;
+
+  List<TerapeutaResumoModel> get _terapeutasPreview =>
+      _terapeutas.take(_maxTerapeutasNaHome).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
+
+  Future<void> _carregarDados() async {
+    setState(() => _carregando = true);
+    try {
+      final token = await TokenStorage.lerToken();
+      final dashboard = await AdminService.buscarDashboard(token ?? '');
+      final terapeutas = await TerapeutaService.buscarResumoPorAdmin(
+        token ?? '',
+      );
+      if (!mounted) return;
+      setState(() {
+        _dashboard = dashboard;
+        _terapeutas = terapeutas;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      _mostrarSnack(e.message, Theme.of(context).colorScheme.error);
+    } catch (_) {
+      if (!mounted) return;
+      _mostrarSnack(
+        'Não foi possível carregar os dados do painel. Tente novamente.',
+        Theme.of(context).colorScheme.error,
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  void _mostrarSnack(String msg, Color cor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        backgroundColor: cor,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  void _confirmarDesativacaoTerapeuta(TerapeutaResumoModel terapeuta) {
+    final cores = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            bool processando = false;
+
+            Future<void> confirmar() async {
+              setDialogState(() => processando = true);
+              try {
+                final token = await TokenStorage.lerToken();
+                await TerapeutaService.desativarTerapeuta(
+                  token ?? '',
+                  terapeuta.id,
+                );
+                if (!mounted) return;
+                Navigator.pop(ctx);
+                setState(() {
+                  _terapeutas = _terapeutas
+                      .where((t) => t.id != terapeuta.id)
+                      .toList();
+                });
+                _mostrarSnack('Terapeuta desativado com sucesso!', cores.error);
+              } on ApiException catch (e) {
+                setDialogState(() => processando = false);
+                _mostrarSnack(e.message, cores.error);
+              } catch (_) {
+                setDialogState(() => processando = false);
+                _mostrarSnack(
+                  'Não foi possível concluir a operação.',
+                  cores.error,
+                );
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Text(
+                'Desativar terapeuta?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: cores.onSecondary,
+                ),
+              ),
+              content: Text(
+                'A conta de ${terapeuta.nome} será desativada e o acesso ao sistema será suspenso. Deseja continuar?',
+                style: TextStyle(color: cores.onSurface.withOpacity(0.7)),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: processando ? null : () => Navigator.pop(ctx),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: cores.onSurface.withOpacity(0.6)),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: processando ? null : confirmar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: cores.error,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: processando
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Sim, desativar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
     final corFundo = tema.scaffoldBackgroundColor;
+
+    if (_carregando) {
+      return Scaffold(
+        backgroundColor: corFundo,
+        appBar: AppBar(
+          backgroundColor: corFundo,
+          elevation: 0,
+          foregroundColor: cores.onSurface,
+          actions: const [],
+        ),
+        endDrawer: DrawerPadrao(),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: corFundo,
@@ -74,15 +240,15 @@ class _HomeAdmState extends State<HomeAdm> {
               children: [
                 _buildCardInformativo(
                   context,
-                  titulo: '148',
+                  titulo: '${_dashboard?.totalPacientes ?? 0}',
                   subtitulo: 'Total de pacientes',
                   icone: Icons.group,
                   corIcone: cores.primary,
                 ),
                 _buildCardInformativo(
                   context,
-                  titulo: '34',
-                  subtitulo: 'Protocolos em Aberto',
+                  titulo: '${_dashboard?.totalProtocolosFinalizados ?? 0}',
+                  subtitulo: 'Protocolos Finalizados',
                   icone: Icons.note_add,
                   corIcone: cores.secondary,
                 ),
@@ -112,7 +278,8 @@ class _HomeAdmState extends State<HomeAdm> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CadastroEstagiario(modoAdmin: true),
+                        builder: (context) =>
+                            const CadastroEstagiario(modoAdmin: true),
                       ),
                     );
                   },
@@ -157,7 +324,7 @@ class _HomeAdmState extends State<HomeAdm> {
             _buildSectionHeader(
               cores,
               'RELATÓRIOS RECENTES',
-                  () => print('ir pra pagina de ver todos os relatorios'),
+              () => print('ir pra pagina de ver todos os relatorios'),
             ),
             const SizedBox(height: 8),
             Column(
@@ -187,18 +354,41 @@ class _HomeAdmState extends State<HomeAdm> {
 
             const SizedBox(height: 28),
 
-            _buildSectionHeader(
-              cores,
-              'GESTÃO DE ALUNOS',
-                  () => print('ir pra pagina de ver todos os alunos'),
-            ),
+            _buildSectionHeader(cores, 'GESTÃO DE ALUNOS', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TelaGerenciarTerapeutas(),
+                ),
+              );
+            }),
             const SizedBox(height: 8),
             Column(
-              children: const [
-                CartaoAluno(nome: 'Ana Souza', numPacientes: 4),
-                SizedBox(height: 8),
-                CartaoAluno(nome: 'Carlos Mendes', numPacientes: 0),
-              ],
+              children: _terapeutasPreview.isEmpty
+                  ? [
+                      Text(
+                        'Nenhum terapeuta cadastrado ainda.',
+                        style: TextStyle(
+                          color: cores.onSurface.withOpacity(0.5),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ]
+                  : [
+                      for (int i = 0; i < _terapeutasPreview.length; i++) ...[
+                        CartaoAluno(
+                          id: _terapeutasPreview[i].id,
+                          nome: _terapeutasPreview[i].nome,
+                          numPacientes:
+                              _terapeutasPreview[i].quantidadePacientes,
+                          onDelete: () => _confirmarDesativacaoTerapeuta(
+                            _terapeutasPreview[i],
+                          ),
+                        ),
+                        if (i < _terapeutasPreview.length - 1)
+                          const SizedBox(height: 8),
+                      ],
+                    ],
             ),
             const SizedBox(height: 24),
           ],
@@ -219,10 +409,10 @@ class _HomeAdmState extends State<HomeAdm> {
   }
 
   Widget _buildSectionHeader(
-      ColorScheme cores,
-      String titulo,
-      VoidCallback onVerTodos,
-      ) {
+    ColorScheme cores,
+    String titulo,
+    VoidCallback onVerTodos,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -256,12 +446,12 @@ class _HomeAdmState extends State<HomeAdm> {
   }
 
   Widget _buildCardInformativo(
-      BuildContext context, {
-        required String titulo,
-        required String subtitulo,
-        required IconData icone,
-        required Color corIcone,
-      }) {
+    BuildContext context, {
+    required String titulo,
+    required String subtitulo,
+    required IconData icone,
+    required Color corIcone,
+  }) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
     final isDark = tema.brightness == Brightness.dark;

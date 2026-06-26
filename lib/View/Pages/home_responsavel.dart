@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Config/coresPadrao.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
@@ -32,7 +33,7 @@ class HomeResponsavel extends StatelessWidget {
                   nivel: 3,
                   idade: 2,
                   status: "Em Progresso",
-                  corStatus: Colors.yellow,
+                  corStatus: CoresPadrao.emProgressoCor,
                   onContinuar: () {
                     print('a');
                   },

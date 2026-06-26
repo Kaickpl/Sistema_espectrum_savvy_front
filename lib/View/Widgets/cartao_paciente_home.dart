@@ -75,7 +75,6 @@ class CartaoPacienteHome extends StatelessWidget {
                   ),
                 ],
               ),
-              // Status Badge
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -103,7 +102,6 @@ class CartaoPacienteHome extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // Chips de Informação
           Row(
             children: [
               _buildChip(
