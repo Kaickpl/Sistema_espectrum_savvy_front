@@ -11,8 +11,6 @@ class ProtocoloService {
     
     final token = await TokenStorage.lerToken();
 
-    print("🚨 OLHA O TOKEN AQUI: $token");
-
     final response = await ApiClient.post(
       '/api/sessao/iniciar/paciente/$pacienteId',
       {}, // Body vazio

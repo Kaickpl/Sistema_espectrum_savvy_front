@@ -73,7 +73,7 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false), // Retorna false se cancelar
-              child: const Text("Cancelar", style: TextStyle(color: Colors.grey, fontSize: 16)),
+              child: const Text("Cancelar", style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true), // Retorna true se confirmar
