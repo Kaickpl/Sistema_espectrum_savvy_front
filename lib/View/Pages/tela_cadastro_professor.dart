@@ -1,4 +1,5 @@
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
@@ -6,6 +7,7 @@ import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
 import '../../Services/ProfessorService.dart';
 import '../../Services/TokenStorage.dart';
+import '../../Services/VinculoService.dart';
 import '../Widgets/app_bar_padrao.dart';
 import '../Widgets/widget_termo_uso_privacidade.dart';
 import '../Widgets/widget_input_acesso.dart';
@@ -30,6 +32,36 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
   final _escolaController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmaController = TextEditingController();
+  final _anoLetivoController = TextEditingController();
+
+  List<PacienteResumoModel> _meusPacientes = [];
+  PacienteResumoModel? _pacienteSelecionado;
+  bool _souTerapeuta = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarMeusPacientes();
+  }
+
+  Future<void> _carregarMeusPacientes() async {
+    final perfil = await TokenStorage.lerPerfil();
+    if (perfil != 'ROLE_TERAPEUTA') return;
+
+    try {
+      final token = await TokenStorage.lerToken();
+      final pacientes = await VinculoService.listarMeusPacientesVinculados(
+        token ?? '',
+      );
+      if (!mounted) return;
+      setState(() {
+        _souTerapeuta = true;
+        _meusPacientes = pacientes;
+      });
+    } catch (_) {
+      // Sem pacientes vinculados disponíveis: a opção de vincular simplesmente não aparece.
+    }
+  }
 
   @override
   void dispose() {
@@ -40,6 +72,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
     _escolaController.dispose();
     _senhaController.dispose();
     _confirmaController.dispose();
+    _anoLetivoController.dispose();
     super.dispose();
   }
 
@@ -61,7 +94,7 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
     setState(() => _carregando = true);
     try {
       final token = await TokenStorage.lerToken();
-      await ProfessorService.cadastrarProfessor(
+      final professor = await ProfessorService.cadastrarProfessor(
         token: token ?? '',
         nome: _nomeController.text.trim(),
         email: _emailController.text.trim(),
@@ -70,6 +103,25 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
         cpf: _cpfController.text.trim(),
         escola: _escolaController.text.trim(),
       );
+
+      if (_pacienteSelecionado != null) {
+        try {
+          await VinculoService.vincularPaciente(
+            token: token ?? '',
+            idPaciente: _pacienteSelecionado!.id,
+            idTerapeuta: professor.idProfessor,
+            anoLetivo: _anoLetivoController.text.trim(),
+          );
+        } catch (_) {
+          if (!mounted) return;
+          _mostrarSnack(
+            "Professor cadastrado, mas não foi possível vincular o paciente.",
+            Theme.of(context).colorScheme.error,
+          );
+          Navigator.pop(context);
+          return;
+        }
+      }
 
       if (!mounted) return;
       _mostrarSnack("Professor cadastrado com sucesso!", Colors.green);
@@ -120,7 +172,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 CampoTexto(
@@ -134,7 +185,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                     if (!value.contains("@")) return "Email inválido";
                     return null;
                   },
-                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 CampoTexto(
@@ -147,7 +197,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 CampoTexto(
@@ -160,7 +209,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
 
@@ -180,9 +228,103 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                       return "O campo não pode ser em vazio";
                     return null;
                   },
-                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
+
+                if (_souTerapeuta && _meusPacientes.isNotEmpty) ...[
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 355),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Vincular Paciente (opcional)",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<PacienteResumoModel>(
+                          value: _pacienteSelecionado,
+                          isExpanded: true,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                            fontSize: 16,
+                          ),
+                          hint: Text(
+                            "Selecione um paciente",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                          ),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: Theme.of(
+                                  context,
+                                ).scaffoldBackgroundColor,
+                                width: 1.5,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 14,
+                            ),
+                          ),
+                          items: [
+                            const DropdownMenuItem<PacienteResumoModel>(
+                              value: null,
+                              child: Text("Nenhum"),
+                            ),
+                            ..._meusPacientes.map((paciente) {
+                              return DropdownMenuItem<PacienteResumoModel>(
+                                value: paciente,
+                                child: Text(paciente.nome),
+                              );
+                            }),
+                          ],
+                          onChanged: (value) {
+                            setState(() => _pacienteSelecionado = value);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_pacienteSelecionado != null) ...[
+                    SizedBox(height: 12),
+                    CampoTexto(
+                      label: "Ano Letivo",
+                      hintText: "Ex: 2024",
+                      keyboardType: TextInputType.number,
+                      controller: _anoLetivoController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "O ano letivo é obrigatório";
+                        }
+                        if (!RegExp(r'^\d{4}$').hasMatch(value)) {
+                          return "Deve conter exatamente 4 números (ex: 2024)";
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                  SizedBox(height: 12),
+                ],
 
                 CategoriaAtributos(
                   nome: "Dados de Seguraça ",
@@ -210,7 +352,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                           : Icons.visibility,
                     ),
                   ),
-                  maxLines: 1,
                 ),
                 ValidadorSenha(controller: _senhaController),
                 SizedBox(height: 4),
@@ -240,7 +381,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                           : Icons.visibility,
                     ),
                   ),
-                  maxLines: 1,
                 ),
                 SizedBox(height: 12),
                 Padding(

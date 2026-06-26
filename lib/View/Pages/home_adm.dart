@@ -25,6 +25,7 @@ class _HomeAdmState extends State<HomeAdm> {
   bool _carregando = true;
   AdminDashboardModel? _dashboard;
   List<TerapeutaResumoModel> _terapeutas = [];
+  int _terapeutasPendentes = 0;
 
   static const int _maxTerapeutasNaHome = 4;
 
@@ -45,10 +46,12 @@ class _HomeAdmState extends State<HomeAdm> {
       final terapeutas = await TerapeutaService.buscarResumoPorAdmin(
         token ?? '',
       );
+      final pendentes = await TerapeutaService.buscarPendentes(token ?? '');
       if (!mounted) return;
       setState(() {
         _dashboard = dashboard;
         _terapeutas = terapeutas;
+        _terapeutasPendentes = pendentes.length;
       });
     } on ApiException catch (e) {
       if (!mounted) return;
@@ -62,6 +65,16 @@ class _HomeAdmState extends State<HomeAdm> {
     } finally {
       if (mounted) setState(() => _carregando = false);
     }
+  }
+
+  void _abrirSolicitacoesPendentes() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            const TelaGerenciarTerapeutas(filtroInicial: 'PENDENTE'),
+      ),
+    ).then((_) => _carregarDados());
   }
 
   void _mostrarSnack(String msg, Color cor) {
@@ -180,7 +193,7 @@ class _HomeAdmState extends State<HomeAdm> {
           backgroundColor: corFundo,
           elevation: 0,
           foregroundColor: cores.onSurface,
-          actions: const [],
+          actions: [_buildNotificacaoPendentes(cores)],
         ),
         endDrawer: DrawerPadrao(),
         body: const Center(child: CircularProgressIndicator()),
@@ -193,9 +206,9 @@ class _HomeAdmState extends State<HomeAdm> {
         backgroundColor: corFundo,
         elevation: 0,
         foregroundColor: cores.onSurface,
-        actions: const [],
+        actions: [_buildNotificacaoPendentes(cores)],
       ),
-      endDrawer: DrawerPadrao(),
+      drawer: DrawerPadrao(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
@@ -394,6 +407,21 @@ class _HomeAdmState extends State<HomeAdm> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildNotificacaoPendentes(ColorScheme cores) {
+    return IconButton(
+      tooltip: _terapeutasPendentes > 0
+          ? '$_terapeutasPendentes solicitação(ões) de cadastro pendente(s)'
+          : 'Nenhuma solicitação pendente',
+      icon: Badge(
+        isLabelVisible: _terapeutasPendentes > 0,
+        label: Text('$_terapeutasPendentes'),
+        backgroundColor: cores.error,
+        child: Icon(Icons.notifications_outlined, color: cores.onSurface),
+      ),
+      onPressed: _abrirSolicitacoesPendentes,
     );
   }
 
