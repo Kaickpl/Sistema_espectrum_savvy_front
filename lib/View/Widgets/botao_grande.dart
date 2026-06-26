@@ -4,11 +4,7 @@ class BotaoGrande extends StatelessWidget {
   final String texto;
   final VoidCallback caminho;
 
-  const BotaoGrande({
-    super.key,
-    required this.texto,
-    required this.caminho
-  });
+  const BotaoGrande({super.key, required this.texto, required this.caminho});
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +27,12 @@ class BotaoGrande extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10)
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         onPressed: caminho,
-        child: Text(texto, style: TextStyle(fontSize: 19, color: Colors.white),)),
+        child: Text(texto, style: TextStyle(fontSize: 19, color: Colors.white)),
+      ),
     );
   }
 }

@@ -2,18 +2,7 @@ import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 
-class RetornoDaCategoria {
-  final int questoesRespondidas;
-  final String comentarioSalvo;
-
-  RetornoDaCategoria({
-    required this.questoesRespondidas,
-    required this.comentarioSalvo,
-  });
-}
-
 class CategoriaProtocolo extends StatefulWidget {
-
   final IconData iconeCategoria;
   final String nomeCategoria;
   final List<AtividadeSessaoModel> questoesDestaCategoria;
@@ -24,7 +13,7 @@ class CategoriaProtocolo extends StatefulWidget {
     required this.iconeCategoria,
     required this.nomeCategoria,
     required this.questoesDestaCategoria,
-    required this.aoAtualizar
+    required this.aoAtualizar,
   });
 
   @override
@@ -32,16 +21,15 @@ class CategoriaProtocolo extends StatefulWidget {
 }
 
 class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
-  String meuTextoSalvo = "";
-
-int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.pontuacao != null).length;  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
+  int get questoesRespondidas =>
+      widget.questoesDestaCategoria.where((q) => q.pontuacao != null).length;
+  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
 
   void abrirTelaDeQuestoes() async {
-    final resultado = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PaginaQuestoesCategoria(
-          comentarioInicial: meuTextoSalvo,
           nomeCategoria: widget.nomeCategoria,
           totalDeQuestoes: totalDeQuestoes,
           iconeCategoria: widget.iconeCategoria,
@@ -50,15 +38,8 @@ int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.pont
       ),
     );
 
-      setState(() {
-        if (resultado != null && resultado is RetornoDaCategoria) {
-        meuTextoSalvo = resultado.comentarioSalvo;
-      }
-      
-      });
-
-      widget.aoAtualizar();
-    }
+    widget.aoAtualizar();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,35 +53,37 @@ int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.pont
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.30),
             borderRadius: BorderRadius.circular(8),
           ),
-            child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(widget.iconeCategoria,
-                    color: Theme.of(context).colorScheme.onPrimary,),
-                  ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  widget.iconeCategoria,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
 
-                  SizedBox(width: 12),
+              SizedBox(width: 12),
 
-                  Expanded(
-                    child: Text(
-                      '${widget.nomeCategoria}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSecondary,
-                      ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    ),
+              Expanded(
+                child: Text(
+                  '${widget.nomeCategoria}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
-              
-              questoesRespondidas == totalDeQuestoes && totalDeQuestoes> 0
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              questoesRespondidas == totalDeQuestoes && totalDeQuestoes > 0
                   ? Icon(
                       Icons.check_circle,
                       color: Theme.of(context).colorScheme.primary,
@@ -116,9 +99,9 @@ int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.pont
                       ),
                     ),
             ],
+          ),
         ),
-        ),
-        ),
-      );
+      ),
+    );
   }
 }

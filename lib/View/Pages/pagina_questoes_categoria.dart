@@ -10,7 +10,6 @@ class PaginaQuestoesCategoria extends StatefulWidget {
   final String nomeCategoria;
   final int totalDeQuestoes;
   final IconData iconeCategoria;
-  final String comentarioInicial;
   final List<AtividadeSessaoModel> questoesDaCategoria;
 
   const PaginaQuestoesCategoria({
@@ -18,9 +17,7 @@ class PaginaQuestoesCategoria extends StatefulWidget {
     required this.nomeCategoria,
     required this.totalDeQuestoes,
     required this.iconeCategoria,
-    required this.comentarioInicial,
     required this.questoesDaCategoria,
-    
   });
 
   @override
@@ -29,17 +26,12 @@ class PaginaQuestoesCategoria extends StatefulWidget {
 }
 
 class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
-  late TextEditingController _comentariosController;
-
   int? indexSanfonaAberta;
   late List<ExpansibleController> controlesDasSanfonas;
 
   @override
   void initState() {
     super.initState();
-    _comentariosController = TextEditingController(
-      text: widget.comentarioInicial,
-    );
 
     controlesDasSanfonas = List.generate(
       widget.questoesDaCategoria.length,
@@ -52,12 +44,7 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
   }
 
   void voltar() {
-    final pacoteDeRetorno = RetornoDaCategoria(
-      questoesRespondidas:
-          0, // Substituir pelo valor real de questões respondidas
-      comentarioSalvo: _comentariosController.text,
-    );
-    Navigator.pop(context, pacoteDeRetorno);
+    Navigator.pop(context);
   }
 
   @override
@@ -117,17 +104,17 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                         "Questões relacionadas à ${widget.nomeCategoria.toLowerCase()}",
                     textoInstrucoes:
                         "Responda as questões abaixo relacionadas à ${widget.nomeCategoria.toLowerCase()} para ajudar na análise do comportamento social da criança.",
-                    tituloComentario: "Comentários sobre a categoria",
-                    dicaTextoComentario:
-                        "Anote aqui suas observações gerais sobre as questões desta categoria, comportamento da criança, etc.",
-                    controller: _comentariosController,
                   ),
 
                   SizedBox(height: 16),
 
                   Text(
                     "Questões",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Theme.of(context).colorScheme.onSecondary),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 19,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
                   ),
 
                   SizedBox(height: 12),
@@ -142,7 +129,7 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                         questao: questao,
 
                         AoResponder: () async {
-                          try { 
+                          try {
                             await ProtocoloService.atualizarPontuacao(
                               questao.id,
                               questao.pontuacao.toString(),
@@ -150,7 +137,7 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                           } catch (e) {
                             print("Erro ao atualizar pontuação: $e");
                           }
-                          
+
                           setState(() {});
                         },
                         controlador: controlesDasSanfonas[index],
