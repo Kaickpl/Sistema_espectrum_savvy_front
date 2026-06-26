@@ -1,4 +1,3 @@
-import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,10 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
   final int idade;
   final String status;
   final Color corStatus;
+  
+  // 🟢 NOVO CALLBACK: Para o botão escutar o clique da Home
+  final VoidCallback onContinuar; 
+
   const CartaoPacienteHomeSemHistorico({
     super.key,
     required this.nomePaciente,
@@ -15,7 +18,9 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
     required this.idade,
     required this.status,
     required this.corStatus,
+    required this.onContinuar, // 🟢 AGORA É OBRIGATÓRIO
   });
+
   @override
   Widget build(BuildContext context) {
     final tema = Theme.of(context);
@@ -88,7 +93,7 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  '${idade} Anos',
+                  '$idade Anos',
                   style: TextStyle(
                     fontSize: 14,
                     color: Color.fromRGBO(100, 116, 139, 1),
@@ -101,10 +106,7 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
 
           BotaoGrande(
             texto: "Iniciar Protocolo",
-            caminho: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PaginaProtocolo()),
-            ),
+            caminho: onContinuar, // 🟢 CORREÇÃO: Agora ele chama a função da Home!
           ),
         ],
       ),

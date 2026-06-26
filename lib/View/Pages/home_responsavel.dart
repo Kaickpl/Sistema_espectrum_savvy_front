@@ -8,7 +8,57 @@ import 'package:espectrum_front/View/Widgets/info_home_professor_e_responsavel.d
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:flutter/material.dart';
 
-class HomeResponsavel extends StatelessWidget {
+// 🟢 NOVOS IMPORTS DA API
+import 'package:espectrum_front/Services/VinculoService.dart';
+import 'package:espectrum_front/Model/PacienteResumoModel.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
+
+class HomeResponsavel extends StatefulWidget {
+  const HomeResponsavel({super.key});
+
+  @override
+  State<HomeResponsavel> createState() => _HomeResponsavelState();
+}
+
+class _HomeResponsavelState extends State<HomeResponsavel> {
+  // 🟢 Lógica de Estado para os Pacientes
+  List<PacienteResumoModel> _pacientes = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarPacientes();
+  }
+
+  // 🟢 Método que busca os pacientes reais do banco
+  Future<void> _carregarPacientes() async {
+    try {
+      final token = await TokenStorage.lerToken();
+      if (token == null) {
+        throw Exception("Sessão expirada. Por favor, faça login novamente.");
+      }
+
+      // O VinculoService já está configurado para buscar os pacientes do usuário logado!
+      final pacientesData = await VinculoService.listarMeusPacientesVinculados(token);
+      
+      if (mounted) {
+        setState(() {
+          _pacientes = pacientesData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,13 +69,13 @@ class HomeResponsavel extends StatelessWidget {
         bottom: false,
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 InfoHomeProfessorEResponsavel(nomePerfil: "Responsável"),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 CartaoPacienteHome(
                   nomePaciente: "João Silva",
@@ -47,13 +97,16 @@ class HomeResponsavel extends StatelessWidget {
       ),
 
       bottomNavigationBar: Padding(
-        padding: EdgeInsetsGeometry.all(17),
+        padding: const EdgeInsets.all(17),
         child: BotaoGrande(
           texto: "Iniciar Protocolo",
-          caminho: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PaginaProtocolo()),
-          ),
+          caminho: () {
+            // Como este é o botão genérico no final da tela e ele precisa do ID do paciente,
+            // colocamos um aviso para clicar no cartão do paciente acima!
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Por favor, clique em "Continuar" no cartão do paciente acima para iniciar o protocolo!')),
+            );
+          },
         ),
       ),
     );

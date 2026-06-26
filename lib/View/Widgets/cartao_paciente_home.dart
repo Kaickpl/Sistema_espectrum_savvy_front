@@ -1,5 +1,3 @@
-import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
-import 'package:espectrum_front/View/Pages/relatorio_evolucao.dart';
 import 'package:flutter/material.dart';
 
 class CartaoPacienteHome extends StatelessWidget {
@@ -32,6 +30,7 @@ class CartaoPacienteHome extends StatelessWidget {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
 
+    
     return Container(
       width: 375,
       decoration: BoxDecoration(
@@ -118,14 +117,7 @@ class CartaoPacienteHome extends StatelessWidget {
               // Botão Continuar
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PaginaProtocolo(),
-                      ),
-                    );
-                  },
+                  onPressed: onContinuar, // 🟢 CORREÇÃO AQUI: Agora ele escuta a Home!
                   icon: Icon(Icons.play_arrow, color: cores.onPrimary),
                   label: Text(textoBotaoPrincipal),
                   style: ElevatedButton.styleFrom(
@@ -143,14 +135,7 @@ class CartaoPacienteHome extends StatelessWidget {
               // Botão Histórico
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RelatorioEvolucao(),
-                      ),
-                    );
-                  },
+                  onPressed: onHistorico, // 🟢 CORREÇÃO AQUI: Escuta a Home para ir ao Histórico!
                   icon: Icon(Icons.description, color: cores.primary),
                   label: const Text('Histórico'),
                   style: OutlinedButton.styleFrom(

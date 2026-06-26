@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 
@@ -15,7 +16,7 @@ class CategoriaProtocolo extends StatefulWidget {
 
   final IconData iconeCategoria;
   final String nomeCategoria;
-  final List<QuestaoModelo> questoesDestaCategoria;
+  final List<AtividadeSessaoModel> questoesDestaCategoria;
   final VoidCallback aoAtualizar;
 
   CategoriaProtocolo({
@@ -33,8 +34,7 @@ class CategoriaProtocolo extends StatefulWidget {
 class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
   String meuTextoSalvo = "";
 
-  int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.estaRespondida).length;
-  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
+int get questoesRespondidas => widget.questoesDestaCategoria.where((q) => q.pontuacao != null).length;  int get totalDeQuestoes => widget.questoesDestaCategoria.length;
 
   void abrirTelaDeQuestoes() async {
     final resultado = await Navigator.push(
@@ -69,7 +69,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
         child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.30),
             borderRadius: BorderRadius.circular(8),
           ),
             child: Row(
@@ -93,7 +93,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -112,7 +112,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
                         fontSize: 14,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSecondary.withOpacity(0.6),
                       ),
                     ),
             ],

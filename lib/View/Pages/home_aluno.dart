@@ -9,10 +9,57 @@ import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 
-import '../Widgets/drawer_padrao.dart';
+import '../Widgets/drawer_padrao.dart'; 
+import 'package:espectrum_front/Services/VinculoService.dart';
+import 'package:espectrum_front/Model/PacienteResumoModel.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
 
-class HomeAluno extends StatelessWidget {
+class HomeAluno extends StatefulWidget {
   const HomeAluno({super.key});
+
+  @override
+  State<HomeAluno> createState() => _HomeAlunoState();
+}
+
+class _HomeAlunoState extends State<HomeAluno> {
+  List<PacienteResumoModel> _pacientes = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarPacientes();
+  }
+
+  // 🟢 MÉTODO ATUALIZADO PARA USAR O VINCULO SERVICE
+  Future<void> _carregarPacientes() async {
+    try {
+      // 1. Pega o token salvo no celular
+      final token = await TokenStorage.lerToken();
+      
+      if (token == null) {
+        throw Exception("Sessão expirada. Por favor, faça login novamente.");
+      }
+
+      // 2. Chama o seu serviço novo
+      final pacientesData = await VinculoService.listarMeusPacientesVinculados(token);
+      
+      if (mounted) {
+        setState(() {
+          _pacientes = pacientesData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,12 +181,13 @@ class HomeAluno extends StatelessWidget {
 
             const SizedBox(height: 20),
             Text(
-              'Que bom ter você de volta, fulano!',
+              'Que bom ter você de volta!', // Dá pra puxar o nome do terapeuta aqui depois!
               style: TextStyle(fontSize: 25, color: cores.onSurface),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
 
-            // card de progresso
+            // card de progresso (Agora dinâmico com a quantidade de pacientes)
             Container(
               height: 96,
               width: 343,
@@ -152,7 +200,9 @@ class HomeAluno extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Você tem X testes em andamento',
+                      _isLoading 
+                        ? 'Carregando testes...' 
+                        : 'Você tem ${_pacientes.length} testes disponíveis',
                       style: TextStyle(color: cores.onPrimary),
                     ),
                     const SizedBox(height: 20),
@@ -162,7 +212,7 @@ class HomeAluno extends StatelessWidget {
                         height: 12,
                         child: LinearProgressIndicator(
                           backgroundColor: cores.onPrimary.withOpacity(0.3),
-                          value: 0.5,
+                          value: _isLoading ? null : (_pacientes.isNotEmpty ? 1.0 : 0.0), // Fica animado enquanto carrega
                           valueColor: AlwaysStoppedAnimation<Color>(
                             cores.secondary,
                           ),
@@ -176,7 +226,6 @@ class HomeAluno extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // lista de testes
             Container(
               height: 70,
               width: 343,
@@ -189,48 +238,55 @@ class HomeAluno extends StatelessWidget {
                   Icon(Icons.info, color: cores.primary),
                   const SizedBox(width: 10),
                   Text(
-                    'Testes em andamento:',
+                    'Seus Pacientes:',
                     style: TextStyle(color: cores.onSurface),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
-            CartaoPacienteHome(
-              nomePaciente: 'Ismael Lins',
-              nivel: 2,
-              idade: 3,
-              status: 'Em progresso',
-              corStatus: emProgressoCor,
-              onContinuar: () => print('Continuando Ismael'),
-              onHistorico: () => print('Histórico Ismael'),
-            ),
 
-            const SizedBox(height: 16),
+            if (_isLoading)
+              const CircularProgressIndicator()
+            else if (_errorMessage != null)
+              Text("Erro ao carregar pacientes: $_errorMessage", style: const TextStyle(color: Colors.red))
+            else if (_pacientes.isEmpty)
+              const Text("Você ainda não tem pacientes vinculados.", style: TextStyle(color: Colors.grey))
+            else
+              ..._pacientes.map((paciente) {
+                final String id = paciente.id;
+                final String nome = paciente.nome;
+                
+                // Mapeando dados do JSON pro seu CartaoPacienteHome
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: CartaoPacienteHome(
+                    nomePaciente: nome,
+                    data: DateTime.now(), // Temporário, o ideal é vir do banco
+                    nivel: 1, // Temporário (ou ler de paciente.grauAutismo se existir no DTO)
+                    idade: 5, // Temporário
+                    status: 'Aguardando', // Pode virar dinâmico depois
+                    corStatus: aguardandoCor,
+                    onContinuar: () {
+                      // 🟢 NAVEGA PARA O PROTOCOLO DESSE PACIENTE!
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaginaProtocolo(
+                            pacienteId: id,
+                            nomePaciente: nome,
+                          ),
+                        ),
+                      );
+                    },
+                    onHistorico: () => print('Acessando Histórico do paciente: $nome'),
+                  ),
+                );
+              }),
 
-            CartaoPacienteHome(
-              nomePaciente: 'Maria Oliveira',
-              nivel: 1,
-              idade: 5,
-              status: 'Aguardando',
-              corStatus: aguardandoCor,
-              onContinuar: () => print('Iniciando Maria'),
-              onHistorico: () => print('Histórico Maria'),
-            ),
             const SizedBox(height: 20),
-            CartaoPacienteHome(
-              nomePaciente: 'João Silva',
-              nivel: 3,
-              idade: 7,
-              status: 'Em progresso',
-              corStatus: emProgressoCor,
-              onContinuar: () => print('Continuando João'),
-              onHistorico: () => print('Histórico João'),
-            ),
-            const SizedBox(height: 20),
-
-            const SizedBox(height: 20),
+            
+            // 🟢 OS SEUS BOTÕES ORIGINAIS CONTINUAM AQUI EMBAIXO INTACTOS
             BotaoGrande(
               texto: "Iniciar Protocolo",
               caminho: () => Navigator.push(

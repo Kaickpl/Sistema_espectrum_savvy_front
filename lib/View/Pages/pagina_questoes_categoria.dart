@@ -3,21 +3,15 @@ import 'package:espectrum_front/View/Widgets/widget_questao_sanfona.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Widgets/info_questoes_e_nome_paciente.dart';
 import 'package:espectrum_front/View/Widgets/categoria_protocolo.dart';
-
-class QuestaoModelo {
-  final int id;
-  final String titulo;
-  int? nota;
-  QuestaoModelo({required this.id, required this.titulo, this.nota});
-  bool get estaRespondida => nota != null;
-}
+import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
+import 'package:espectrum_front/Services/ProtocoloService.dart';
 
 class PaginaQuestoesCategoria extends StatefulWidget {
   final String nomeCategoria;
   final int totalDeQuestoes;
   final IconData iconeCategoria;
   final String comentarioInicial;
-  final List<QuestaoModelo> questoesDaCategoria;
+  final List<AtividadeSessaoModel> questoesDaCategoria;
 
   const PaginaQuestoesCategoria({
     super.key,
@@ -26,6 +20,7 @@ class PaginaQuestoesCategoria extends StatefulWidget {
     required this.iconeCategoria,
     required this.comentarioInicial,
     required this.questoesDaCategoria,
+    
   });
 
   @override
@@ -53,7 +48,7 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
   }
 
   int get quantidadeRespondidas {
-    return widget.questoesDaCategoria.where((q) => q.estaRespondida).length;
+    return widget.questoesDaCategoria.where((q) => q.pontuacao != null).length;
   }
 
   void voltar() {
@@ -132,17 +127,30 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
 
                   Text(
                     "Questões",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19, color: Theme.of(context).colorScheme.onSecondary),
                   ),
+
+                  SizedBox(height: 12),
 
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: widget.questoesDaCategoria.length,
                     itemBuilder: (context, index) {
+                      final questao = widget.questoesDaCategoria[index];
                       return WidgetQuestaoSanfona(
-                        questao: widget.questoesDaCategoria[index],
-                        AoResponder: () {
+                        questao: questao,
+
+                        AoResponder: () async {
+                          try { 
+                            await ProtocoloService.atualizarPontuacao(
+                              questao.id,
+                              questao.pontuacao.toString(),
+                            );
+                          } catch (e) {
+                            print("Erro ao atualizar pontuação: $e");
+                          }
+                          
                           setState(() {});
                         },
                         controlador: controlesDasSanfonas[index],
