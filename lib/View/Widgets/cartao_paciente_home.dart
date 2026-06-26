@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 
 class CartaoPacienteHome extends StatelessWidget {
   final String nomePaciente;
-  final DateTime data;
+  final DateTime? data;
   final int nivel;
   final int idade;
   final String status;
   final Color corStatus;
+  final String textoBotaoPrincipal;
 
   final VoidCallback onContinuar;
   final VoidCallback onHistorico;
@@ -16,11 +17,12 @@ class CartaoPacienteHome extends StatelessWidget {
   const CartaoPacienteHome({
     super.key,
     required this.nomePaciente,
-    required this.data,
+    this.data,
     required this.nivel,
     required this.idade,
     required this.status,
     required this.corStatus,
+    this.textoBotaoPrincipal = 'Continuar',
     required this.onContinuar,
     required this.onHistorico,
   });
@@ -29,17 +31,13 @@ class CartaoPacienteHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
-    
-    
+
     return Container(
       width: 375,
       decoration: BoxDecoration(
         color: cores.onPrimary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: cores.onSurface,
-          width: 1,
-        ),
+        border: Border.all(color: cores.onSurface, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -65,14 +63,16 @@ class CartaoPacienteHome extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  Text(
-                    'Última avaliação:',
-                    style: TextStyle(fontSize: 12, color:cores.onSurface),
-                  ),
-                  Text(
-                    '${data.day}/${data.month}/${data.year}',
-                    style: TextStyle(fontSize: 12, color: cores.onSurface),
-                  ),
+                  if (data != null) ...[
+                    Text(
+                      'Última avaliação:',
+                      style: TextStyle(fontSize: 12, color: cores.onSurface),
+                    ),
+                    Text(
+                      '${data!.day}/${data!.month}/${data!.year}',
+                      style: TextStyle(fontSize: 12, color: cores.onSurface),
+                    ),
+                  ],
                 ],
               ),
               Container(
@@ -104,10 +104,7 @@ class CartaoPacienteHome extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _buildChip(
-                'Nível $nivel',
-                cores.onPrimary,
-              ),
+              _buildChip('Nível $nivel', cores.onPrimary),
               const SizedBox(width: 8),
               _buildChip('TEA', cores.onPrimary),
               const SizedBox(width: 8),
@@ -130,7 +127,7 @@ class CartaoPacienteHome extends StatelessWidget {
                     );
                   },
                   icon: Icon(Icons.play_arrow, color: cores.onPrimary),
-                  label: const Text('Continuar'),
+                  label: Text(textoBotaoPrincipal),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: cores.primary,
                     foregroundColor: cores.onPrimary,
@@ -159,10 +156,7 @@ class CartaoPacienteHome extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: cores.primary,
                     minimumSize: const Size(0, 52),
-                    side: BorderSide(
-                      color: cores.onPrimary,
-                      width: 2,
-                    ),
+                    side: BorderSide(color: cores.onPrimary, width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

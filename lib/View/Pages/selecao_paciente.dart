@@ -1,3 +1,8 @@
+import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Model/Enum/GrauAutismo.dart';
+import 'package:espectrum_front/Model/PacienteResumoModel.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
+import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/View/Pages/tela_cadastro_paciente.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
@@ -6,6 +11,10 @@ import 'package:flutter/material.dart';
 
 import '../Widgets/drawer_padrao.dart';
 
+/// Tela de seleção de paciente para iniciar o protocolo.
+/// Lista os pacientes já vinculados ao terapeuta logado; a aplicação do
+/// protocolo em si (progresso, avaliações, atividades) é tratada nas
+/// telas de protocolo, não aqui.
 class SelecaoPaciente extends StatefulWidget {
   const SelecaoPaciente({super.key});
 
@@ -16,73 +25,83 @@ class SelecaoPaciente extends StatefulWidget {
 class _SelecaoPacienteState extends State<SelecaoPaciente> {
   final TextEditingController meuController = TextEditingController();
   int? nivelSelecionado;
-  final concluidoCor = const Color.fromARGB(255, 37, 163, 41);
-  final emProgressoCor = const Color.fromARGB(255, 216, 163, 71);
   final naoIniciadoCor = const Color.fromARGB(255, 216, 71, 71);
-  final List<Map<String, dynamic>> dadosPacientes = [
-    {
-      'nome': 'Lucas Martins',
-      'data': DateTime(2026, 4, 21),
-      'nivel': 2,
-      'idade': 3,
-      'status': 'Em progresso',
-    },
-    {
-      'nome': 'Sofia Almeida',
-      'data': DateTime(2026, 8, 12),
-      'nivel': 3,
-      'idade': 1,
-      'status': 'Concluído',
-    },
-    {
-      'nome': 'João Silva',
-      'data': DateTime(2026, 5, 10),
-      'nivel': 1,
-      'idade': 5,
-      'status': 'Não iniciado',
-    },
-  ];
 
-  List<Map<String, dynamic>> pacientesFiltrados = [];
+  bool _carregando = true;
+  String? _erro;
+  List<PacienteResumoModel> _pacientes = [];
+  List<PacienteResumoModel> pacientesFiltrados = [];
 
   @override
   void initState() {
     super.initState();
-    pacientesFiltrados = dadosPacientes;
+    _carregarPacientes();
+  }
+
+  Future<void> _carregarPacientes() async {
+    setState(() {
+      _carregando = true;
+      _erro = null;
+    });
+    try {
+      final token = await TokenStorage.lerToken();
+      final pacientes = await VinculoService.listarMeusPacientesVinculados(
+        token ?? '',
+      );
+      if (!mounted) return;
+      setState(() {
+        _pacientes = pacientes;
+        pacientesFiltrados = pacientes;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _erro = e.message);
+    } catch (_) {
+      if (!mounted) return;
+      setState(
+        () => _erro = "Não foi possível carregar os pacientes vinculados.",
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
   }
 
   void filtrarListaPorNome(String pesquisa) {
     setState(() {
-      pacientesFiltrados = dadosPacientes
-          .where(
-            (paciente) =>
-                paciente['nome'].toLowerCase().contains(pesquisa.toLowerCase()),
-          )
-          .toList();
+      pacientesFiltrados = _aplicarFiltros(nome: pesquisa);
     });
   }
 
   void filtrarListaPorNivel(int? nivel) {
     setState(() {
       nivelSelecionado = nivel;
-      if (nivel == null) {
-        pacientesFiltrados = dadosPacientes;
-      } else {
-        pacientesFiltrados = dadosPacientes
-            .where((paciente) => paciente['nivel'] == nivel)
-            .toList();
-      }
+      pacientesFiltrados = _aplicarFiltros(
+        nome: meuController.text,
+        nivel: nivel,
+      );
     });
   }
 
-  Color definirCorStatus(String status) {
-    if (status == 'Concluído') {
-      return concluidoCor;
+  List<PacienteResumoModel> _aplicarFiltros({String nome = '', int? nivel}) {
+    return _pacientes.where((paciente) {
+      final correspondeNome = paciente.nome.toLowerCase().contains(
+        nome.toLowerCase(),
+      );
+      final correspondeNivel =
+          nivel == null || _nivel(paciente.grauAutismo) == nivel;
+      return correspondeNome && correspondeNivel;
+    }).toList();
+  }
+
+  int _nivel(GrauAutismo grauAutismo) {
+    switch (grauAutismo) {
+      case GrauAutismo.nivel1:
+        return 1;
+      case GrauAutismo.nivel2:
+        return 2;
+      case GrauAutismo.nivel3:
+        return 3;
     }
-    if (status == 'Em progresso') {
-      return emProgressoCor;
-    }
-    return naoIniciadoCor;
   }
 
   @override
@@ -203,11 +222,10 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
                 ),
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                          const CadastroPaciente(),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CadastroPaciente(),
+                    ),
                   );
                 },
                 child: Text(
@@ -218,22 +236,43 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                final pacienteAtual = pacientesFiltrados[index];
-                return CartaoPacienteHome(
-                  nomePaciente: pacienteAtual['nome'],
-                  data: pacienteAtual['data'],
-                  nivel: pacienteAtual['nivel'],
-                  idade: pacienteAtual['idade'],
-                  status: pacienteAtual['status'],
-                  corStatus: definirCorStatus(pacienteAtual['status']), onContinuar: () { print('a'); }, onHistorico: () { print('a'); },
-                  
-                );
-              },
-              separatorBuilder: (context, index) => SizedBox(height: 10),
-              itemCount: pacientesFiltrados.length,
-            ),
+            child: _carregando
+                ? const Center(child: CircularProgressIndicator())
+                : _erro != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        _erro!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: cores.error),
+                      ),
+                    ),
+                  )
+                : pacientesFiltrados.isEmpty
+                ? Center(
+                    child: Text(
+                      "Nenhum paciente vinculado encontrado.",
+                      style: TextStyle(color: cores.onSurface.withOpacity(0.6)),
+                    ),
+                  )
+                : ListView.separated(
+                    itemBuilder: (context, index) {
+                      final pacienteAtual = pacientesFiltrados[index];
+                      return CartaoPacienteHome(
+                        nomePaciente: pacienteAtual.nome,
+                        nivel: _nivel(pacienteAtual.grauAutismo),
+                        idade: pacienteAtual.idade ?? 0,
+                        status: 'Não iniciado',
+                        corStatus: naoIniciadoCor,
+                        textoBotaoPrincipal: 'Iniciar',
+                        onContinuar: () {},
+                        onHistorico: () {},
+                      );
+                    },
+                    separatorBuilder: (context, index) => SizedBox(height: 10),
+                    itemCount: pacientesFiltrados.length,
+                  ),
           ),
         ],
       ),

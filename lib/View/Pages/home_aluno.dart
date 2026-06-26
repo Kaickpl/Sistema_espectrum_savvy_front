@@ -199,7 +199,6 @@ class HomeAluno extends StatelessWidget {
             const SizedBox(height: 20),
             CartaoPacienteHome(
               nomePaciente: 'Ismael Lins',
-              data: DateTime.now(),
               nivel: 2,
               idade: 3,
               status: 'Em progresso',
@@ -212,7 +211,6 @@ class HomeAluno extends StatelessWidget {
 
             CartaoPacienteHome(
               nomePaciente: 'Maria Oliveira',
-              data: DateTime.now(),
               nivel: 1,
               idade: 5,
               status: 'Aguardando',
@@ -223,7 +221,6 @@ class HomeAluno extends StatelessWidget {
             const SizedBox(height: 20),
             CartaoPacienteHome(
               nomePaciente: 'João Silva',
-              data: DateTime.now(),
               nivel: 3,
               idade: 7,
               status: 'Em progresso',

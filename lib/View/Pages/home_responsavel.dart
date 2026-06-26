@@ -29,7 +29,6 @@ class HomeResponsavel extends StatelessWidget {
 
                 CartaoPacienteHome(
                   nomePaciente: "João Silva",
-                  data: DateTime(2026, 12, 25, 20, 30),
                   nivel: 3,
                   idade: 2,
                   status: "Em Progresso",

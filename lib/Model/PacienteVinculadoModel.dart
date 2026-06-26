@@ -8,6 +8,7 @@ class PacienteVinculadoModel {
   final String nome;
   final String genero;
   final GrauAutismo grauAutismo;
+  final DateTime? dataNascimento;
 
   PacienteVinculadoModel({
     required this.idVinculo,
@@ -15,6 +16,7 @@ class PacienteVinculadoModel {
     required this.nome,
     required this.genero,
     required this.grauAutismo,
+    this.dataNascimento,
   });
 
   factory PacienteVinculadoModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,9 @@ class PacienteVinculadoModel {
       nome: json['nome'],
       genero: json['genero'],
       grauAutismo: GrauAutismo.fromString(json['grauAutismo']),
+      dataNascimento: json['dataNascimento'] != null
+          ? DateTime.parse(json['dataNascimento'])
+          : null,
     );
   }
 }
