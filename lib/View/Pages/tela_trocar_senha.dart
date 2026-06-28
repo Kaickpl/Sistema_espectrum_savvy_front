@@ -7,12 +7,13 @@ import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
 import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
-import '../Widgets/validadorsenha.dart';
+import '../Widgets/ValidadorSenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
   final String email; // recebido da tela anterior
+  final String token; // código já validado na tela anterior
 
-  const TelaTrocarSenha({super.key, required this.email});
+  const TelaTrocarSenha({super.key, required this.email, required this.token});
 
   @override
   State<TelaTrocarSenha> createState() => _TelaTrocarSenhaState();
@@ -40,10 +41,10 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
     setState(() => _carregando = true);
 
     try {
-      await UsuarioService.recuperarSenha(
+      await UsuarioServiceTrocarSenha.redefinirSenha(
         email: widget.email,
+        token: widget.token,
         novaSenha: _senhaController.text,
-        confirmaSenha: _confirmaController.text,
       );
 
       if (!mounted) return;
