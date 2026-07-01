@@ -16,10 +16,8 @@ class TelaCadastro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme
-          .of(context)
-          .scaffoldBackgroundColor,
-      appBar: AppBarPadrao(nome: "Seleção Perfis",),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBarPadrao(nome: "Seleção Perfis"),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -28,68 +26,60 @@ class TelaCadastro extends StatelessWidget {
               left: 30,
               right: 30,
               top: 30,
-              bottom: MediaQuery
-                  .of(context)
-                  .viewInsets
-                  .bottom,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                LogoContainer(nomePage: "Seleção de cadastro",
-                imagem: "assets/Images/Logo.png",),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.055),
-                child: CategoriaCadastro(
-                  nome: "Admin",
-                  descricao:
-                  "Gerencie usuários, permissões e configurações do sistema",
-                  gradiente: [
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .tertiary,
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .tertiary,
-                  ],
-                  destino: CadastroAdmin(),
-                  icone: FaIcon(FontAwesomeIcons.userShield,color: Theme.of(context).colorScheme.onPrimary,),
-                ),
-              ),
+                  LogoContainer(
+                    nomePage: "Seleção de cadastro",
+                    imagem: "assets/Images/Logo.png",
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.055,
+                    ),
+                    child: CategoriaCadastro(
+                      nome: "Supervisor de Estágio",
+                      descricao:
+                          "Gerencie estágiarios, permissões e configurações do sistema",
+                      gradiente: [
+                        Theme.of(context).colorScheme.tertiary,
+                        Theme.of(context).colorScheme.tertiary,
+                      ],
+                      destino: CadastroAdmin(),
+                      icone: FaIcon(
+                        FontAwesomeIcons.userShield,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
 
-              SizedBox(height: 8),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.055),
-                child: CategoriaCadastro(
-                  nome: "Estágiario",
-                  descricao: "Acompanhe atividades e registre desenvolvimento do paciente",
-                  gradiente: [
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .secondary,
-                    Theme
-                        .of(context)
-                        .colorScheme
-                        .secondary,
-                  ],
-                  destino: CadastroEstagiario(),
-                  icone: FaIcon(FontAwesomeIcons.brain,color: Theme.of(context).colorScheme.onPrimary),
-                ),
-              ),
-               
-                SizedBox(height: 20),
-                RodaPe(),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.055,
+                    ),
+                    child: CategoriaCadastro(
+                      nome: "Estágiario",
+                      descricao:
+                          "Acompanhe atividades e registre desenvolvimento do paciente",
+                      gradiente: [
+                        Theme.of(context).colorScheme.secondary,
+                        Theme.of(context).colorScheme.secondary,
+                      ],
+                      destino: CadastroEstagiario(),
+                      icone: FaIcon(
+                        FontAwesomeIcons.brain,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+                  RodaPe(),
                 ],
               ),
             ),

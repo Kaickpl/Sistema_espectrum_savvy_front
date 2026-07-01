@@ -96,7 +96,7 @@ class _CadastroAdminState extends State<CadastroAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      appBar: AppBarPadrao(nome: "Cadastro Administrador"),
+      appBar: AppBarPadrao(nome: "Cadastro Supervisor de Estágio"),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -106,12 +106,12 @@ class _CadastroAdminState extends State<CadastroAdmin> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 LogoContainer(
-                  nomePage: 'Cadastro Administrador',
+                  nomePage: 'Cadastro Supervisor de Estágio',
                   imagem: "assets/Images/Logo.png",
                 ),
                 SizedBox(height: 12),
                 CategoriaAtributos(
-                  nome: "Dados Administrador",
+                  nome: "Dados Supervisor de Estágio",
                   icone: Icons.person,
                 ),
                 SizedBox(height: 12),

@@ -229,7 +229,7 @@ class _HomeAdmState extends State<HomeAdm> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Painel administrativo',
+                    'Painel Supervisor de Estágio',
                     style: tema.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: cores.onSurface,

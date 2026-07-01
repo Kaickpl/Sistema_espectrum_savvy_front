@@ -325,63 +325,6 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
                   ],
                   SizedBox(height: 12),
                 ],
-
-                CategoriaAtributos(
-                  nome: "Dados de Seguraça ",
-                  icone: Icons.security,
-                ),
-
-                SizedBox(height: 12),
-
-                CampoTexto(
-                  label: "Senha",
-                  hintText: "Digite sua senha",
-                  keyboardType: TextInputType.text,
-                  obscureText: obscureTextSenha,
-                  controller: _senhaController,
-                  validator: validarSenhaForte,
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscureTextSenha = !obscureTextSenha;
-                      });
-                    },
-                    icon: Icon(
-                      obscureTextSenha
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                  ),
-                ),
-                ValidadorSenha(controller: _senhaController),
-                SizedBox(height: 4),
-
-                CampoTexto(
-                  label: "Confirmar Senha",
-                  hintText: "Repita sua senha",
-                  keyboardType: TextInputType.text,
-                  obscureText: obscureTextConfirma,
-                  controller: _confirmaController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Confirme sua senha";
-                    if (value != _senhaController.text)
-                      return "As senhas não coincidem";
-                    return null;
-                  },
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscureTextConfirma = !obscureTextConfirma;
-                      });
-                    },
-                    icon: Icon(
-                      obscureTextConfirma
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                  ),
-                ),
                 SizedBox(height: 12),
                 Padding(
                   padding: EdgeInsets.symmetric(

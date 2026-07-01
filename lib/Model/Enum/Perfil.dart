@@ -1,4 +1,6 @@
+// ignore: file_names
 enum Perfil {
+  // ignore: constant_identifier_names
   ROLE_SUPERVISOR_ESTAGIO,
   roleTerapeuta,
   roleResponsavel,

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// retornado pelo backend no login.
 Widget paginaHomePorPerfil(String perfil) {
   switch (perfil) {
-    case 'ROLE_ADMIN':
+    case 'ROLE_SUPERVISOR_ESTAGIO':
       return const HomeAdm();
     case 'ROLE_TERAPEUTA':
       return const HomeAluno();
