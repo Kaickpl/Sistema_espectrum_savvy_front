@@ -1,5 +1,5 @@
 enum Perfil {
-  roleAdmin,
+  ROLE_SUPERVISOR_ESTAGIO,
   roleTerapeuta,
   roleResponsavel,
   roleProfessor;
@@ -7,8 +7,8 @@ enum Perfil {
   /// Converte a string vinda do backend (ex: "ROLE_ADMIN") para o enum
   static Perfil fromString(String value) {
     switch (value) {
-      case 'ROLE_ADMIN':
-        return Perfil.roleAdmin;
+      case 'ROLE_SUPERVISOR_ESTAGIO':
+        return Perfil.ROLE_SUPERVISOR_ESTAGIO;
       case 'ROLE_TERAPEUTA':
         return Perfil.roleTerapeuta;
       case 'ROLE_RESPONSAVEL':
@@ -23,8 +23,8 @@ enum Perfil {
   /// Nome amigável para exibir na tela
   String get displayName {
     switch (this) {
-      case Perfil.roleAdmin:
-        return 'Administrador';
+      case Perfil.ROLE_SUPERVISOR_ESTAGIO:
+        return 'Supervisor de Estágio';
       case Perfil.roleTerapeuta:
         return 'Terapeuta';
       case Perfil.roleResponsavel:
@@ -37,8 +37,8 @@ enum Perfil {
   /// String no formato do backend para enviar no JSON
   String get backendValue {
     switch (this) {
-      case Perfil.roleAdmin:
-        return 'ROLE_ADMIN';
+      case Perfil.ROLE_SUPERVISOR_ESTAGIO:
+        return 'ROLE_SUPERVISOR_ESTAGIO';
       case Perfil.roleTerapeuta:
         return 'ROLE_TERAPEUTA';
       case Perfil.roleResponsavel:

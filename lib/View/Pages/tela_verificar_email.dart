@@ -1,4 +1,4 @@
-import 'package:espectrum_front/View/Pages/tela_validar_token.dart';
+import 'package:espectrum_front/View/Pages/tela_trocar_senha.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +39,7 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => TelaValidarToken(email: email)),
+        MaterialPageRoute(builder: (context) => TelaTrocarSenha(email: email)),
       );
     } catch (e) {
       if (!mounted) return;

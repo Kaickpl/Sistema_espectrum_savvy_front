@@ -13,20 +13,7 @@ class UsuarioServiceTrocarSenha {
     _validar(response, 'Erro ao solicitar recuperação de senha');
   }
 
-  /// Verifica se o código informado é válido para o e-mail.
-  static Future<void> validarToken({
-    required String email,
-    required String token,
-  }) async {
-    final response = await ApiClient.post('/trocarSenha/validar-token', {
-      'email': email,
-      'token': token,
-    });
-
-    _validar(response, 'Token inválido ou expirado');
-  }
-
-  /// Redefine a senha usando o código de recuperação validado anteriormente.
+  /// Redefine a senha usando o código de recuperação enviado por e-mail.
   static Future<void> redefinirSenha({
     required String email,
     required String token,

@@ -11,9 +11,8 @@ import '../Widgets/ValidadorSenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
   final String email; // recebido da tela anterior
-  final String token; // código já validado na tela anterior
 
-  const TelaTrocarSenha({super.key, required this.email, required this.token});
+  const TelaTrocarSenha({super.key, required this.email});
 
   @override
   State<TelaTrocarSenha> createState() => _TelaTrocarSenhaState();
@@ -23,13 +22,16 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
   bool obscureTextSenha = true;
   bool obscureTextConfirma = true;
   bool _carregando = false;
+  bool _reenviando = false;
 
+  final _tokenController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
+    _tokenController.dispose();
     _senhaController.dispose();
     _confirmaController.dispose();
     super.dispose();
@@ -43,7 +45,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
     try {
       await UsuarioServiceTrocarSenha.redefinirSenha(
         email: widget.email,
-        token: widget.token,
+        token: _tokenController.text.trim(),
         novaSenha: _senhaController.text,
       );
 
@@ -70,6 +72,31 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
       );
     } finally {
       if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  Future<void> _reenviarCodigo() async {
+    setState(() => _reenviando = true);
+
+    try {
+      await UsuarioServiceTrocarSenha.solicitarReset(widget.email);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Código reenviado para ${widget.email}')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _reenviando = false);
     }
   }
 
@@ -107,7 +134,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                   SizedBox(height: 12),
 
                   Text(
-                    "Crie uma nova senha segura",
+                    "Digite o código enviado para ${widget.email} e crie uma nova senha segura",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -130,6 +157,39 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
 
                         child: Column(
                           children: [
+                            CampoTexto(
+                              label: "Código",
+                              hintText: "Digite o código recebido",
+                              keyboardType: TextInputType.text,
+                              controller: _tokenController,
+                              maxLines: 1,
+
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return "Digite o código recebido";
+                                }
+                                return null;
+                              },
+                            ),
+
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: _reenviando ? null : _reenviarCodigo,
+                                child: _reenviando
+                                    ? SizedBox(
+                                        height: 14,
+                                        width: 14,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text("Reenviar código"),
+                              ),
+                            ),
+
+                            SizedBox(height: 4),
+
                             CampoTexto(
                               label: "Senha",
                               hintText: "Digite sua senha",
