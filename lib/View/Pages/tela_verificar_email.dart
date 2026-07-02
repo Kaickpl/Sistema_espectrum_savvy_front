@@ -99,33 +99,36 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
                   Form(
                     key: _formKey,
 
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Container(
+                        width: double.infinity,
 
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
 
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
 
-                        child: CampoTexto(
-                          label: "Email",
-                          hintText: "Digite seu email",
-                          keyboardType: TextInputType.emailAddress,
-                          controller: _emailController,
+                          child: CampoTexto(
+                            label: "Email",
+                            hintText: "Digite seu email",
+                            keyboardType: TextInputType.emailAddress,
+                            controller: _emailController,
 
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Digite seu email";
-                            }
-                            if (!value.contains("@")) {
-                              return "Email inválido";
-                            }
-                            return null;
-                          },
-                          maxLines: 1,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Digite seu email";
+                              }
+                              if (!value.contains("@")) {
+                                return "Email inválido";
+                              }
+                              return null;
+                            },
+                            maxLines: 1,
+                          ),
                         ),
                       ),
                     ),

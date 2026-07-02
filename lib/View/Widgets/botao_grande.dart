@@ -8,30 +8,36 @@ class BotaoGrande extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 65,
-      width: 375,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Theme.of(context).colorScheme.tertiary,
-            Theme.of(context).colorScheme.secondary,
-          ],
-        ),
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 375),
+      child: Container(
+        height: 65,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.tertiary,
+              Theme.of(context).colorScheme.secondary,
+            ],
           ),
         ),
-        onPressed: caminho,
-        child: Text(texto, style: TextStyle(fontSize: 19, color: Colors.white)),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: caminho,
+          child: Text(
+            texto,
+            style: TextStyle(fontSize: 19, color: Colors.white),
+          ),
+        ),
       ),
     );
   }

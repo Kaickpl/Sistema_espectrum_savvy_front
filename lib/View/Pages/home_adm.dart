@@ -200,6 +200,27 @@ class _HomeAdmState extends State<HomeAdm> {
       );
     }
 
+    // Grade de "Resumo Geral" adapta o número de colunas conforme a
+    // largura da tela: telas estreitas ganham menos colunas (cards não
+    // ficam espremidos) e telas largas (tablets) ganham mais colunas em
+    // vez de esticar os mesmos 3 cards.
+    final larguraTela = MediaQuery.of(context).size.width;
+    final int colunasResumo;
+    final double proporcaoCardResumo;
+    if (larguraTela >= 900) {
+      colunasResumo = 5;
+      proporcaoCardResumo = 0.9;
+    } else if (larguraTela >= 600) {
+      colunasResumo = 4;
+      proporcaoCardResumo = 0.85;
+    } else if (larguraTela < 360) {
+      colunasResumo = 2;
+      proporcaoCardResumo = 1.1;
+    } else {
+      colunasResumo = 3;
+      proporcaoCardResumo = 0.68;
+    }
+
     return Scaffold(
       backgroundColor: corFundo,
       appBar: AppBar(
@@ -246,10 +267,10 @@ class _HomeAdmState extends State<HomeAdm> {
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 3,
+              crossAxisCount: colunasResumo,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              childAspectRatio: 0.68,
+              childAspectRatio: proporcaoCardResumo,
               children: [
                 _buildCardInformativo(
                   context,

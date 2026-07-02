@@ -30,127 +30,142 @@ class CartaoPacienteHome extends StatelessWidget {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
 
-    
-    return Container(
-      width: 375,
-      decoration: BoxDecoration(
-        color: cores.onPrimary,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cores.onSurface, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    nomePaciente,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 375),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: cores.onPrimary,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: cores.onSurface, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        nomePaciente,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      if (data != null) ...[
+                        Text(
+                          'Última avaliação:',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: cores.onSurface,
+                          ),
+                        ),
+                        Text(
+                          '${data!.day}/${data!.month}/${data!.year}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: cores.onSurface,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: corStatus.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.circle, color: corStatus, size: 10),
+                      const SizedBox(width: 8),
+                      Text(
+                        status,
+                        style: TextStyle(
+                          color: corStatus,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                _buildChip('Nível $nivel', cores.onPrimary),
+                const SizedBox(width: 8),
+                _buildChip('TEA', cores.onPrimary),
+                const SizedBox(width: 8),
+                _buildChip('$idade Anos', cores.onPrimary),
+              ],
+            ),
+            const SizedBox(height: 24),
+            // BOTÕES DE AÇÃO
+            Row(
+              children: [
+                // Botão Continuar
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed:
+                        onContinuar, // 🟢 CORREÇÃO AQUI: Agora ele escuta a Home!
+                    icon: Icon(Icons.play_arrow, color: cores.onPrimary),
+                    label: Text(textoBotaoPrincipal),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: cores.primary,
+                      foregroundColor: cores.onPrimary,
+                      minimumSize: const Size(0, 52), // Altura do botão
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
                     ),
                   ),
-                  if (data != null) ...[
-                    Text(
-                      'Última avaliação:',
-                      style: TextStyle(fontSize: 12, color: cores.onSurface),
-                    ),
-                    Text(
-                      '${data!.day}/${data!.month}/${data!.year}',
-                      style: TextStyle(fontSize: 12, color: cores.onSurface),
-                    ),
-                  ],
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
                 ),
-                decoration: BoxDecoration(
-                  color: corStatus.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.circle, color: corStatus, size: 10),
-                    const SizedBox(width: 8),
-                    Text(
-                      status,
-                      style: TextStyle(
-                        color: corStatus,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(width: 12),
+                // Botão Histórico
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed:
+                        onHistorico, // 🟢 CORREÇÃO AQUI: Escuta a Home para ir ao Histórico!
+                    icon: Icon(Icons.description, color: cores.primary),
+                    label: const Text('Histórico'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: cores.primary,
+                      minimumSize: const Size(0, 52),
+                      side: BorderSide(color: cores.onPrimary, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _buildChip('Nível $nivel', cores.onPrimary),
-              const SizedBox(width: 8),
-              _buildChip('TEA', cores.onPrimary),
-              const SizedBox(width: 8),
-              _buildChip('$idade Anos', cores.onPrimary),
-            ],
-          ),
-          const SizedBox(height: 24),
-          // BOTÕES DE AÇÃO
-          Row(
-            children: [
-              // Botão Continuar
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: onContinuar, // 🟢 CORREÇÃO AQUI: Agora ele escuta a Home!
-                  icon: Icon(Icons.play_arrow, color: cores.onPrimary),
-                  label: Text(textoBotaoPrincipal),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: cores.primary,
-                    foregroundColor: cores.onPrimary,
-                    minimumSize: const Size(0, 52), // Altura do botão
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Botão Histórico
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onHistorico, // 🟢 CORREÇÃO AQUI: Escuta a Home para ir ao Histórico!
-                  icon: Icon(Icons.description, color: cores.primary),
-                  label: const Text('Histórico'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: cores.primary,
-                    minimumSize: const Size(0, 52),
-                    side: BorderSide(color: cores.onPrimary, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

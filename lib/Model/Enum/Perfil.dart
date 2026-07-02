@@ -28,7 +28,7 @@ enum Perfil {
       case Perfil.ROLE_SUPERVISOR_ESTAGIO:
         return 'Supervisor de Estágio';
       case Perfil.roleTerapeuta:
-        return 'Terapeuta';
+        return 'Estagiário';
       case Perfil.roleResponsavel:
         return 'Responsável';
       case Perfil.roleProfessor:

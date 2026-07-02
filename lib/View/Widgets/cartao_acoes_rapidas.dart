@@ -24,49 +24,62 @@ class BotaoAcoesRapidas extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          height: 90,
-          width: 335,
-          decoration: BoxDecoration(
-            color: corFundo,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: corLetra.withOpacity(0.1)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.surface.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: icone,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      titulo,
-                      style: TextStyle(fontSize: 17, color: corLetra),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 335),
+          child: Ink(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: corFundo,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: corLetra.withOpacity(0.1)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surface.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    Text(
-                      subtitulo,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: corLetra.withOpacity(0.5),
+                    child: icone,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            titulo,
+                            style: TextStyle(fontSize: 17, color: corLetra),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            subtitulo,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: corLetra.withOpacity(0.5),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                Icon(Icons.arrow_forward_ios, color: corLetra.withOpacity(0.3)),
-              ],
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: corLetra.withOpacity(0.3),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
