@@ -1,11 +1,9 @@
 import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
 import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_responsavel.dart';
 import 'package:espectrum_front/View/Pages/tela_vincular_professor.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
-import 'package:espectrum_front/View/Widgets/categoria_perfis.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
 
@@ -32,7 +30,6 @@ class _HomeAlunoState extends State<HomeAluno> {
     _carregarPacientes();
   }
 
-  // 🟢 MÉTODO ATUALIZADO PARA USAR O VINCULO SERVICE
   Future<void> _carregarPacientes() async {
     try {
       // 1. Pega o token salvo no celular
