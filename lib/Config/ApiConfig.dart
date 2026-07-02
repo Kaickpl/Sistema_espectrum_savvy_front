@@ -2,7 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiClient {
-  static const String _baseUrl = 'http://localhost:8080';
+  /// URL base da API. Em desenvolvimento local usa localhost:8080; para
+  /// gerar um build apontando para o backend publicado, passe
+  /// --dart-define=API_BASE_URL=https://seu-backend.onrender.com
+  /// no comando `flutter build` / `flutter run`.
+  static const String _baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:8080',
+  );
 
   static Map<String, String> _headers([String? token]) => {
     'Content-Type': 'application/json',
