@@ -1,19 +1,18 @@
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Pages/tela_perfil.dart';
 import 'package:espectrum_front/View/Pages/tela_suporte.dart';
+import 'package:espectrum_front/View/Pages/tela_visualizar_pacientes.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/main.dart';
 
 import '../../Services/AuthService.dart';
+import '../../Services/TokenStorage.dart';
 
 class DrawerPadrao extends StatelessWidget {
   /// Defina como [false] nas telas de login, cadastro e recuperação de senha.
   final bool mostrarLogout;
 
-  const DrawerPadrao({
-    super.key,
-    this.mostrarLogout = true,
-  });
+  const DrawerPadrao({super.key, this.mostrarLogout = true});
 
   void _logout(BuildContext context) async {
     Navigator.pop(context); // fecha o drawer
@@ -23,7 +22,7 @@ class DrawerPadrao extends StatelessWidget {
     if (!context.mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const PaginaInicial()),
-          (route) => false, // remove todo o histórico de navegação
+      (route) => false, // remove todo o histórico de navegação
     );
   }
 
@@ -41,7 +40,7 @@ class DrawerPadrao extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx); // fecha o diálogo
-              _logout(context);   // navega para login
+              _logout(context); // navega para login
             },
             child: Text(
               "Sair",
@@ -72,63 +71,93 @@ class DrawerPadrao extends StatelessWidget {
 
             // ── Itens principais ─────────────────────────────────────
             Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  _DrawerItem(
-                    icone: Icons.person,
-                    titulo: "Perfil",
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const TelaPerfil(),
-                        ),
-                      );
-                    },
-                  ),
+              child: FutureBuilder<String?>(
+                future: TokenStorage.lerPerfil(),
+                builder: (context, snapshot) {
+                  final perfil = snapshot.data;
+                  final podeVerPacientes =
+                      perfil == 'ROLE_TERAPEUTA' ||
+                      perfil == 'ROLE_SUPERVISOR_ESTAGIO';
 
-                  const _Divisor(),
-
-                  _DrawerItem(
-                    icone: Icons.support_agent_rounded,
-                    titulo: "Suporte e Ajuda",
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const TelaSuporte(),
-                        ),
-                      );
-                    },
-                  ),
-                  const _Divisor(),
-
-                  // ── Modo escuro ───────────────────────────────────
-                  SwitchListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                    secondary: Icon(
-                      isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                      color: colors.onPrimary,
-                    ),
-                    title: Text(
-                      "Modo Escuro",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: colors.onPrimary,
+                  return ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      _DrawerItem(
+                        icone: Icons.person,
+                        titulo: "Perfil",
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TelaPerfil(),
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                    value: isDarkMode,
-                    activeColor: colors.onPrimary,
-                    onChanged: (value) {
-                      temaApp.value =
-                      value ? ThemeMode.dark : ThemeMode.light;
-                    },
-                  ),
-                ],
+
+                      const _Divisor(),
+
+                      if (podeVerPacientes) ...[
+                        _DrawerItem(
+                          icone: Icons.groups_outlined,
+                          titulo: "Pacientes",
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const TelaVisualizarPacientes(),
+                              ),
+                            );
+                          },
+                        ),
+                        const _Divisor(),
+                      ],
+
+                      _DrawerItem(
+                        icone: Icons.support_agent_rounded,
+                        titulo: "Suporte e Ajuda",
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TelaSuporte(),
+                            ),
+                          );
+                        },
+                      ),
+                      const _Divisor(),
+
+                      // ── Modo escuro ───────────────────────────────────
+                      SwitchListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                        secondary: Icon(
+                          isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                          color: colors.onPrimary,
+                        ),
+                        title: Text(
+                          "Modo Escuro",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colors.onPrimary,
+                          ),
+                        ),
+                        value: isDarkMode,
+                        activeColor: colors.onPrimary,
+                        onChanged: (value) {
+                          temaApp.value = value
+                              ? ThemeMode.dark
+                              : ThemeMode.light;
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
 
@@ -164,9 +193,7 @@ class _DrawerHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.primary,
         border: Border(
-          bottom: BorderSide(
-            color: colors.onPrimary.withOpacity(0.15),
-          ),
+          bottom: BorderSide(color: colors.onPrimary.withOpacity(0.15)),
         ),
       ),
       child: Column(

@@ -1,23 +1,28 @@
 import 'package:espectrum_front/Config/ApiConfig.dart';
 
-class UsuarioService {
-  static Future<void> verificarEmail(String email) async {
-    final response = await ApiClient.get(
-      '/auth/verificar-email?email=${Uri.encodeComponent(email)}',
+class UsuarioServiceTrocarSenha {
+  /// Solicita o envio do código de recuperação para o e-mail informado.
+  /// O backend sempre responde 200, mesmo se o e-mail não existir
+  /// (segurança silenciosa), então não há como saber se o e-mail é válido.
+  static Future<void> solicitarReset(String email) async {
+    final response = await ApiClient.post(
+      '/trocarSenha/solicitar-reset?email=${Uri.encodeComponent(email)}',
+      {},
     );
 
-    _validar(response, 'Email não encontrado');
+    _validar(response, 'Erro ao solicitar recuperação de senha');
   }
 
-  static Future<void> recuperarSenha({
+  /// Redefine a senha usando o código de recuperação enviado por e-mail.
+  static Future<void> redefinirSenha({
     required String email,
+    required String token,
     required String novaSenha,
-    required String confirmaSenha,
   }) async {
-    final response = await ApiClient.post('/auth/recuperar-senha', {
+    final response = await ApiClient.post('/trocarSenha/redefinir-senha', {
       'email': email,
+      'token': token,
       'novaSenha': novaSenha,
-      'confirmaSenha': confirmaSenha,
     });
 
     _validar(response, 'Erro ao trocar senha');

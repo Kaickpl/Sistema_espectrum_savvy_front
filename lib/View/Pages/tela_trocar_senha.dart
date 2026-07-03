@@ -7,7 +7,7 @@ import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
 import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
-import '../Widgets/validadorsenha.dart';
+import '../Widgets/ValidadorSenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
   final String email; // recebido da tela anterior
@@ -22,13 +22,16 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
   bool obscureTextSenha = true;
   bool obscureTextConfirma = true;
   bool _carregando = false;
+  bool _reenviando = false;
 
+  final _tokenController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
+    _tokenController.dispose();
     _senhaController.dispose();
     _confirmaController.dispose();
     super.dispose();
@@ -40,10 +43,10 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
     setState(() => _carregando = true);
 
     try {
-      await UsuarioService.recuperarSenha(
+      await UsuarioServiceTrocarSenha.redefinirSenha(
         email: widget.email,
+        token: _tokenController.text.trim(),
         novaSenha: _senhaController.text,
-        confirmaSenha: _confirmaController.text,
       );
 
       if (!mounted) return;
@@ -69,6 +72,31 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
       );
     } finally {
       if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  Future<void> _reenviarCodigo() async {
+    setState(() => _reenviando = true);
+
+    try {
+      await UsuarioServiceTrocarSenha.solicitarReset(widget.email);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Código reenviado para ${widget.email}')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _reenviando = false);
     }
   }
 
@@ -106,7 +134,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                   SizedBox(height: 12),
 
                   Text(
-                    "Crie uma nova senha segura",
+                    "Digite o código enviado para ${widget.email} e crie uma nova senha segura",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -116,78 +144,117 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                   Form(
                     key: _formKey,
 
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Container(
+                        width: double.infinity,
 
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
 
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
 
-                        child: Column(
-                          children: [
-                            CampoTexto(
-                              label: "Senha",
-                              hintText: "Digite sua senha",
-                              keyboardType: TextInputType.text,
-                              obscureText: obscureTextSenha,
-                              controller: _senhaController,
-                              validator: validarSenhaForte,
+                          child: Column(
+                            children: [
+                              CampoTexto(
+                                label: "Código",
+                                hintText: "Digite o código recebido",
+                                keyboardType: TextInputType.text,
+                                controller: _tokenController,
+                                maxLines: 1,
 
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    obscureTextSenha = !obscureTextSenha;
-                                  });
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Digite o código recebido";
+                                  }
+                                  return null;
                                 },
-                                icon: Icon(
-                                  obscureTextSenha
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                              ),
+
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: _reenviando
+                                      ? null
+                                      : _reenviarCodigo,
+                                  child: _reenviando
+                                      ? SizedBox(
+                                          height: 14,
+                                          width: 14,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : Text("Reenviar código"),
                                 ),
                               ),
-                              maxLines: 1,
-                            ),
 
-                            ValidadorSenha(controller: _senhaController),
+                              SizedBox(height: 4),
 
-                            SizedBox(height: 4),
+                              CampoTexto(
+                                label: "Senha",
+                                hintText: "Digite sua senha",
+                                keyboardType: TextInputType.text,
+                                obscureText: obscureTextSenha,
+                                controller: _senhaController,
+                                validator: validarSenhaForte,
 
-                            CampoTexto(
-                              label: "Confirmar Senha",
-                              hintText: "Repita sua senha",
-                              keyboardType: TextInputType.text,
-                              obscureText: obscureTextConfirma,
-                              controller: _confirmaController,
-
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Confirme sua senha";
-                                }
-                                if (value != _senhaController.text) {
-                                  return "As senhas não coincidem";
-                                }
-                                return null;
-                              },
-
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    obscureTextConfirma = !obscureTextConfirma;
-                                  });
-                                },
-                                icon: Icon(
-                                  obscureTextConfirma
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      obscureTextSenha = !obscureTextSenha;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    obscureTextSenha
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
                                 ),
+                                maxLines: 1,
                               ),
-                              maxLines: 1,
-                            ),
-                          ],
+
+                              ValidadorSenha(controller: _senhaController),
+
+                              SizedBox(height: 4),
+
+                              CampoTexto(
+                                label: "Confirmar Senha",
+                                hintText: "Repita sua senha",
+                                keyboardType: TextInputType.text,
+                                obscureText: obscureTextConfirma,
+                                controller: _confirmaController,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Confirme sua senha";
+                                  }
+                                  if (value != _senhaController.text) {
+                                    return "As senhas não coincidem";
+                                  }
+                                  return null;
+                                },
+
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      obscureTextConfirma =
+                                          !obscureTextConfirma;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    obscureTextConfirma
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                ),
+                                maxLines: 1,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -17,7 +17,7 @@ import '../Widgets/widget_input_acesso.dart';
 extension _PerfilUiExt on Perfil {
   IconData get icone {
     switch (this) {
-      case Perfil.roleAdmin:
+      case Perfil.ROLE_SUPERVISOR_ESTAGIO:
         return Icons.admin_panel_settings_rounded;
       case Perfil.roleTerapeuta:
         return Icons.psychology_rounded;
@@ -30,7 +30,7 @@ extension _PerfilUiExt on Perfil {
 
   Color cor(ColorScheme cs) {
     switch (this) {
-      case Perfil.roleAdmin:
+      case Perfil.ROLE_SUPERVISOR_ESTAGIO:
         return cs.tertiary;
       case Perfil.roleTerapeuta:
         return cs.secondary;
@@ -453,7 +453,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     const SizedBox(height: 12),
                     _CardStatus(cores: cores, ativo: usuario.isActive),
 
-                    if (usuario.tipo == Perfil.roleAdmin &&
+                    if (usuario.tipo == Perfil.ROLE_SUPERVISOR_ESTAGIO &&
                         (usuario.codigoConvite ?? '').isNotEmpty) ...[
                       const SizedBox(height: 20),
                       CategoriaAtributos(

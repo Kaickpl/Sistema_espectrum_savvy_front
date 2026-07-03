@@ -15,7 +15,7 @@ class WidgetQuestaoSanfona extends StatefulWidget {
     required this.questao,
     required this.AoResponder,
     required this.controlador,
-    required this.aoMudarEstadoSanfona
+    required this.aoMudarEstadoSanfona,
   });
 
   @override
@@ -35,18 +35,20 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
   // Cores fixas da escala de semáforo (não mudam com o tema)
   final Map<int, Color> coresNotas = {
-    0 : Colors.red,
-    1 : Colors.orange,
-    2 : Colors.amber,
-    3 : Colors.green,
-    4 : Colors.grey
+    0: Colors.red,
+    1: Colors.orange,
+    2: Colors.amber,
+    3: Colors.green,
+    4: Colors.grey,
   };
 
   bool get estaRespondida => widget.questao.pontuacao != null;
 
   // 🟢 NOVO: Função que descobre qual é a cor da nota atual da atividade
-  Color get _corSelecionada {
-    if (!estaRespondida) return Colors.grey;
+  Color _corSelecionada(BuildContext context) {
+    if (!estaRespondida) {
+      return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+    }
     // Tenta converter a pontuação atual em inteiro, se falhar volta pra verde como padrão
     int nota = int.tryParse(widget.questao.pontuacao!) ?? 3;
     return coresNotas[nota] ?? Colors.green;
@@ -86,7 +88,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
         title: Text(
           widget.questao.nomeAtividade,
           style: TextStyle(
-            fontSize: 17, 
+            fontSize: 17,
             fontWeight: FontWeight.w500,
             // Texto do título obedece o onSurface para dar contraste com o fundo
             color: Theme.of(context).colorScheme.onSurface,
@@ -98,17 +100,27 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
           height: 24,
           decoration: BoxDecoration(
             color: estaRespondida
-                ? _corSelecionada.withValues(alpha: 0.2) // 🟢 Agora usa a cor dinâmica com fundo transparente
-                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                ? _corSelecionada(context).withValues(
+                    alpha: 0.2,
+                  ) // 🟢 Agora usa a cor dinâmica com fundo transparente
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: estaRespondida
-              ? Icon(Icons.check, size: 16, color: _corSelecionada) // 🟢 Ícone agora adota a cor correta
+              ? Icon(
+                  Icons.check,
+                  size: 16,
+                  color: _corSelecionada(context),
+                ) // 🟢 Ícone agora adota a cor correta
               : Icon(
-                  Icons.access_time_rounded, 
-                  size: 16, 
+                  Icons.access_time_rounded,
+                  size: 16,
                   // Ícone do relógio pegando a cor de texto (onSurface) com opacidade
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
         ),
 
@@ -121,8 +133,8 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                 Text(
                   "Selecione a pontuação",
                   style: TextStyle(
-                    fontSize: 14, 
-                    fontWeight: FontWeight.bold, 
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
@@ -130,9 +142,9 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
                 Column(
                   children: notasPossiveis.map((nota) {
-
-                  
-                    bool selecionado = estaRespondida && widget.questao.pontuacao == nota.toString();
+                    bool selecionado =
+                        estaRespondida &&
+                        widget.questao.pontuacao == nota.toString();
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
@@ -157,7 +169,8 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                               // Borda colorida se selecionado, senão uma borda neutra baseada no texto do tema
                               color: selecionado
                                   ? coresNotas[nota]!
-                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.2),
                             ),
                           ),
                           child: Row(
@@ -174,7 +187,10 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                   border: Border.all(
                                     color: selecionado
                                         ? Colors.transparent
-                                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
+                                        : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Center(
@@ -184,8 +200,10 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                       fontWeight: FontWeight.bold,
                                       // Se selecionado, o número na bolinha colorida fica branco. Senão, fica com a cor do texto do tema.
                                       color: selecionado
-                                      ? Colors.white
-                                      : Theme.of(context).colorScheme.onSurface
+                                          ? Colors.white
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
@@ -200,14 +218,16 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                     fontSize: 14,
                                     // Se selecionado, o texto de descrição pega a cor do semáforo. Senão, usa a cor de texto padrão do tema atual.
                                     color: selecionado
-                                      ? coresNotas[nota]
-                                      : Theme.of(context).colorScheme.onSurface,
+                                        ? coresNotas[nota]
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                     fontWeight: selecionado
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
-                                )
-                              )
+                                ),
+                              ),
                             ],
                           ),
                         ),

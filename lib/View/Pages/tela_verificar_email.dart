@@ -32,16 +32,14 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
     setState(() => _carregando = true);
 
     try {
-      await UsuarioService.verificarEmail(_emailController.text.trim());
+      final email = _emailController.text.trim();
+      await UsuarioServiceTrocarSenha.solicitarReset(email);
 
       if (!mounted) return;
 
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) =>
-              TelaTrocarSenha(email: _emailController.text.trim()),
-        ),
+        MaterialPageRoute(builder: (context) => TelaTrocarSenha(email: email)),
       );
     } catch (e) {
       if (!mounted) return;
@@ -91,7 +89,7 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
                   SizedBox(height: 12),
 
                   Text(
-                    "Digite seu e-mail cadastrado para verificarmos se você possui uma conta em nosso sistema",
+                    "Digite seu e-mail cadastrado para enviarmos um código de recuperação de senha",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -101,33 +99,36 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
                   Form(
                     key: _formKey,
 
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Container(
+                        width: double.infinity,
 
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
 
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
 
-                        child: CampoTexto(
-                          label: "Email",
-                          hintText: "Digite seu email",
-                          keyboardType: TextInputType.emailAddress,
-                          controller: _emailController,
+                          child: CampoTexto(
+                            label: "Email",
+                            hintText: "Digite seu email",
+                            keyboardType: TextInputType.emailAddress,
+                            controller: _emailController,
 
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Digite seu email";
-                            }
-                            if (!value.contains("@")) {
-                              return "Email inválido";
-                            }
-                            return null;
-                          },
-                          maxLines: 1,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Digite seu email";
+                              }
+                              if (!value.contains("@")) {
+                                return "Email inválido";
+                              }
+                              return null;
+                            },
+                            maxLines: 1,
+                          ),
                         ),
                       ),
                     ),

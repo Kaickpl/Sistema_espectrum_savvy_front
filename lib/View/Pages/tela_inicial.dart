@@ -92,192 +92,199 @@ class _PaginaInicialState extends State<PaginaInicial> {
 
                     SizedBox(height: 15),
 
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(24),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Login",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                ),
-                              ),
-
-                              SizedBox(height: 20),
-
-                              CampoTexto(
-                                label: "Email",
-                                hintText: "Digite seu email",
-                                keyboardType: TextInputType.emailAddress,
-                                controller: _emailController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return "Digite seu email";
-                                  if (!value.contains("@"))
-                                    return "Email inválido";
-                                  return null;
-                                },
-                                maxLines: 1,
-                              ),
-                              SizedBox(height: 8),
-                              CampoTexto(
-                                label: "Senha",
-                                hintText: "Digite sua senha",
-                                keyboardType: TextInputType.text,
-                                obscureText: obscureText,
-                                controller: _senhaController,
-                                validator: (valueSenha) {
-                                  if (valueSenha == null || valueSenha.isEmpty)
-                                    return "Digite sua senha";
-                                  return null;
-                                },
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      obscureText = !obscureText;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    obscureText
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                  ),
-                                ),
-                                maxLines: 1,
-                              ),
-
-                              SizedBox(height: 15),
-
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 400),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
+                                  Text(
+                                    "Login",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              TelaVerificarEmail(),
-                                        ),
-                                      );
+                                      ).colorScheme.secondary,
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 20),
+
+                                  CampoTexto(
+                                    label: "Email",
+                                    hintText: "Digite seu email",
+                                    keyboardType: TextInputType.emailAddress,
+                                    controller: _emailController,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty)
+                                        return "Digite seu email";
+                                      if (!value.contains("@"))
+                                        return "Email inválido";
+                                      return null;
                                     },
-                                    child: Text(
-                                      "Esqueci minha senha",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                    maxLines: 1,
+                                  ),
+                                  SizedBox(height: 8),
+                                  CampoTexto(
+                                    label: "Senha",
+                                    hintText: "Digite sua senha",
+                                    keyboardType: TextInputType.text,
+                                    obscureText: obscureText,
+                                    controller: _senhaController,
+                                    validator: (valueSenha) {
+                                      if (valueSenha == null ||
+                                          valueSenha.isEmpty)
+                                        return "Digite sua senha";
+                                      return null;
+                                    },
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          obscureText = !obscureText;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        obscureText
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                      ),
+                                    ),
+                                    maxLines: 1,
+                                  ),
+
+                                  SizedBox(height: 15),
+
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TelaVerificarEmail(),
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          "Esqueci minha senha",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      FundoBotao(
+                                        child: TextButton(
+                                          style: TextButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 25,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          onPressed: _carregando
+                                              ? null
+                                              : _fazerLogin,
+                                          child: _carregando
+                                              ? SizedBox(
+                                                  width: 18,
+                                                  height: 18,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.onPrimary,
+                                                      ),
+                                                )
+                                              : Text(
+                                                  "Entrar",
+                                                  style: TextStyle(
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).colorScheme.onPrimary,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+
+                                  Center(child: Text("ou")),
+
+                                  SizedBox(height: 10),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 40,
+                                    child: OutlinedButton.icon(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.g_mobiledata,
+                                        size: 30,
                                         color: Theme.of(
                                           context,
                                         ).colorScheme.secondary,
                                       ),
+                                      label: Text(
+                                        "Entrar com o Google",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  FundoBotao(
+                                  Center(child: Text("Não tem conta ?")),
+                                  Center(
                                     child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 25,
-                                          vertical: 12,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TelaCadastro(),
                                           ),
+                                        );
+                                      },
+                                      child: Text(
+                                        "Criar conta",
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
                                         ),
                                       ),
-                                      onPressed: _carregando
-                                          ? null
-                                          : _fazerLogin,
-                                      child: _carregando
-                                          ? SizedBox(
-                                              width: 18,
-                                              height: 18,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.onPrimary,
-                                              ),
-                                            )
-                                          : Text(
-                                              "Entrar",
-                                              style: TextStyle(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.onPrimary,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 10),
-
-                              Center(child: Text("ou")),
-
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 40,
-                                child: OutlinedButton.icon(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.g_mobiledata,
-                                    size: 30,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.secondary,
-                                  ),
-                                  label: Text(
-                                    "Entrar com o Google",
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.secondary,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Center(child: Text("Não tem conta ?")),
-                              Center(
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const TelaCadastro(),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    "Criar conta",
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.secondary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
