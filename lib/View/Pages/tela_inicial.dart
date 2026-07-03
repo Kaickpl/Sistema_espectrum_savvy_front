@@ -233,9 +233,6 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   ),
                                   SizedBox(height: 10),
 
-                                  Center(child: Text("ou")),
-
-                                  SizedBox(height: 10),
                                   SizedBox(width: double.infinity, height: 40),
                                   Center(child: Text("Não tem conta ?")),
                                   Center(
