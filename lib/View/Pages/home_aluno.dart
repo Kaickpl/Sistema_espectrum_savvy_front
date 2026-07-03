@@ -211,8 +211,8 @@ class _HomeAlunoState extends State<HomeAluno> {
                     children: [
                       Text(
                         _isLoading
-                            ? 'Carregando testes...'
-                            : 'Você tem ${_pacientes.length} testes disponíveis',
+                            ? 'Carregando protocolos...'
+                            : 'Você tem ${_pacientes.length} protocolos disponíveis',
                         style: TextStyle(color: cores.onPrimary),
                       ),
                       const SizedBox(height: 20),

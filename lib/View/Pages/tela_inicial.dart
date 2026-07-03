@@ -236,30 +236,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   Center(child: Text("ou")),
 
                                   SizedBox(height: 10),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 40,
-                                    child: OutlinedButton.icon(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.g_mobiledata,
-                                        size: 30,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.secondary,
-                                      ),
-                                      label: Text(
-                                        "Entrar com o Google",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
+                                  SizedBox(width: double.infinity, height: 40),
                                   Center(child: Text("Não tem conta ?")),
                                   Center(
                                     child: TextButton(
