@@ -5,6 +5,8 @@ import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 class CategoriaProtocolo extends StatefulWidget {
   final IconData iconeCategoria;
   final String nomeCategoria;
+  final String nomePaciente;
+  final String categoriaSessaoId;
   final List<AtividadeSessaoModel> questoesDestaCategoria;
   final VoidCallback aoAtualizar;
 
@@ -12,6 +14,8 @@ class CategoriaProtocolo extends StatefulWidget {
     super.key,
     required this.iconeCategoria,
     required this.nomeCategoria,
+    required this.nomePaciente,
+    required this.categoriaSessaoId,
     required this.questoesDestaCategoria,
     required this.aoAtualizar,
   });
@@ -31,6 +35,8 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
       MaterialPageRoute(
         builder: (context) => PaginaQuestoesCategoria(
           nomeCategoria: widget.nomeCategoria,
+          nomePaciente: widget.nomePaciente,
+          categoriaSessaoId: widget.categoriaSessaoId,
           totalDeQuestoes: totalDeQuestoes,
           iconeCategoria: widget.iconeCategoria,
           questoesDaCategoria: widget.questoesDestaCategoria,

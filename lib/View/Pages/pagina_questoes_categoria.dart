@@ -5,9 +5,12 @@ import 'package:espectrum_front/View/Widgets/info_questoes_e_nome_paciente.dart'
 import 'package:espectrum_front/View/Widgets/categoria_protocolo.dart';
 import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 import 'package:espectrum_front/Services/ProtocoloService.dart';
+import 'package:espectrum_front/Services/ComentarioService.dart';
 
 class PaginaQuestoesCategoria extends StatefulWidget {
   final String nomeCategoria;
+  final String nomePaciente;
+  final String categoriaSessaoId;
   final int totalDeQuestoes;
   final IconData iconeCategoria;
   final List<AtividadeSessaoModel> questoesDaCategoria;
@@ -15,6 +18,8 @@ class PaginaQuestoesCategoria extends StatefulWidget {
   const PaginaQuestoesCategoria({
     super.key,
     required this.nomeCategoria,
+    required this.nomePaciente,
+    required this.categoriaSessaoId,
     required this.totalDeQuestoes,
     required this.iconeCategoria,
     required this.questoesDaCategoria,
@@ -28,6 +33,8 @@ class PaginaQuestoesCategoria extends StatefulWidget {
 class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
   int? indexSanfonaAberta;
   late List<ExpansibleController> controlesDasSanfonas;
+  final TextEditingController _comentarioController = TextEditingController();
+  String _ultimoComentarioSalvo = "";
 
   @override
   void initState() {
@@ -37,14 +44,54 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
       widget.questoesDaCategoria.length,
       (index) => ExpansibleController(),
     );
+
+    _carregarComentario();
+  }
+
+  @override
+  void dispose() {
+    _comentarioController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _carregarComentario() async {
+    try {
+      final comentarios = await ComentarioService.buscarComentariosCategoria(
+        widget.categoriaSessaoId,
+      );
+      if (comentarios.isEmpty || !mounted) return;
+
+      comentarios.sort(
+        (a, b) => (b.dataCriacao ?? DateTime(0)).compareTo(
+          a.dataCriacao ?? DateTime(0),
+        ),
+      );
+      setState(() {
+        _comentarioController.text = comentarios.first.comentario;
+        _ultimoComentarioSalvo = comentarios.first.comentario;
+      });
+    } catch (e) {
+      print("Erro ao carregar comentário da categoria: $e");
+    }
   }
 
   int get quantidadeRespondidas {
     return widget.questoesDaCategoria.where((q) => q.pontuacao != null).length;
   }
 
-  void voltar() {
-    Navigator.pop(context);
+  void voltar() async {
+    final texto = _comentarioController.text.trim();
+    if (texto.isNotEmpty && texto != _ultimoComentarioSalvo) {
+      try {
+        await ComentarioService.comentarCategoria(
+          widget.categoriaSessaoId,
+          texto,
+        );
+      } catch (e) {
+        print("Erro ao salvar comentário da categoria: $e");
+      }
+    }
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -95,7 +142,7 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   InfoQuestoesENomePaciente(
-                    nomePaciente: "João Silva",
+                    nomePaciente: widget.nomePaciente,
                     questoesRespondidas: quantidadeRespondidas,
                     totalDeQuestoes: widget.questoesDaCategoria.length,
                     iconePrincipal: widget.iconeCategoria,
@@ -104,6 +151,10 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                         "Questões relacionadas à ${widget.nomeCategoria.toLowerCase()}",
                     textoInstrucoes:
                         "Responda as questões abaixo relacionadas à ${widget.nomeCategoria.toLowerCase()} para ajudar na análise do comportamento social da criança.",
+                    comentarioController: _comentarioController,
+                    tituloComentario: "Comentários sobre a categoria",
+                    dicaTextoComentario:
+                        "Anote aqui suas observações sobre as questões desta categoria.",
                   ),
 
                   SizedBox(height: 16),
