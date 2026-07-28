@@ -6,6 +6,7 @@ import 'package:espectrum_front/View/Widgets/info_questoes_e_nome_paciente.dart'
 import 'package:espectrum_front/Model/Protocolo/ProtocoloSessaoModel.dart';
 import 'package:espectrum_front/Services/ProtocoloService.dart';
 import 'package:espectrum_front/Services/ComentarioService.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
 
 class PaginaProtocolo extends StatefulWidget {
   final String pacienteId;
@@ -26,10 +27,24 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
   final TextEditingController _comentarioController = TextEditingController();
   String _ultimoComentarioSalvo = "";
 
+  // Professor e responsável podem aplicar o protocolo, mas não finalizá-lo.
+  bool _podeFinalizar = true;
+
   @override
   void initState() {
     super.initState();
     _carregarSessaoDoBackend();
+    _verificarPermissaoFinalizar();
+  }
+
+  Future<void> _verificarPermissaoFinalizar() async {
+    final perfil = await TokenStorage.lerPerfil();
+    if (mounted) {
+      setState(() {
+        _podeFinalizar =
+            perfil != 'ROLE_PROFESSOR' && perfil != 'ROLE_RESPONSAVEL';
+      });
+    }
   }
 
   @override
@@ -304,25 +319,29 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Row(
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _finalizarSessao,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              if (_podeFinalizar) ...[
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _finalizarSessao,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "Finalizar",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    "Finalizar",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
                 ),
-              ),
-
-              SizedBox(width: 10),
+                SizedBox(width: 10),
+              ],
 
               Expanded(
                 child: ElevatedButton(

@@ -75,19 +75,53 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
 
                 const SizedBox(height: 20),
 
-                CartaoPacienteHome(
-                  nomePaciente: "João Silva",
-                  nivel: 3,
-                  idade: 2,
-                  status: "Em Progresso",
-                  corStatus: CoresPadrao.emProgressoCor,
-                  onContinuar: () {
-                    print('a');
-                  },
-                  onHistorico: () {
-                    print('a');
-                  },
-                ),
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else if (_errorMessage != null)
+                  Text(
+                    "Erro ao carregar pacientes: $_errorMessage",
+                    style: const TextStyle(color: Colors.red),
+                  )
+                else if (_pacientes.isEmpty)
+                  const Text(
+                    "Você ainda não tem pacientes vinculados.",
+                    style: TextStyle(color: Colors.grey),
+                  )
+                else
+                  ..._pacientes.map((paciente) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: CartaoPacienteHome(
+                        nomePaciente: paciente.nome,
+                        nivel: 3,
+                        idade: 5,
+                        status: "Em Progresso",
+                        corStatus: CoresPadrao.emProgressoCor,
+                        onContinuar: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaginaProtocolo(
+                                pacienteId: paciente.id,
+                                nomePaciente: paciente.nome,
+                              ),
+                            ),
+                          );
+                        },
+                        onHistorico: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaginaProtocolo(
+                                pacienteId: paciente.id,
+                                nomePaciente: paciente.nome,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }).toList(),
               ],
             ),
           ),
