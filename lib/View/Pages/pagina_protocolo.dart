@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Widgets/info_questoes_e_nome_paciente.dart';
 import 'package:espectrum_front/Model/Protocolo/ProtocoloSessaoModel.dart';
 import 'package:espectrum_front/Services/ProtocoloService.dart';
+import 'package:espectrum_front/Services/ComentarioService.dart';
+import 'package:espectrum_front/Services/TokenStorage.dart';
 
 class PaginaProtocolo extends StatefulWidget {
   final String pacienteId;
@@ -22,11 +24,33 @@ class PaginaProtocolo extends StatefulWidget {
 class _PaginaProtocoloState extends State<PaginaProtocolo> {
   ProtocoloSessaoModel? sessaoAtual;
   bool isLoading = true;
+  final TextEditingController _comentarioController = TextEditingController();
+  String _ultimoComentarioSalvo = "";
+
+  // Professor e responsável podem aplicar o protocolo, mas não finalizá-lo.
+  bool _podeFinalizar = true;
 
   @override
   void initState() {
     super.initState();
     _carregarSessaoDoBackend();
+    _verificarPermissaoFinalizar();
+  }
+
+  Future<void> _verificarPermissaoFinalizar() async {
+    final perfil = await TokenStorage.lerPerfil();
+    if (mounted) {
+      setState(() {
+        _podeFinalizar =
+            perfil != 'ROLE_PROFESSOR' && perfil != 'ROLE_RESPONSAVEL';
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _comentarioController.dispose();
+    super.dispose();
   }
 
   Future<void> _carregarSessaoDoBackend() async {
@@ -38,11 +62,46 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
         sessaoAtual = protocoloSessao;
         isLoading = false;
       });
+      _carregarComentario();
     } catch (e) {
       print("Erro ao carregar a sessão do protocolo: $e");
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _carregarComentario() async {
+    if (sessaoAtual == null) return;
+    try {
+      final comentarios = await ComentarioService.buscarComentariosProtocolo(
+        sessaoAtual!.id,
+      );
+      if (comentarios.isEmpty || !mounted) return;
+
+      comentarios.sort(
+        (a, b) => (b.dataCriacao ?? DateTime(0)).compareTo(
+          a.dataCriacao ?? DateTime(0),
+        ),
+      );
+      setState(() {
+        _comentarioController.text = comentarios.first.comentario;
+        _ultimoComentarioSalvo = comentarios.first.comentario;
+      });
+    } catch (e) {
+      print("Erro ao carregar comentário do protocolo: $e");
+    }
+  }
+
+  Future<void> _salvarComentarioSeNecessario() async {
+    if (sessaoAtual == null) return;
+    final texto = _comentarioController.text.trim();
+    if (texto.isEmpty || texto == _ultimoComentarioSalvo) return;
+    try {
+      await ComentarioService.comentarProtocolo(sessaoAtual!.id, texto);
+      _ultimoComentarioSalvo = texto;
+    } catch (e) {
+      print("Erro ao salvar comentário do protocolo: $e");
     }
   }
 
@@ -118,6 +177,8 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
         isLoading = true;
       });
 
+      await _salvarComentarioSeNecessario();
+
       // Chama a API para encerrar
       await ProtocoloService.encerrarSessao(sessaoAtual!.id);
 
@@ -152,6 +213,7 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
     if (sessaoAtual == null) return;
 
     try {
+      await _salvarComentarioSeNecessario();
       await ProtocoloService.salvarProgresso(sessaoAtual!.id);
 
       if (mounted) {
@@ -225,6 +287,10 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                       "Protocolo Socially Savvy para análise\n do comportamento social no\n contexto da criança",
                   textoInstrucoes:
                       "Este protocolo foi desenvolvido para auxiliar na análise do comportamento social de crianças em diferentes contextos.",
+                  comentarioController: _comentarioController,
+                  tituloComentario: "Comentários sobre o protocolo",
+                  dicaTextoComentario:
+                      "Anote aqui suas observações gerais sobre o protocolo, comportamento da criança, etc.",
                 ),
 
                 SizedBox(height: 8),
@@ -232,6 +298,8 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                 ...sessaoAtual!.categoriasSessao.map((categoriaApi) {
                   return CategoriaProtocolo(
                     nomeCategoria: categoriaApi.nomeCategoria,
+                    nomePaciente: nomeDoPacienteAtual,
+                    categoriaSessaoId: categoriaApi.id,
                     iconeCategoria: Icons.assignment_turned_in,
                     questoesDestaCategoria: categoriaApi.atividades,
                     aoAtualizar: () {
@@ -251,25 +319,29 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Row(
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _finalizarSessao,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              if (_podeFinalizar) ...[
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _finalizarSessao,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "Finalizar",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    "Finalizar",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
                 ),
-              ),
-
-              SizedBox(width: 10),
+                SizedBox(width: 10),
+              ],
 
               Expanded(
                 child: ElevatedButton(

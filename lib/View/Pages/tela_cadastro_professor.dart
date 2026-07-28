@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
@@ -98,7 +99,9 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
         token: token ?? '',
         nome: _nomeController.text.trim(),
         email: _emailController.text.trim(),
-        numeroTelefone: _telefoneController.text.trim(),
+        numeroTelefone: FormatadorTelefone.apenasDigitos(
+          _telefoneController.text,
+        ),
         senha: _senhaController.text,
         cpf: _cpfController.text.trim(),
         escola: _escolaController.text.trim(),

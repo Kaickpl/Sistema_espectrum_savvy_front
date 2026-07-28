@@ -61,7 +61,6 @@ class _TelaVerificarEmailState extends State<TelaVerificarEmail> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       appBar: AppBarPadrao(nome: 'Verificar Email'),
-      endDrawer: DrawerPadrao(),
 
       body: SafeArea(
         bottom: false,

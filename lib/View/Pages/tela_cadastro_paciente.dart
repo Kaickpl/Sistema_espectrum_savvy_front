@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/Enum/GrauAutismo.dart';
 import 'package:flutter/material.dart';
@@ -130,10 +131,14 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
 
       await PacienteService.cadastrarPacienteEResponsavel(
         token: token ?? '',
-        numeroTelefone: _telefoneResponsavelController.text.trim(),
+        numeroTelefone: FormatadorTelefone.apenasDigitos(
+          _telefoneResponsavelController.text,
+        ),
         cpfResponsavel: _cpfResponsavelController.text.trim(),
         nomeResponsavel: _nomeResponsavelController.text.trim(),
-        emailResponsavel: _emailResponsavelController.text.trim(),
+        emailResponsavel: _emailResponsavelController.text.trim().isEmpty
+            ? null
+            : _emailResponsavelController.text.trim(),
         grauParentesco: _grauParentescoController.text.trim().isEmpty
             ? null
             : _grauParentescoController.text.trim(),
@@ -840,14 +845,12 @@ class _CadastroPacienteState extends State<CadastroPaciente> {
                 const SizedBox(height: 12),
 
                 CampoTexto(
-                  label: "Email",
+                  label: "Email (opcional)",
                   hintText: "Digite o email",
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailResponsavelController,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "O campo não pode ser vazio";
-                    }
+                    if (value == null || value.trim().isEmpty) return null;
                     if (!value.contains("@")) return "Email inválido";
                     return null;
                   },

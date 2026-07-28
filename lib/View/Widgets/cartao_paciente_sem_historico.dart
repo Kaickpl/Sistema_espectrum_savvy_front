@@ -8,7 +8,6 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
   final String status;
   final Color corStatus;
 
-  // 🟢 NOVO CALLBACK: Para o botão escutar o clique da Home
   final VoidCallback onContinuar;
 
   const CartaoPacienteHomeSemHistorico({
@@ -109,11 +108,7 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
             ),
             SizedBox(height: 30),
 
-            BotaoGrande(
-              texto: "Iniciar Protocolo",
-              caminho:
-                  onContinuar, // 🟢 CORREÇÃO: Agora ele chama a função da Home!
-            ),
+            BotaoGrande(texto: "Iniciar Protocolo", caminho: onContinuar),
           ],
         ),
       ),

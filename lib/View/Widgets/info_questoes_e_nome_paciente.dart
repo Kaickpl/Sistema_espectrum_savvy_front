@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:espectrum_front/View/Widgets/campo_anotacao_padrao.dart';
 
 // O nome correto para esse topo da tela!
 class InfoQuestoesENomePaciente extends StatelessWidget {
@@ -9,6 +10,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
   final int questoesRespondidas;
   final int totalDeQuestoes;
   final String nomePaciente;
+  final TextEditingController? comentarioController;
+  final String tituloComentario;
+  final String dicaTextoComentario;
 
   const InfoQuestoesENomePaciente({
     Key? key,
@@ -19,6 +23,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
     required this.questoesRespondidas,
     required this.totalDeQuestoes,
     required this.nomePaciente,
+    this.comentarioController,
+    this.tituloComentario = "Comentários",
+    this.dicaTextoComentario = "Anote aqui suas observações.",
   }) : super(key: key);
 
   @override
@@ -256,6 +263,15 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
             ],
           ),
         ),
+
+        if (comentarioController != null) ...[
+          const SizedBox(height: 16),
+          CampoAnotacaoPadrao(
+            controller: comentarioController!,
+            titulo: tituloComentario,
+            dicaTexto: dicaTextoComentario,
+          ),
+        ],
       ],
     );
   }

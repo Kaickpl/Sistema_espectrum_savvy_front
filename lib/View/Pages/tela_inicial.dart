@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/View/Pages/tela_perfis_cadatro.dart';
 import 'package:espectrum_front/View/Pages/tela_verificar_email.dart';
@@ -48,8 +49,13 @@ class _PaginaInicialState extends State<PaginaInicial> {
 
     setState(() => _carregando = true);
     try {
+      final textoLogin = _emailController.text.trim();
+      final loginNormalizado = textoLogin.contains("@")
+          ? textoLogin
+          : FormatadorTelefone.apenasDigitos(textoLogin);
+
       final login = await AuthService.login(
-        _emailController.text.trim(),
+        loginNormalizado,
         _senhaController.text,
       );
 
@@ -123,15 +129,26 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   SizedBox(height: 20),
 
                                   CampoTexto(
-                                    label: "Email",
-                                    hintText: "Digite seu email",
-                                    keyboardType: TextInputType.emailAddress,
+                                    label: "Email ou telefone",
+                                    hintText: "Digite seu email ou telefone",
+                                    keyboardType: TextInputType.text,
                                     controller: _emailController,
                                     validator: (value) {
-                                      if (value == null || value.isEmpty)
-                                        return "Digite seu email";
-                                      if (!value.contains("@"))
-                                        return "Email inválido";
+                                      if (value == null ||
+                                          value.trim().isEmpty) {
+                                        return "Digite seu email ou telefone";
+                                      }
+                                      final texto = value.trim();
+                                      final pareceEmail = texto.contains("@");
+                                      final apenasDigitos = texto.replaceAll(
+                                        RegExp(r'[^0-9]'),
+                                        '',
+                                      );
+                                      final pareceTelefone =
+                                          apenasDigitos.length >= 10;
+                                      if (!pareceEmail && !pareceTelefone) {
+                                        return "Digite um email ou telefone válido";
+                                      }
                                       return null;
                                     },
                                     maxLines: 1,
@@ -233,33 +250,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                   ),
                                   SizedBox(height: 10),
 
-                                  Center(child: Text("ou")),
-
-                                  SizedBox(height: 10),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 40,
-                                    child: OutlinedButton.icon(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.g_mobiledata,
-                                        size: 30,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.secondary,
-                                      ),
-                                      label: Text(
-                                        "Entrar com o Google",
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.secondary,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
+                                  SizedBox(width: double.infinity, height: 40),
                                   Center(child: Text("Não tem conta ?")),
                                   Center(
                                     child: TextButton(

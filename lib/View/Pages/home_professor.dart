@@ -11,7 +11,6 @@ import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
 
-
 class HomeProfessor extends StatefulWidget {
   const HomeProfessor({super.key});
 
@@ -37,8 +36,10 @@ class _HomeProfessorState extends State<HomeProfessor> {
         throw Exception("Sessão expirada. Por favor, faça login novamente.");
       }
 
-      final pacientesData = await VinculoService.listarMeusPacientesVinculados(token);
-      
+      final pacientesData = await VinculoService.listarMeusPacientesVinculados(
+        token,
+      );
+
       if (mounted) {
         setState(() {
           _pacientes = pacientesData;
@@ -73,13 +74,18 @@ class _HomeProfessorState extends State<HomeProfessor> {
 
                 const SizedBox(height: 20),
 
-                // 🟢 LÓGICA DE EXIBIÇÃO DINÂMICA
                 if (_isLoading)
                   const Center(child: CircularProgressIndicator())
                 else if (_errorMessage != null)
-                  Text("Erro ao carregar pacientes: $_errorMessage", style: const TextStyle(color: Colors.red))
+                  Text(
+                    "Erro ao carregar pacientes: $_errorMessage",
+                    style: const TextStyle(color: Colors.red),
+                  )
                 else if (_pacientes.isEmpty)
-                  const Text("Você ainda não tem pacientes vinculados.", style: TextStyle(color: Colors.grey))
+                  const Text(
+                    "Você ainda não tem pacientes vinculados.",
+                    style: TextStyle(color: Colors.grey),
+                  )
                 else
                   // Espalha a lista dinâmica de Cartões
                   ..._pacientes.map((paciente) {
@@ -114,7 +120,7 @@ class _HomeProfessorState extends State<HomeProfessor> {
                                 ),
                               ),
                             );
-                          }
+                          },
                         ),
                       ),
                     );
@@ -130,18 +136,12 @@ class _HomeProfessorState extends State<HomeProfessor> {
         child: BotaoGrande(
           texto: "Iniciar Protocolo",
           caminho: () {
-            // 🟢 AQUI ESTAVA A DAR ERRO! 
-            // A PaginaProtocolo precisa de pacienteId. 
-            // O ideal para este botão genérico é ir para a tela de Seleção de Paciente:
-            
-            /* Navigator.push(
-               context,
-               MaterialPageRoute(builder: (context) => const SelecaoPaciente()),
-            ); */
-            
-            // Se não tiveres a tela de seleção pronta, podes mostrar um alerta temporário:
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Por favor, clique no cartão de um paciente acima para iniciar o protocolo!')),
+              const SnackBar(
+                content: Text(
+                  'Por favor, clique no cartão de um paciente acima para iniciar o protocolo!',
+                ),
+              ),
             );
           },
         ),

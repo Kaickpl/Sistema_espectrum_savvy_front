@@ -8,7 +8,6 @@ import 'package:espectrum_front/View/Widgets/info_home_professor_e_responsavel.d
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:flutter/material.dart';
 
-// 🟢 NOVOS IMPORTS DA API
 import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
@@ -21,7 +20,6 @@ class HomeResponsavel extends StatefulWidget {
 }
 
 class _HomeResponsavelState extends State<HomeResponsavel> {
-  // 🟢 Lógica de Estado para os Pacientes
   List<PacienteResumoModel> _pacientes = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -32,7 +30,6 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
     _carregarPacientes();
   }
 
-  // 🟢 Método que busca os pacientes reais do banco
   Future<void> _carregarPacientes() async {
     try {
       final token = await TokenStorage.lerToken();
@@ -40,9 +37,10 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
         throw Exception("Sessão expirada. Por favor, faça login novamente.");
       }
 
-      // O VinculoService já está configurado para buscar os pacientes do usuário logado!
-      final pacientesData = await VinculoService.listarMeusPacientesVinculados(token);
-      
+      final pacientesData = await VinculoService.listarMeusPacientesVinculados(
+        token,
+      );
+
       if (mounted) {
         setState(() {
           _pacientes = pacientesData;
@@ -77,19 +75,53 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
 
                 const SizedBox(height: 20),
 
-                CartaoPacienteHome(
-                  nomePaciente: "João Silva",
-                  nivel: 3,
-                  idade: 2,
-                  status: "Em Progresso",
-                  corStatus: CoresPadrao.emProgressoCor,
-                  onContinuar: () {
-                    print('a');
-                  },
-                  onHistorico: () {
-                    print('a');
-                  },
-                ),
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else if (_errorMessage != null)
+                  Text(
+                    "Erro ao carregar pacientes: $_errorMessage",
+                    style: const TextStyle(color: Colors.red),
+                  )
+                else if (_pacientes.isEmpty)
+                  const Text(
+                    "Você ainda não tem pacientes vinculados.",
+                    style: TextStyle(color: Colors.grey),
+                  )
+                else
+                  ..._pacientes.map((paciente) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: CartaoPacienteHome(
+                        nomePaciente: paciente.nome,
+                        nivel: 3,
+                        idade: 5,
+                        status: "Em Progresso",
+                        corStatus: CoresPadrao.emProgressoCor,
+                        onContinuar: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaginaProtocolo(
+                                pacienteId: paciente.id,
+                                nomePaciente: paciente.nome,
+                              ),
+                            ),
+                          );
+                        },
+                        onHistorico: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaginaProtocolo(
+                                pacienteId: paciente.id,
+                                nomePaciente: paciente.nome,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }).toList(),
               ],
             ),
           ),
@@ -101,10 +133,12 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
         child: BotaoGrande(
           texto: "Iniciar Protocolo",
           caminho: () {
-            // Como este é o botão genérico no final da tela e ele precisa do ID do paciente,
-            // colocamos um aviso para clicar no cartão do paciente acima!
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Por favor, clique em "Continuar" no cartão do paciente acima para iniciar o protocolo!')),
+              const SnackBar(
+                content: Text(
+                  'Por favor, clique em "Continuar" no cartão do paciente acima para iniciar o protocolo!',
+                ),
+              ),
             );
           },
         ),

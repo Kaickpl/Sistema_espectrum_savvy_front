@@ -106,7 +106,6 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       appBar: AppBarPadrao(nome: 'Trocar Senha'),
-      drawer: DrawerPadrao(),
 
       body: SafeArea(
         bottom: false,

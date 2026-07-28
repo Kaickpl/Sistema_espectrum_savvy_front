@@ -1,8 +1,8 @@
 import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
 import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
 import 'package:espectrum_front/View/Pages/tela_vincular_professor.dart';
-import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
+import 'package:espectrum_front/View/Widgets/cartao_acao_home.dart';
 import 'package:flutter/material.dart';
 
 import '../Widgets/drawer_padrao.dart';
@@ -210,8 +210,8 @@ class _HomeAlunoState extends State<HomeAluno> {
                     children: [
                       Text(
                         _isLoading
-                            ? 'Carregando testes...'
-                            : 'Você tem ${_pacientes.length} testes disponíveis',
+                            ? 'Carregando protocolos...'
+                            : 'Você tem ${_pacientes.length} protocolos disponíveis',
                         style: TextStyle(color: cores.onPrimary),
                       ),
                       const SizedBox(height: 20),
@@ -238,31 +238,54 @@ class _HomeAlunoState extends State<HomeAluno> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 28),
 
-            BotaoGrande(
-              texto: "Iniciar Protocolo",
-              caminho: () => Navigator.push(
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 343),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'O que você deseja fazer?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: cores.onSurface,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            CartaoAcaoHome(
+              icone: Icons.play_circle_fill_rounded,
+              titulo: "Iniciar Protocolo",
+              subtitulo: "Escolha um paciente e comece uma sessão",
+              destaque: true,
+              aoTocar: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SelecaoPaciente(),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            BotaoGrande(
-              texto: "Cadastrar professor",
-              caminho: () => Navigator.push(
+            const SizedBox(height: 12),
+            CartaoAcaoHome(
+              icone: Icons.person_add_alt_1_rounded,
+              titulo: "Cadastrar professor",
+              subtitulo: "Adicione um novo professor ao sistema",
+              aoTocar: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const CadastroProfessor(),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            BotaoGrande(
-              texto: "Vincular professor a paciente",
-              caminho: () => Navigator.push(
+            const SizedBox(height: 12),
+            CartaoAcaoHome(
+              icone: Icons.link_rounded,
+              titulo: "Vincular professor a paciente",
+              subtitulo: "Conecte um professor a um paciente",
+              aoTocar: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const TelaVincularProfessor(),

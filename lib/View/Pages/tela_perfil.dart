@@ -1,3 +1,4 @@
+import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/Enum/Perfil.dart';
 import 'package:espectrum_front/Model/UsuarioModel.dart';
@@ -122,7 +123,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                   token: token ?? '',
                   nome: tmpNome.text.trim(),
                   email: tmpEmail.text.trim(),
-                  numeroTelefone: tmpTel.text.trim(),
+                  numeroTelefone: FormatadorTelefone.apenasDigitos(tmpTel.text),
                 );
                 if (!mounted) return;
                 setState(() => _usuario = atualizado);
