@@ -65,67 +65,73 @@ class _HomeProfessorState extends State<HomeProfessor> {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                InfoHomeProfessorEResponsavel(nomePerfil: "Professor"),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    InfoHomeProfessorEResponsavel(nomePerfil: "Professor"),
 
-                const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                if (_isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else if (_errorMessage != null)
-                  Text(
-                    "Erro ao carregar pacientes: $_errorMessage",
-                    style: const TextStyle(color: Colors.red),
-                  )
-                else if (_pacientes.isEmpty)
-                  const Text(
-                    "Você ainda não tem pacientes vinculados.",
-                    style: TextStyle(color: Colors.grey),
-                  )
-                else
-                  // Espalha a lista dinâmica de Cartões
-                  ..._pacientes.map((paciente) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: GestureDetector(
-                        onTap: () {
-                          // 🟢 Clicar no cartão leva para o Protocolo com o ID e Nome certos!
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PaginaProtocolo(
-                                pacienteId: paciente.id,
-                                nomePaciente: paciente.nome,
-                              ),
-                            ),
-                          );
-                        },
-                        child: CartaoPacienteHomeSemHistorico(
-                          nomePaciente: paciente.nome,
-                          data: DateTime.now(), // Temporário (ou pega do DTO)
-                          idade: 5, // Temporário
-                          status: "Em Progresso", // Temporário
-                          corStatus: CoresPadrao.emProgressoCor,
-                          onContinuar: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PaginaProtocolo(
-                                  pacienteId: paciente.id,
-                                  nomePaciente: paciente.nome,
+                    if (_isLoading)
+                      const Center(child: CircularProgressIndicator())
+                    else if (_errorMessage != null)
+                      Text(
+                        "Erro ao carregar pacientes: $_errorMessage",
+                        style: const TextStyle(color: Colors.red),
+                      )
+                    else if (_pacientes.isEmpty)
+                      const Text(
+                        "Você ainda não tem pacientes vinculados.",
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    else
+                      // Espalha a lista dinâmica de Cartões
+                      ..._pacientes.map((paciente) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: GestureDetector(
+                            onTap: () {
+                              // 🟢 Clicar no cartão leva para o Protocolo com o ID e Nome certos!
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaginaProtocolo(
+                                    pacienteId: paciente.id,
+                                    nomePaciente: paciente.nome,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  }).toList(),
-              ],
+                              );
+                            },
+                            child: CartaoPacienteHomeSemHistorico(
+                              nomePaciente: paciente.nome,
+                              data:
+                                  DateTime.now(), // Temporário (ou pega do DTO)
+                              idade: 5, // Temporário
+                              status: "Em Progresso", // Temporário
+                              corStatus: CoresPadrao.emProgressoCor,
+                              onContinuar: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaginaProtocolo(
+                                      pacienteId: paciente.id,
+                                      nomePaciente: paciente.nome,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -133,17 +139,22 @@ class _HomeProfessorState extends State<HomeProfessor> {
 
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
-        child: BotaoGrande(
-          texto: "Iniciar Protocolo",
-          caminho: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Por favor, clique no cartão de um paciente acima para iniciar o protocolo!',
-                ),
-              ),
-            );
-          },
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: BotaoGrande(
+              texto: "Iniciar Protocolo",
+              caminho: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Por favor, clique no cartão de um paciente acima para iniciar o protocolo!',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
