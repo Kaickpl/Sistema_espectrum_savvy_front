@@ -178,6 +178,7 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                       final questao = widget.questoesDaCategoria[index];
                       return WidgetQuestaoSanfona(
                         questao: questao,
+                        numeroDaQuestao: index + 1,
 
                         AoResponder: () async {
                           try {
