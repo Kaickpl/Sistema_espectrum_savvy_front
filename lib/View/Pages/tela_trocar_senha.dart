@@ -1,15 +1,18 @@
+import 'package:espectrum_front/Services/UsuarioServiceTrocarSenha.dart';
 import 'package:espectrum_front/View/Pages/tela_inicial.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
 
 import '../Widgets/drawer_padrao.dart';
 import '../Widgets/fundo_botão.dart';
-import '../Widgets/icon_text.dart';
 import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
+import '../Widgets/ValidadorSenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
-  const TelaTrocarSenha({super.key});
+  final String email; // recebido da tela anterior
+
+  const TelaTrocarSenha({super.key, required this.email});
 
   @override
   State<TelaTrocarSenha> createState() => _TelaTrocarSenhaState();
@@ -18,19 +21,91 @@ class TelaTrocarSenha extends StatefulWidget {
 class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
   bool obscureTextSenha = true;
   bool obscureTextConfirma = true;
+  bool _carregando = false;
+  bool _reenviando = false;
 
+  final _tokenController = TextEditingController();
+  final _senhaController = TextEditingController();
+  final _confirmaController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _tokenController.dispose();
+    _senhaController.dispose();
+    _confirmaController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _trocarSenha() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _carregando = true);
+
+    try {
+      await UsuarioServiceTrocarSenha.redefinirSenha(
+        email: widget.email,
+        token: _tokenController.text.trim(),
+        novaSenha: _senhaController.text,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Senha alterada com sucesso!')));
+
+      // Vai para a tela inicial e limpa o histórico de navegação
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const PaginaInicial()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  Future<void> _reenviarCodigo() async {
+    setState(() => _reenviando = true);
+
+    try {
+      await UsuarioServiceTrocarSenha.solicitarReset(widget.email);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Código reenviado para ${widget.email}')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _reenviando = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      appBar: AppBarPadrao(
-        nome: 'Trocar Senha',
-      ),
-      drawer: DrawerPadrao(),
-
+      appBar: AppBarPadrao(nome: 'Trocar Senha'),
 
       body: SafeArea(
         bottom: false,
@@ -58,7 +133,7 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                   SizedBox(height: 12),
 
                   Text(
-                    "Crie uma nova senha segura",
+                    "Digite o código enviado para ${widget.email} e crie uma nova senha segura",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -68,110 +143,117 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                   Form(
                     key: _formKey,
 
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Container(
+                        width: double.infinity,
 
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
 
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
 
-                        child: Column(
-                          children: [
-                            CampoTexto(
-                              label: "Senha",
-                              hintText: "Digite sua senha",
-                              keyboardType: TextInputType.text,
-                              obscureText: obscureTextSenha,
+                          child: Column(
+                            children: [
+                              CampoTexto(
+                                label: "Código",
+                                hintText: "Digite o código recebido",
+                                keyboardType: TextInputType.text,
+                                controller: _tokenController,
+                                maxLines: 1,
 
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Digite sua senha";
-                                }
-
-                                return null;
-                              },
-
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    obscureTextSenha =
-                                    !obscureTextSenha;
-                                  });
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Digite o código recebido";
+                                  }
+                                  return null;
                                 },
+                              ),
 
-                                icon: Icon(
-                                  obscureTextSenha
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: _reenviando
+                                      ? null
+                                      : _reenviarCodigo,
+                                  child: _reenviando
+                                      ? SizedBox(
+                                          height: 14,
+                                          width: 14,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : Text("Reenviar código"),
                                 ),
                               ),
-                            ),
 
-                            SizedBox(height: 12),
+                              SizedBox(height: 4),
 
-                            CampoTexto(
-                              label: "Confirmar Senha",
-                              hintText: "Repita sua senha",
-                              keyboardType: TextInputType.text,
-                              obscureText: obscureTextConfirma,
+                              CampoTexto(
+                                label: "Senha",
+                                hintText: "Digite sua senha",
+                                keyboardType: TextInputType.text,
+                                obscureText: obscureTextSenha,
+                                controller: _senhaController,
+                                validator: validarSenhaForte,
 
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Confirme sua senha";
-                                }
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      obscureTextSenha = !obscureTextSenha;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    obscureTextSenha
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                ),
+                                maxLines: 1,
+                              ),
 
-                                return null;
-                              },
+                              ValidadorSenha(controller: _senhaController),
 
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    obscureTextConfirma =
-                                    !obscureTextConfirma;
-                                  });
+                              SizedBox(height: 4),
+
+                              CampoTexto(
+                                label: "Confirmar Senha",
+                                hintText: "Repita sua senha",
+                                keyboardType: TextInputType.text,
+                                obscureText: obscureTextConfirma,
+                                controller: _confirmaController,
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Confirme sua senha";
+                                  }
+                                  if (value != _senhaController.text) {
+                                    return "As senhas não coincidem";
+                                  }
+                                  return null;
                                 },
 
-                                icon: Icon(
-                                  obscureTextConfirma
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      obscureTextConfirma =
+                                          !obscureTextConfirma;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    obscureTextConfirma
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
                                 ),
+                                maxLines: 1,
                               ),
-                            ),
-                            Padding(padding: EdgeInsets.only(
-                              left: 15,
-                              right: 15,
-                              top: 15,
-                              bottom: MediaQuery.of(context).viewInsets.bottom,
-                            ),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.90,
-
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  children: [
-                                    IconText(texto: 'Mínimo de 8 caracteres', icone: Icons.check_circle,),
-                                    SizedBox(height: 3,),
-                                    IconText(texto: 'Mínimo de uma letra maiúscula', icone: Icons.check_circle,),
-                                    SizedBox(height: 3,),
-                                    IconText(texto: 'Mínimo de uma letra minúscula', icone: Icons.check_circle,),
-                                    SizedBox(height: 3,),
-                                    IconText(texto: 'Mínimo de um número', icone: Icons.check_circle,),
-
-                                  ],
-                                ),
-                            ),
-                            ),
-
-
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -186,35 +268,29 @@ class _TelaTrocarSenhaState extends State<TelaTrocarSenha> {
                           horizontal: 100,
                           vertical: 24,
                         ),
-
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
 
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                              const PaginaInicial(),
+                      onPressed: _carregando ? null : _trocarSenha,
+
+                      child: _carregando
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            )
+                          : Text(
+                              "Salvar",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          );
-                        }
-                      },
-
-                      child: Text(
-                        "Entrar",
-
-                        style: TextStyle(
-                          color:
-                          Theme.of(context)
-                              .colorScheme
-                              .onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ),
                   ),
 

@@ -12,12 +12,15 @@ class RodaPe extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
-          child: Text(
-            '© Aplicativo Desenvolvido \n pela Turma 2026.1',
-            style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface),
-            textAlign: TextAlign.right,
+            child: Text(
+              '© Este aplicativo foi desenvolvido\npela Turma de Mobile 2026.1.',
+              style: TextStyle(
+                fontSize: 10,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.right,
+            ),
           ),
-    ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16),
             height: 20,
@@ -26,13 +29,14 @@ class RodaPe extends StatelessWidget {
             alignment: Alignment.center,
           ),
           Flexible(
-
-
-          child: Text(
-            'Universidade de Pernambuco \n Professor Élisson Rocha',
-            style: TextStyle(fontSize: 10,color: Theme.of(context).colorScheme.onSurface),
-            textAlign: TextAlign.left,
-          ),
+            child: Text(
+              'Universidade de Pernambuco \n Professor Élisson Rocha',
+              style: TextStyle(
+                fontSize: 10,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.left,
+            ),
           ),
         ],
       ),

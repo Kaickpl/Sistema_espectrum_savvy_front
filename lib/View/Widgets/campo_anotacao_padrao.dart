@@ -33,7 +33,7 @@ class CampoAnotacaoPadrao extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],
@@ -49,7 +49,7 @@ class CampoAnotacaoPadrao extends StatelessWidget {
             hintStyle: TextStyle(fontSize: 14),
             alignLabelWithHint: true,
             filled: true,
-            fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+            fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
             
             // Borda padrão
             enabledBorder: OutlineInputBorder(

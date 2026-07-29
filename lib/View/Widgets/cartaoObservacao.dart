@@ -33,53 +33,56 @@ class CartaoObservacao extends StatelessWidget {
     final cores = tema.colorScheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        height: 180,
-        width: 340,
-        decoration: BoxDecoration(
-          color: cores.surface,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // etiqueta de status
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 30,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: corStatus.withOpacity(0.2),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        status,
-                        style: TextStyle(color: corStatus, fontSize: 10),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 340),
+        child: Container(
+          height: 180,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: cores.surface,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // etiqueta de status
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 30,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: corStatus.withOpacity(0.2),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          status,
+                          style: TextStyle(color: corStatus, fontSize: 10),
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    '${data.day}/${data.month}/${data.year}',
-                    style: TextStyle(
-                      color: cores.onSurface.withOpacity(0.3),
-                      fontSize: 12,
+                    Text(
+                      '${data.day}/${data.month}/${data.year}',
+                      style: TextStyle(
+                        color: cores.onSurface.withOpacity(0.3),
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Text(titulo),
-              Text(
-                texto,
-                style: TextStyle(color: cores.onSurface.withOpacity(0.3)),
-              ),
-            ],
+                  ],
+                ),
+                Text(titulo),
+                Text(
+                  texto,
+                  style: TextStyle(color: cores.onSurface.withOpacity(0.3)),
+                ),
+              ],
+            ),
           ),
         ),
       ),

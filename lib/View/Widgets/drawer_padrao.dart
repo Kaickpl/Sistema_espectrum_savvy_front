@@ -1,121 +1,266 @@
+import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/tela_perfil.dart';
 import 'package:espectrum_front/View/Pages/tela_suporte.dart';
+import 'package:espectrum_front/View/Pages/tela_visualizar_pacientes.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/main.dart';
 
+import '../../Services/AuthService.dart';
+import '../../Services/TokenStorage.dart';
+
 class DrawerPadrao extends StatelessWidget {
-  const DrawerPadrao({super.key});
+  /// Defina como [false] nas telas de login, cadastro e recuperação de senha.
+  final bool mostrarLogout;
 
-  @override
-  Widget build(BuildContext context) {
+  const DrawerPadrao({super.key, this.mostrarLogout = true});
 
-    bool isDarkMode =
-        Theme.of(context).brightness == Brightness.dark;
+  void _logout(BuildContext context) async {
+    Navigator.pop(context); // fecha o drawer
 
-    return Drawer(
-      shadowColor: Theme.of(context).colorScheme.onPrimary,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+    await AuthService.logout();
 
-      child: ListView(
-        padding: EdgeInsets.zero,
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const PaginaInicial()),
+      (route) => false, // remove todo o histórico de navegação
+    );
+  }
 
-        children: [
-
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-
-              children: [
-
-                Icon(
-                  Icons.settings,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  size: 36,
-                ),
-
-                SizedBox(height: 12),
-
-                Text(
-                  "Configurações",
-
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+  void _confirmarLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Sair"),
+        content: const Text("Tem certeza que deseja sair?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
           ),
-
-          ListTile(
-            leading: Icon(
-              Icons.support_agent_rounded,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-
-            title: Text(
-              "Suporte e Ajuda",
-
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx); // fecha o diálogo
+              _logout(context); // navega para login
+            },
+            child: Text(
+              "Sair",
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.bold,
               ),
             ),
-
-            onTap: () {
-              Navigator.pop(context);
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TelaSuporte(),
-                ),
-              );
-            },
-          ),
-
-          Divider(height: 32),
-
-          SwitchListTile(
-            secondary: Icon(
-              isDarkMode
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-
-            title: Text(
-              "Modo Escuro",
-
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-
-            value: isDarkMode,
-
-            activeColor:
-            Theme.of(context).colorScheme.onPrimary,
-
-            onChanged: (bool value) {
-
-              temaApp.value =
-              value
-                  ? ThemeMode.dark
-                  : ThemeMode.light;
-            },
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return Drawer(
+      shadowColor: colors.onPrimary,
+      backgroundColor: colors.primary,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // ── Header ───────────────────────────────────────────────
+            _DrawerHeader(),
+
+            // ── Itens principais ─────────────────────────────────────
+            Expanded(
+              child: FutureBuilder<String?>(
+                future: TokenStorage.lerPerfil(),
+                builder: (context, snapshot) {
+                  final perfil = snapshot.data;
+                  final podeVerPacientes =
+                      perfil == 'ROLE_TERAPEUTA' ||
+                      perfil == 'ROLE_SUPERVISOR_ESTAGIO';
+
+                  return ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      _DrawerItem(
+                        icone: Icons.person,
+                        titulo: "Perfil",
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TelaPerfil(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const _Divisor(),
+
+                      if (podeVerPacientes) ...[
+                        _DrawerItem(
+                          icone: Icons.groups_outlined,
+                          titulo: "Pacientes",
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const TelaVisualizarPacientes(),
+                              ),
+                            );
+                          },
+                        ),
+                        const _Divisor(),
+                      ],
+
+                      _DrawerItem(
+                        icone: Icons.support_agent_rounded,
+                        titulo: "Suporte e Ajuda",
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TelaSuporte(),
+                            ),
+                          );
+                        },
+                      ),
+                      const _Divisor(),
+
+                      // ── Modo escuro ───────────────────────────────────
+                      SwitchListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                        secondary: Icon(
+                          isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                          color: colors.onPrimary,
+                        ),
+                        title: Text(
+                          "Modo Escuro",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colors.onPrimary,
+                          ),
+                        ),
+                        value: isDarkMode,
+                        activeColor: colors.onPrimary,
+                        onChanged: (value) {
+                          temaApp.value = value
+                              ? ThemeMode.dark
+                              : ThemeMode.light;
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+
+            // ── Logout (só aparece quando mostrarLogout == true) ──────
+            if (mostrarLogout) ...[
+              const _Divisor(),
+              _DrawerItem(
+                icone: Icons.logout_rounded,
+                titulo: "Sair",
+                corIcone: colors.error,
+                corTexto: colors.error,
+                onTap: () => _confirmarLogout(context),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Widgets internos ────────────────────────────────────────────────────────
+
+class _DrawerHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+      decoration: BoxDecoration(
+        color: colors.primary,
+        border: Border(
+          bottom: BorderSide(color: colors.onPrimary.withOpacity(0.15)),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.settings, color: colors.onPrimary, size: 36),
+          const SizedBox(height: 12),
+          Text(
+            "Configurações",
+            style: TextStyle(
+              color: colors.onPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final IconData icone;
+  final String titulo;
+  final VoidCallback onTap;
+  final Color? corIcone;
+  final Color? corTexto;
+
+  const _DrawerItem({
+    required this.icone,
+    required this.titulo,
+    required this.onTap,
+    this.corIcone,
+    this.corTexto,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: Icon(icone, color: corIcone ?? colors.onPrimary),
+      title: Text(
+        titulo,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: corTexto ?? colors.onPrimary,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+}
+
+class _Divisor extends StatelessWidget {
+  const _Divisor();
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      indent: 20,
+      endIndent: 20,
+      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
     );
   }
 }

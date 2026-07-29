@@ -1,5 +1,5 @@
-import 'package:espectrum_front/View/Widgets/campo_anotacao_padrao.dart';
 import 'package:flutter/material.dart';
+import 'package:espectrum_front/View/Widgets/campo_anotacao_padrao.dart';
 
 // O nome correto para esse topo da tela!
 class InfoQuestoesENomePaciente extends StatelessWidget {
@@ -10,7 +10,7 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
   final int questoesRespondidas;
   final int totalDeQuestoes;
   final String nomePaciente;
-  final TextEditingController controller;
+  final TextEditingController? comentarioController;
   final String tituloComentario;
   final String dicaTextoComentario;
 
@@ -23,15 +23,15 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
     required this.questoesRespondidas,
     required this.totalDeQuestoes,
     required this.nomePaciente,
-    required this.controller,
-    required this.tituloComentario,
-    required this.dicaTextoComentario,
+    this.comentarioController,
+    this.tituloComentario = "Comentários",
+    this.dicaTextoComentario = "Anote aqui suas observações.",
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final double porcentagemProgresso = totalDeQuestoes > 0 
-        ? questoesRespondidas / totalDeQuestoes 
+    final double porcentagemProgresso = totalDeQuestoes > 0
+        ? questoesRespondidas / totalDeQuestoes
         : 0.0;
 
     return Column(
@@ -40,7 +40,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
         Center(
           child: CircleAvatar(
             radius: 36,
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.30),
             child: Icon(
               iconePrincipal,
               color: Theme.of(context).colorScheme.primary,
@@ -49,14 +51,16 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         Text(
           tituloPrincipal,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface, // Ajustado de onBackground
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface, // Ajustado de onBackground
           ),
         ),
         const SizedBox(height: 8),
@@ -65,7 +69,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface, // Ajustado de onBackground
           ),
         ),
 
@@ -121,7 +127,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.90),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -134,11 +142,12 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      '${questoesRespondidas.toString().padLeft(2, '0')}/'+ '${totalDeQuestoes.toString().padLeft(2, '0')}',
+                      '${questoesRespondidas.toString().padLeft(2, '0')}/' +
+                          '${totalDeQuestoes.toString().padLeft(2, '0')}',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -146,7 +155,7 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
                       "Questões",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                   ],
@@ -160,7 +169,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.90),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -177,7 +188,7 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -186,7 +197,7 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
                       "Paciente",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                   ],
@@ -201,7 +212,9 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.90),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -220,7 +233,7 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   const Spacer(),
@@ -228,7 +241,7 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
                     '$questoesRespondidas/$totalDeQuestoes',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -237,11 +250,13 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
-                  minHeight: 8, // Altura da barrinha
-                  value: porcentagemProgresso, // Usa a nossa matemática!
-                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.10),
+                  minHeight: 8,
+                  value: porcentagemProgresso,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.onSecondary.withOpacity(0.20),
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
               ),
@@ -249,10 +264,14 @@ class InfoQuestoesENomePaciente extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 16),
-
-        CampoAnotacaoPadrao(controller: controller, titulo: tituloComentario, dicaTexto: dicaTextoComentario)
-
+        if (comentarioController != null) ...[
+          const SizedBox(height: 16),
+          CampoAnotacaoPadrao(
+            controller: comentarioController!,
+            titulo: tituloComentario,
+            dicaTexto: dicaTextoComentario,
+          ),
+        ],
       ],
     );
   }

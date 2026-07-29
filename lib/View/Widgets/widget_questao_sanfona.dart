@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
+import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 
 class WidgetQuestaoSanfona extends StatefulWidget {
-  final QuestaoModelo questao;
+  final int numeroDaQuestao;
+  final AtividadeSessaoModel questao;
   final VoidCallback AoResponder;
 
-  final ExpansibleController controlador;
+  // Corrigido o tipo para o controlador nativo do Flutter
+  final ExpansionTileController controlador;
   final Function(bool) aoMudarEstadoSanfona;
 
   const WidgetQuestaoSanfona({
@@ -13,7 +16,8 @@ class WidgetQuestaoSanfona extends StatefulWidget {
     required this.questao,
     required this.AoResponder,
     required this.controlador,
-    required this.aoMudarEstadoSanfona
+    required this.aoMudarEstadoSanfona,
+    required this.numeroDaQuestao
   });
 
   @override
@@ -31,100 +35,145 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
     4: "N/A (não aplicável)",
   };
 
+  // Cores fixas da escala de semáforo (não mudam com o tema)
   final Map<int, Color> coresNotas = {
-    0 : Colors.red.withValues(alpha: 0.3),
-    1 : Colors.orange.withValues(alpha: 0.3),
-    2 : Colors.amber.withValues(alpha: 0.3),
-    3 : Colors.green.withValues(alpha: 0.3),
-    4 : Colors.grey.withValues(alpha: 0.3)
+    0: Colors.red,
+    1: Colors.orange,
+    2: Colors.amber,
+    3: Colors.green,
+    4: Colors.grey,
+  };
+
+  bool get estaRespondida => widget.questao.pontuacao != null;
+
+  // Cor da nota atual da atividade, sempre a partir do valor numerico
+  // (o campo "pontuacao" vem do backend como o nome do enum, ex:
+  // "DEMONSTRA_CONSISTENTEMENTE", entao nao pode ser comparado com o
+  // numero da nota diretamente).
+  Color _corSelecionada(BuildContext context) {
+    if (!estaRespondida) {
+      return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+    }
+    return coresNotas[widget.questao.valorPontuacao] ?? Colors.green;
   }
-;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        // Fundo do cartão sempre obedece o surface do tema atual
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          // Borda sutil com base na cor do texto do cartão
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
         ),
       ),
       child: ExpansionTile(
         controller: widget.controlador,
         onExpansionChanged: widget.aoMudarEstadoSanfona,
-        shape: Border(),
-        collapsedShape: Border(),
-        leading: Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.question_mark_rounded,
-            size: 16,
-            color: Theme.of(context).colorScheme.onPrimary,
+        shape: const Border(),
+        collapsedShape: const Border(),
+         leading: CircleAvatar(
+          radius: 18, // Dá um respiro maior para caber o 10, 11, 20...
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Text(
+            widget.numeroDaQuestao.toString(),
+            style: TextStyle(
+              fontSize: 15, // Diminuímos um tiquinho para encaixar como uma luva
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
         ),
+      
 
         title: Text(
-          widget.questao.titulo,
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
+          widget.questao.nomeAtividade,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+            // Texto do título obedece o onSurface para dar contraste com o fundo
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
         ),
 
         trailing: Container(
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: widget.questao.estaRespondida
-                ? Colors.green.withOpacity(0.2)
-                : Theme.of(context).colorScheme.surfaceVariant,
+            color: estaRespondida
+                ? _corSelecionada(context).withValues(
+                    alpha: 0.2,
+                  ) 
+                : Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: widget.questao.estaRespondida
-              ? Icon(Icons.check, size: 16, color: Colors.green)
-              : Icon(Icons.access_time_rounded),
+          child: estaRespondida
+              ? Icon(
+                  Icons.check,
+                  size: 16,
+                  color: _corSelecionada(context),
+                ) // 🟢 Ícone agora adota a cor correta
+              : Icon(
+                  Icons.access_time_rounded,
+                  size: 16,
+                  // Ícone do relógio pegando a cor de texto (onSurface) com opacidade
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
         ),
 
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Selecione a pontuação",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
 
                 Column(
                   children: notasPossiveis.map((nota) {
-                    bool selecionado = widget.questao.nota == nota;
+                    bool selecionado =
+                        estaRespondida && widget.questao.valorPontuacao == nota;
 
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
                           setState(() {
-                            widget.questao.nota = nota;
+                            widget.questao.valorPontuacao = nota;
+                            widget.questao.pontuacao = nota.toString();
                           });
                           widget.AoResponder();
                         },
                         child: Container(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
+                            // Se selecionado, fundo fica com 10% da cor da nota. Se não, fica transparente (mostrando a surface do cartão)
                             color: selecionado
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context,).colorScheme.surface.withOpacity(0.4),
+                                ? coresNotas[nota]!.withValues(alpha: 0.1)
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
+                              // Borda colorida se selecionado, senão uma borda neutra baseada no texto do tema
                               color: selecionado
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.transparent,
+                                  ? coresNotas[nota]!
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.2),
                             ),
                           ),
                           child: Row(
@@ -133,14 +182,18 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                 width: 36,
                                 height: 36,
                                 decoration: BoxDecoration(
+                                  // Bolinha totalmente colorida se selecionada
                                   color: selecionado
-                                      ? Theme.of(context).colorScheme.primary
-                                      : coresNotas[nota]!,
+                                      ? coresNotas[nota]
+                                      : Colors.transparent,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: selecionado
-                                        ? Theme.of(context).colorScheme.onPrimary
-                                        : Theme.of(context).colorScheme.onSurface
+                                        ? Colors.transparent
+                                        : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Center(
@@ -148,29 +201,36 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                     nota.toString(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      // Se selecionado, o número na bolinha colorida fica branco. Senão, fica com a cor do texto do tema.
                                       color: selecionado
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.onSurface
+                                          ? Colors.white
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onSecondary.withValues(alpha: 0.8),
                                     ),
                                   ),
                                 ),
                               ),
 
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
 
                               Expanded(
                                 child: Text(
                                   descricoesNotas[nota] ?? "",
                                   style: TextStyle(
                                     fontSize: 14,
-                                  color: selecionado
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: selecionado
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                                    // Se selecionado, o texto de descrição pega a cor do semáforo. Senão, usa a cor de texto padrão do tema atual.
+                                    color: selecionado
+                                        ? coresNotas[nota]
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSecondary.withValues(alpha: 0.8),
+                                    fontWeight: selecionado
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
-                                ))
+                                ),
+                              ),
                             ],
                           ),
                         ),

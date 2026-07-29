@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
 
 class CartaoAluno extends StatelessWidget {
+  final String id;
   final String nome;
   final int numPacientes;
+  final VoidCallback? onDelete;
 
   const CartaoAluno({
     super.key,
+    required this.id,
     required this.nome,
     required this.numPacientes,
+    this.onDelete,
   });
 
   @override
@@ -80,7 +84,7 @@ class CartaoAluno extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: onDelete,
                 icon: Icon(
                   Icons.delete_outline,
                   color: cores.error.withOpacity(0.7),
@@ -106,7 +110,7 @@ class CartaoAluno extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        TelaVincularPacientes(nomeAlunoPreSelecionado: nome),
+                        TelaVincularPacientes(idTerapeutaPreSelecionado: id),
                   ),
                 );
               },
