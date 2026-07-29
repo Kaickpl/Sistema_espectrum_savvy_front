@@ -46,14 +46,15 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
 
   bool get estaRespondida => widget.questao.pontuacao != null;
 
-  // 🟢 NOVO: Função que descobre qual é a cor da nota atual da atividade
+  // Cor da nota atual da atividade, sempre a partir do valor numerico
+  // (o campo "pontuacao" vem do backend como o nome do enum, ex:
+  // "DEMONSTRA_CONSISTENTEMENTE", entao nao pode ser comparado com o
+  // numero da nota diretamente).
   Color _corSelecionada(BuildContext context) {
     if (!estaRespondida) {
       return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
     }
-    // Tenta converter a pontuação atual em inteiro, se falhar volta pra verde como padrão
-    int nota = int.tryParse(widget.questao.pontuacao!) ?? 3;
-    return coresNotas[nota] ?? Colors.green;
+    return coresNotas[widget.questao.valorPontuacao] ?? Colors.green;
   }
 
   @override
@@ -146,8 +147,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                 Column(
                   children: notasPossiveis.map((nota) {
                     bool selecionado =
-                        estaRespondida &&
-                        widget.questao.pontuacao == nota.toString();
+                        estaRespondida && widget.questao.valorPontuacao == nota;
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
