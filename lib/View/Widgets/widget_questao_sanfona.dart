@@ -3,6 +3,7 @@ import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 
 class WidgetQuestaoSanfona extends StatefulWidget {
+  final int numeroDaQuestao;
   final AtividadeSessaoModel questao;
   final VoidCallback AoResponder;
 
@@ -16,6 +17,7 @@ class WidgetQuestaoSanfona extends StatefulWidget {
     required this.AoResponder,
     required this.controlador,
     required this.aoMudarEstadoSanfona,
+    required this.numeroDaQuestao
   });
 
   @override
@@ -61,7 +63,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         // Fundo do cartão sempre obedece o surface do tema atual
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           // Borda sutil com base na cor do texto do cartão
@@ -73,18 +75,19 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
         onExpansionChanged: widget.aoMudarEstadoSanfona,
         shape: const Border(),
         collapsedShape: const Border(),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.help_outline,
-            size: 16,
-            color: Theme.of(context).colorScheme.onPrimary,
+         leading: CircleAvatar(
+          radius: 18, // Dá um respiro maior para caber o 10, 11, 20...
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Text(
+            widget.numeroDaQuestao.toString(),
+            style: TextStyle(
+              fontSize: 15, // Diminuímos um tiquinho para encaixar como uma luva
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
         ),
+      
 
         title: Text(
           widget.questao.nomeAtividade,
@@ -92,7 +95,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
             fontSize: 17,
             fontWeight: FontWeight.w500,
             // Texto do título obedece o onSurface para dar contraste com o fundo
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
 
@@ -103,10 +106,10 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
             color: estaRespondida
                 ? _corSelecionada(context).withValues(
                     alpha: 0.2,
-                  ) // 🟢 Agora usa a cor dinâmica com fundo transparente
+                  ) 
                 : Theme.of(
                     context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.1),
+                  ).colorScheme.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: estaRespondida
@@ -203,7 +206,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                           ? Colors.white
                                           : Theme.of(
                                               context,
-                                            ).colorScheme.onSurface,
+                                            ).colorScheme.onSecondary.withValues(alpha: 0.8),
                                     ),
                                   ),
                                 ),
@@ -221,7 +224,7 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                         ? coresNotas[nota]
                                         : Theme.of(
                                             context,
-                                          ).colorScheme.onSurface,
+                                          ).colorScheme.onSecondary.withValues(alpha: 0.8),
                                     fontWeight: selecionado
                                         ? FontWeight.bold
                                         : FontWeight.normal,

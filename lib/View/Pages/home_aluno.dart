@@ -27,7 +27,6 @@ class _HomeAlunoState extends State<HomeAluno> {
     _carregarPacientes();
   }
 
-  // 🟢 MÉTODO ATUALIZADO PARA USAR O VINCULO SERVICE
   Future<void> _carregarPacientes() async {
     try {
       // 1. Pega o token salvo no celular
