@@ -214,8 +214,19 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 20),
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cores.primary,
+                foregroundColor: cores.onPrimary,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
