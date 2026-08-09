@@ -12,9 +12,6 @@ import '../Widgets/drawer_padrao.dart';
 import '../Widgets/roda_pe.dart';
 import '../Widgets/widget_input_acesso.dart';
 
-// ─────────────────────────────────────────────────────────────
-// Aparência por perfil – usa o enum compartilhado Model/Enum/Perfil.dart
-// ─────────────────────────────────────────────────────────────
 extension _PerfilUiExt on Perfil {
   IconData get icone {
     switch (this) {
@@ -42,10 +39,6 @@ extension _PerfilUiExt on Perfil {
     }
   }
 }
-
-// ─────────────────────────────────────────────────────────────
-// TELA PRINCIPAL
-// ─────────────────────────────────────────────────────────────
 
 class TelaPerfil extends StatefulWidget {
   const TelaPerfil({super.key});
@@ -411,79 +404,83 @@ class _TelaPerfilState extends State<TelaPerfil> {
       endDrawer: const DrawerPadrao(),
       body: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // ── Banner com avatar ──
-              _buildBanner(cores, usuario),
+        child: RefreshIndicator(
+          onRefresh: _carregarPerfil,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                // ── Banner com avatar ──
+                _buildBanner(cores, usuario),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Dados pessoais
-                    CategoriaAtributos(
-                      nome: 'Dados Pessoais',
-                      icone: Icons.person_rounded,
-                    ),
-                    const SizedBox(height: 12),
-                    _InfoCard(
-                      cores: cores,
-                      campos: [
-                        _Campo(Icons.badge_rounded, 'Nome', usuario.nome),
-                        _Campo(Icons.email_rounded, 'E-mail', usuario.email),
-                        _Campo(
-                          Icons.phone_rounded,
-                          'Telefone',
-                          usuario.numeroTelefone,
-                        ),
-                        _Campo(Icons.fingerprint_rounded, 'CPF', usuario.cpf),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Status da conta
-                    CategoriaAtributos(
-                      nome: 'Status da Conta',
-                      icone: Icons.shield_rounded,
-                    ),
-                    const SizedBox(height: 12),
-                    _CardStatus(cores: cores, ativo: usuario.isActive),
-
-                    if (usuario.tipo == Perfil.ROLE_SUPERVISOR_ESTAGIO &&
-                        (usuario.codigoConvite ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Dados pessoais
                       CategoriaAtributos(
-                        nome: 'Código de Convite',
-                        icone: Icons.qr_code_rounded,
+                        nome: 'Dados Pessoais',
+                        icone: Icons.person_rounded,
                       ),
                       const SizedBox(height: 12),
-                      _CardCodigoConvite(
+                      _InfoCard(
                         cores: cores,
-                        codigo: usuario.codigoConvite!,
-                        onCopiado: () => _mostrarSnack(
-                          'Código copiado!',
-                          const Color(0xFF4CAF50),
-                        ),
+                        campos: [
+                          _Campo(Icons.badge_rounded, 'Nome', usuario.nome),
+                          _Campo(Icons.email_rounded, 'E-mail', usuario.email),
+                          _Campo(
+                            Icons.phone_rounded,
+                            'Telefone',
+                            usuario.numeroTelefone,
+                          ),
+                          _Campo(Icons.fingerprint_rounded, 'CPF', usuario.cpf),
+                        ],
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Status da conta
+                      CategoriaAtributos(
+                        nome: 'Status da Conta',
+                        icone: Icons.shield_rounded,
+                      ),
+                      const SizedBox(height: 12),
+                      _CardStatus(cores: cores, ativo: usuario.isActive),
+
+                      if (usuario.tipo == Perfil.ROLE_SUPERVISOR_ESTAGIO &&
+                          (usuario.codigoConvite ?? '').isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        CategoriaAtributos(
+                          nome: 'Código de Convite',
+                          icone: Icons.qr_code_rounded,
+                        ),
+                        const SizedBox(height: 12),
+                        _CardCodigoConvite(
+                          cores: cores,
+                          codigo: usuario.codigoConvite!,
+                          onCopiado: () => _mostrarSnack(
+                            'Código copiado!',
+                            const Color(0xFF4CAF50),
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 20),
+
+                      // Botões de ação
+                      _buildBotoesAcao(cores, usuario),
+
+                      const SizedBox(height: 24),
                     ],
-
-                    const SizedBox(height: 20),
-
-                    // Botões de ação
-                    _buildBotoesAcao(cores, usuario),
-
-                    const SizedBox(height: 24),
-                  ],
+                  ),
                 ),
-              ),
 
-              const RodaPe(),
-            ],
+                const RodaPe(),
+              ],
+            ),
           ),
         ),
       ),

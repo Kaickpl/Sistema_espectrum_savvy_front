@@ -65,67 +65,71 @@ class _HomeResponsavelState extends State<HomeResponsavel> {
       endDrawer: DrawerPadrao(),
       body: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    InfoHomeProfessorEResponsavel(nomePerfil: "Responsável"),
+        child: RefreshIndicator(
+          onRefresh: _carregarPacientes,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      InfoHomeProfessorEResponsavel(nomePerfil: "Responsável"),
 
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    if (_isLoading)
-                      const Center(child: CircularProgressIndicator())
-                    else if (_errorMessage != null)
-                      Text(
-                        "Erro ao carregar pacientes: $_errorMessage",
-                        style: const TextStyle(color: Colors.red),
-                      )
-                    else if (_pacientes.isEmpty)
-                      const Text(
-                        "Você ainda não tem pacientes vinculados.",
-                        style: TextStyle(color: Colors.grey),
-                      )
-                    else
-                      ..._pacientes.map((paciente) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: CartaoPacienteHome(
-                            nomePaciente: paciente.nome,
-                            nivel: 3,
-                            idade: 5,
-                            status: "Em Progresso",
-                            corStatus: CoresPadrao.emProgressoCor,
-                            onContinuar: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaginaProtocolo(
-                                    pacienteId: paciente.id,
-                                    nomePaciente: paciente.nome,
+                      if (_isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else if (_errorMessage != null)
+                        Text(
+                          "Erro ao carregar pacientes: $_errorMessage",
+                          style: const TextStyle(color: Colors.red),
+                        )
+                      else if (_pacientes.isEmpty)
+                        const Text(
+                          "Você ainda não tem pacientes vinculados.",
+                          style: TextStyle(color: Colors.grey),
+                        )
+                      else
+                        ..._pacientes.map((paciente) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: CartaoPacienteHome(
+                              nomePaciente: paciente.nome,
+                              nivel: 3,
+                              idade: 5,
+                              status: "Em Progresso",
+                              corStatus: CoresPadrao.emProgressoCor,
+                              onContinuar: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaginaProtocolo(
+                                      pacienteId: paciente.id,
+                                      nomePaciente: paciente.nome,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            onHistorico: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaginaProtocolo(
-                                    pacienteId: paciente.id,
-                                    nomePaciente: paciente.nome,
+                                );
+                              },
+                              onHistorico: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaginaProtocolo(
+                                      pacienteId: paciente.id,
+                                      nomePaciente: paciente.nome,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      }).toList(),
-                  ],
+                                );
+                              },
+                            ),
+                          );
+                        }).toList(),
+                    ],
+                  ),
                 ),
               ),
             ),

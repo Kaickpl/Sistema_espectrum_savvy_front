@@ -4,6 +4,7 @@ import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
+import 'package:espectrum_front/View/Widgets/responsive_form_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
 import '../../Services/ProfessorService.dart';
@@ -150,226 +151,233 @@ class _CadastroProfessorState extends State<CadastroProfessor> {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LogoContainer(
-                  nomePage: 'Cadastro Professor',
-                  imagem: "assets/Images/Logo.png",
-                ),
-                SizedBox(height: 12),
-                CategoriaAtributos(
-                  nome: "Dados Professor      ",
-                  icone: Icons.person,
-                ),
-                SizedBox(height: 12),
-                CampoTexto(
-                  label: "Nome Completo",
-                  hintText: "Digite seu nome completo",
-                  keyboardType: TextInputType.name,
-                  controller: _nomeController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
-                CampoTexto(
-                  label: "Email",
-                  hintText: "Digite seu email",
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
-                    if (!value.contains("@")) return "Email inválido";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
-                CampoTexto(
-                  label: "Número de Telefone",
-                  hintText: "(11) 99999-9999",
-                  keyboardType: TextInputType.phone,
-                  controller: _telefoneController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
-                CampoTexto(
-                  label: "CPF",
-                  hintText: "000.000.000-00",
-                  keyboardType: TextInputType.number,
-                  controller: _cpfController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
+          child: ResponsiveFormContainer(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LogoContainer(
+                    nomePage: 'Cadastro Professor',
+                    imagem: "assets/Images/Logo.png",
+                  ),
+                  SizedBox(height: 12),
+                  CategoriaAtributos(
+                    nome: "Dados Professor      ",
+                    icone: Icons.person,
+                  ),
+                  SizedBox(height: 12),
+                  CampoTexto(
+                    label: "Nome Completo",
+                    hintText: "Digite seu nome completo",
+                    keyboardType: TextInputType.name,
+                    controller: _nomeController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "O campo não pode ser em vazio";
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  CampoTexto(
+                    label: "Email",
+                    hintText: "Digite seu email",
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "O campo não pode ser em vazio";
+                      if (!value.contains("@")) return "Email inválido";
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  CampoTexto(
+                    label: "Número de Telefone",
+                    hintText: "(11) 99999-9999",
+                    keyboardType: TextInputType.phone,
+                    controller: _telefoneController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "O campo não pode ser em vazio";
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 12),
+                  CampoTexto(
+                    label: "CPF",
+                    hintText: "000.000.000-00",
+                    keyboardType: TextInputType.number,
+                    controller: _cpfController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "O campo não pode ser em vazio";
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 12),
 
-                CategoriaAtributos(
-                  nome: "Dados Acadêmicos ",
-                  icone: Icons.work,
-                ),
-                SizedBox(height: 12),
+                  CategoriaAtributos(
+                    nome: "Dados Acadêmicos ",
+                    icone: Icons.work,
+                  ),
+                  SizedBox(height: 12),
 
-                CampoTexto(
-                  label: "Escola",
-                  hintText: "Digite a escola",
-                  keyboardType: TextInputType.text,
-                  controller: _escolaController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "O campo não pode ser em vazio";
-                    return null;
-                  },
-                ),
-                SizedBox(height: 12),
+                  CampoTexto(
+                    label: "Escola",
+                    hintText: "Digite a escola",
+                    keyboardType: TextInputType.text,
+                    controller: _escolaController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return "O campo não pode ser em vazio";
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 12),
 
-                if (_souTerapeuta && _meusPacientes.isNotEmpty) ...[
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 355),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Vincular Paciente (opcional)",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        DropdownButtonFormField<PacienteResumoModel>(
-                          value: _pacienteSelecionado,
-                          isExpanded: true,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSecondary,
-                            fontSize: 16,
-                          ),
-                          hint: Text(
-                            "Selecione um paciente",
+                  if (_souTerapeuta && _meusPacientes.isNotEmpty) ...[
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 355),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Vincular Paciente (opcional)",
                             style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.onSecondary,
                             ),
                           ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainer,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
+                          const SizedBox(height: 6),
+                          DropdownButtonFormField<PacienteResumoModel>(
+                            value: _pacienteSelecionado,
+                            isExpanded: true,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontSize: 16,
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
+                            hint: Text(
+                              "Selecione um paciente",
+                              style: TextStyle(
                                 color: Theme.of(
                                   context,
-                                ).scaffoldBackgroundColor,
-                                width: 1.5,
+                                ).colorScheme.onSecondary,
                               ),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 14,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainer,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: Theme.of(
+                                    context,
+                                  ).scaffoldBackgroundColor,
+                                  width: 1.5,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 14,
+                              ),
                             ),
+                            items: [
+                              const DropdownMenuItem<PacienteResumoModel>(
+                                value: null,
+                                child: Text("Nenhum"),
+                              ),
+                              ..._meusPacientes.map((paciente) {
+                                return DropdownMenuItem<PacienteResumoModel>(
+                                  value: paciente,
+                                  child: Text(paciente.nome),
+                                );
+                              }),
+                            ],
+                            onChanged: (value) {
+                              setState(() => _pacienteSelecionado = value);
+                            },
                           ),
-                          items: [
-                            const DropdownMenuItem<PacienteResumoModel>(
-                              value: null,
-                              child: Text("Nenhum"),
-                            ),
-                            ..._meusPacientes.map((paciente) {
-                              return DropdownMenuItem<PacienteResumoModel>(
-                                value: paciente,
-                                child: Text(paciente.nome),
-                              );
-                            }),
-                          ],
-                          onChanged: (value) {
-                            setState(() => _pacienteSelecionado = value);
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  if (_pacienteSelecionado != null) ...[
+                    if (_pacienteSelecionado != null) ...[
+                      SizedBox(height: 12),
+                      CampoTexto(
+                        label: "Ano Letivo",
+                        hintText: "Ex: 2024",
+                        keyboardType: TextInputType.number,
+                        controller: _anoLetivoController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "O ano letivo é obrigatório";
+                          }
+                          if (!RegExp(r'^\d{4}$').hasMatch(value)) {
+                            return "Deve conter exatamente 4 números (ex: 2024)";
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
                     SizedBox(height: 12),
-                    CampoTexto(
-                      label: "Ano Letivo",
-                      hintText: "Ex: 2024",
-                      keyboardType: TextInputType.number,
-                      controller: _anoLetivoController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "O ano letivo é obrigatório";
-                        }
-                        if (!RegExp(r'^\d{4}$').hasMatch(value)) {
-                          return "Deve conter exatamente 4 números (ex: 2024)";
-                        }
-                        return null;
-                      },
-                    ),
                   ],
                   SizedBox(height: 12),
-                ],
-                SizedBox(height: 12),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.055,
-                  ),
-                  child: ConteinerTermoDeUsoPrivacidade(),
-                ),
-
-                SizedBox(height: 12),
-
-                ElevatedButton(
-                  onPressed: _carregando ? null : _cadastrar,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.055,
                     ),
+                    child: ConteinerTermoDeUsoPrivacidade(),
                   ),
-                  child: _carregando
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        )
-                      : Text(
-                          "Cadastrar",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                ),
-                SizedBox(height: 12),
 
-                RodaPe(),
-              ],
+                  SizedBox(height: 12),
+
+                  ElevatedButton(
+                    onPressed: _carregando ? null : _cadastrar,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 40,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: _carregando
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                        : Text(
+                            "Cadastrar",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                  ),
+                  SizedBox(height: 12),
+
+                  RodaPe(),
+                ],
+              ),
             ),
           ),
         ),
