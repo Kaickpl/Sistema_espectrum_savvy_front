@@ -1,20 +1,15 @@
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Model/EnderecoModel.dart';
 import 'package:espectrum_front/Model/Enum/GrauAutismo.dart';
 import 'package:espectrum_front/Model/PacienteDetalheModel.dart';
 import 'package:espectrum_front/Services/PacienteService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
+import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
+import 'package:espectrum_front/View/Widgets/responsive_form_container.dart';
+import 'package:espectrum_front/View/Widgets/roda_pe.dart';
+import 'package:espectrum_front/View/Widgets/widget_input_acesso.dart';
 import 'package:flutter/material.dart';
 
-import '../../Widgets/app_bar_padrao.dart';
-import '../../Widgets/categoria_input.dart';
-import '../../Widgets/responsive_form_container.dart';
-import '../../Widgets/roda_pe.dart';
-import '../../Widgets/widget_input_acesso.dart';
-
-/// Tela de edição de um paciente já cadastrado. Carrega os dados atuais
-/// via [PacienteService.buscarPaciente] e salva as alterações via
-/// [PacienteService.editarPaciente]. Some paciente e endereço reaproveitam
-/// os mesmos campos do cadastro (CadastroPaciente).
 class TelaEditarPaciente extends StatefulWidget {
   final String pacienteId;
 
@@ -29,6 +24,12 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
   bool _carregando = true;
   bool _salvando = false;
   String? _erro;
+  bool _dadosAlterados = false;
+
+  PacienteDetalheModel? _pacienteAtual;
+
+  bool _editandoDados = false;
+  bool _editandoEndereco = false;
 
   final _nomeController = TextEditingController();
   final _cpfController = TextEditingController();
@@ -110,6 +111,24 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
     );
   }
 
+  String _formatarData(DateTime data) {
+    return "${data.day.toString().padLeft(2, '0')}/"
+        "${data.month.toString().padLeft(2, '0')}/"
+        "${data.year}";
+  }
+
+  String _iniciais(String nome) {
+    final partes = nome
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (partes.isEmpty) return "?";
+    if (partes.length == 1) return partes.first.substring(0, 1).toUpperCase();
+    return (partes.first.substring(0, 1) + partes.last.substring(0, 1))
+        .toUpperCase();
+  }
+
   Future<void> _carregarPaciente() async {
     setState(() {
       _carregando = true;
@@ -121,7 +140,9 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
         token ?? '',
         widget.pacienteId,
       );
-      _preencherFormulario(paciente);
+      _pacienteAtual = paciente;
+      _preencherFormularioDados(paciente);
+      _preencherFormularioEndereco(paciente.endereco);
     } on ApiException catch (e) {
       setState(() => _erro = e.message);
     } catch (_) {
@@ -131,7 +152,7 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
     }
   }
 
-  void _preencherFormulario(PacienteDetalheModel paciente) {
+  void _preencherFormularioDados(PacienteDetalheModel paciente) {
     _nomeController.text = paciente.nome;
     _cpfController.text = paciente.cpf ?? '';
     _generoSelecionado = _generos.contains(paciente.genero)
@@ -142,24 +163,31 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
     final nascimento = paciente.dataNascimento;
     if (nascimento != null) {
       _dataNascimentoSelecionada = nascimento;
-      _dataNascimentoController.text =
-          "${nascimento.day.toString().padLeft(2, '0')}/"
-          "${nascimento.month.toString().padLeft(2, '0')}/"
-          "${nascimento.year}";
+      _dataNascimentoController.text = _formatarData(nascimento);
     }
+  }
 
-    final endereco = paciente.endereco;
-    if (endereco != null) {
-      _cepController.text = endereco.cep;
-      _ruaController.text = endereco.rua;
-      _numeroController.text = endereco.numero;
-      _complementoController.text = endereco.complemento ?? '';
-      _bairroController.text = endereco.bairro;
-      _cidadeController.text = endereco.cidade;
-      _estadoSelecionado = _estados.contains(endereco.estado)
-          ? endereco.estado
-          : null;
-    }
+  void _preencherFormularioEndereco(EnderecoModel? endereco) {
+    if (endereco == null) return;
+    _cepController.text = endereco.cep;
+    _ruaController.text = endereco.rua;
+    _numeroController.text = endereco.numero;
+    _complementoController.text = endereco.complemento ?? '';
+    _bairroController.text = endereco.bairro;
+    _cidadeController.text = endereco.cidade;
+    _estadoSelecionado = _estados.contains(endereco.estado)
+        ? endereco.estado
+        : null;
+  }
+
+  void _cancelarEdicaoDados() {
+    if (_pacienteAtual != null) _preencherFormularioDados(_pacienteAtual!);
+    setState(() => _editandoDados = false);
+  }
+
+  void _cancelarEdicaoEndereco() {
+    _preencherFormularioEndereco(_pacienteAtual?.endereco);
+    setState(() => _editandoEndereco = false);
   }
 
   Future<void> _salvar() async {
@@ -181,7 +209,7 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
           "${data.month.toString().padLeft(2, '0')}-"
           "${data.day.toString().padLeft(2, '0')}";
 
-      await PacienteService.editarPaciente(
+      final atualizado = await PacienteService.editarPaciente(
         token: token ?? '',
         idPaciente: widget.pacienteId,
         dados: {
@@ -203,8 +231,13 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
       );
 
       if (!mounted) return;
-      _mostrarSnack("Paciente atualizado com sucesso!", Colors.green);
-      Navigator.pop(context, true);
+      setState(() {
+        _pacienteAtual = atualizado;
+        _dadosAlterados = true;
+        _editandoDados = false;
+        _editandoEndereco = false;
+      });
+      _mostrarSnack("Dados atualizados com sucesso!", Colors.green);
     } on ApiException catch (e) {
       _mostrarSnack(e.message, Theme.of(context).colorScheme.error);
     } catch (_) {
@@ -219,537 +252,657 @@ class _TelaEditarPacienteState extends State<TelaEditarPaciente> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      appBar: AppBarPadrao(nome: "Editar Paciente"),
-      body: SafeArea(
-        bottom: false,
-        child: _carregando
-            ? const Center(child: CircularProgressIndicator())
-            : _erro != null
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Text(
-                    _erro!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        if (didPop) return;
+        Navigator.pop(context, _dadosAlterados);
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        appBar: AppBarPadrao(nome: "Perfil do Paciente"),
+        body: SafeArea(
+          bottom: false,
+          child: _carregando
+              ? const Center(child: CircularProgressIndicator())
+              : _erro != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      _erro!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                   ),
-                ),
-              )
-            : SingleChildScrollView(
-                child: ResponsiveFormContainer(
+                )
+              : SingleChildScrollView(
                   child: Form(
                     key: _formKey,
                     child: Column(
                       children: [
-                        const SizedBox(height: 20),
-                        _buildSectionHeader(
-                          context,
-                          "Dados do Paciente",
-                          Icons.person,
-                        ),
-                        const SizedBox(height: 12),
-
-                        CampoTexto(
-                          label: "Nome Completo",
-                          hintText: "Digite o nome completo",
-                          keyboardType: TextInputType.name,
-                          controller: _nomeController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "O campo não pode ser vazio";
-                            }
-                            return null;
-                          },
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 12),
-
-                        CampoTexto(
-                          label: "CPF",
-                          hintText: "000.000.000-00",
-                          keyboardType: TextInputType.number,
-                          controller: _cpfController,
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 12),
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.055,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 355),
+                        _buildCabecalhoPerfil(context, _pacienteAtual!),
+                        ResponsiveFormContainer(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Data de Nascimento",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSecondary,
+                                _buildSecaoCard(
+                                  context: context,
+                                  titulo: "Dados Pessoais",
+                                  icone: Icons.person_outline,
+                                  editando: _editandoDados,
+                                  aoIniciarEdicao: () =>
+                                      setState(() => _editandoDados = true),
+                                  resumo: _resumoDadosPessoais(
+                                    context,
+                                    _pacienteAtual!,
                                   ),
+                                  formulario: _formularioDadosPessoais(context),
+                                  aoCancelar: _cancelarEdicaoDados,
                                 ),
-                                const SizedBox(height: 6),
-                                TextFormField(
-                                  controller: _dataNascimentoController,
-                                  readOnly: true,
-                                  style: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSecondary,
+                                const SizedBox(height: 16),
+                                _buildSecaoCard(
+                                  context: context,
+                                  titulo: "Endereço",
+                                  icone: Icons.location_on_outlined,
+                                  editando: _editandoEndereco,
+                                  aoIniciarEdicao: () =>
+                                      setState(() => _editandoEndereco = true),
+                                  resumo: _resumoEndereco(
+                                    context,
+                                    _pacienteAtual!.endereco,
                                   ),
-                                  decoration: InputDecoration(
-                                    hintText: "00/00/0000",
-                                    filled: true,
-                                    fillColor: Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainer,
-                                    suffixIcon: const Icon(
-                                      Icons.calendar_month,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Selecione a data";
-                                    }
-                                    return null;
-                                  },
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate:
-                                          _dataNascimentoSelecionada ??
-                                          DateTime.now(),
-                                      firstDate: DateTime(1900),
-                                      lastDate: DateTime.now(),
-                                      locale: const Locale('pt', 'BR'),
-                                    );
-                                    if (pickedDate != null) {
-                                      setState(() {
-                                        _dataNascimentoSelecionada = pickedDate;
-                                        _dataNascimentoController.text =
-                                            "${pickedDate.day.toString().padLeft(2, '0')}/"
-                                            "${pickedDate.month.toString().padLeft(2, '0')}/"
-                                            "${pickedDate.year}";
-                                      });
-                                    }
-                                  },
+                                  formulario: _formularioEndereco(context),
+                                  aoCancelar: _cancelarEdicaoEndereco,
                                 ),
+                                const SizedBox(height: 24),
+                                const RodaPe(),
                               ],
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.055,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 355),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Gênero",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSecondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                DropdownButtonFormField<String>(
-                                  value: _generoSelecionado,
-                                  isExpanded: true,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainer,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                  items: _generos
-                                      .map(
-                                        (g) => DropdownMenuItem(
-                                          value: g,
-                                          child: Text(g),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (value) => setState(
-                                    () => _generoSelecionado = value,
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Selecione o gênero";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.055,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 355),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Grau de Autismo",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSecondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                DropdownButtonFormField<GrauAutismo>(
-                                  value: _grauAutismoSelecionado,
-                                  isExpanded: true,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainer,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                  items: GrauAutismo.values
-                                      .map(
-                                        (g) => DropdownMenuItem(
-                                          value: g,
-                                          child: Text(
-                                            g.displayName,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (value) => setState(
-                                    () => _grauAutismoSelecionado = value,
-                                  ),
-                                  validator: (value) {
-                                    if (value == null) {
-                                      return "Selecione o grau de autismo";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        _buildSectionHeader(
-                          context,
-                          "Endereço",
-                          Icons.location_on,
-                        ),
-                        const SizedBox(height: 12),
-
-                        CampoTexto(
-                          label: "CEP",
-                          hintText: "00000-000",
-                          keyboardType: TextInputType.number,
-                          controller: _cepController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Digite o CEP";
-                            }
-                            return null;
-                          },
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 12),
-
-                        CampoTexto(
-                          label: "Rua",
-                          hintText: "Nome da rua",
-                          keyboardType: TextInputType.streetAddress,
-                          controller: _ruaController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "O campo não pode ser vazio";
-                            }
-                            return null;
-                          },
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 12),
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.055,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 355),
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  flex: 2,
-                                  child: CampoTexto(
-                                    label: "Número",
-                                    hintText: "123",
-                                    keyboardType: TextInputType.number,
-                                    controller: _numeroController,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Obrigatório";
-                                      }
-                                      return null;
-                                    },
-                                    maxLines: 1,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Flexible(
-                                  flex: 3,
-                                  child: CampoTexto(
-                                    label: "Complemento",
-                                    hintText: "Apto, bloco... (opcional)",
-                                    keyboardType: TextInputType.text,
-                                    controller: _complementoController,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        CampoTexto(
-                          label: "Bairro",
-                          hintText: "Nome do bairro",
-                          keyboardType: TextInputType.text,
-                          controller: _bairroController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Digite o bairro";
-                            }
-                            return null;
-                          },
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 12),
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.055,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 355),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Flexible(
-                                  flex: 3,
-                                  child: CampoTexto(
-                                    label: "Cidade",
-                                    hintText: "Nome da cidade",
-                                    keyboardType: TextInputType.text,
-                                    controller: _cidadeController,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Digite a cidade";
-                                      }
-                                      return null;
-                                    },
-                                    maxLines: 1,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Flexible(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Estado",
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSecondary,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      DropdownButtonFormField<String>(
-                                        value: _estadoSelecionado,
-                                        isExpanded: true,
-                                        hint: const Text("UF"),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainer,
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 14,
-                                              ),
-                                        ),
-                                        items: _estados
-                                            .map(
-                                              (uf) => DropdownMenuItem(
-                                                value: uf,
-                                                child: Text(uf),
-                                              ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) => setState(
-                                          () => _estadoSelecionado = value,
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Selecione";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 12,
-                          runSpacing: 12,
-                          children: [
-                            ElevatedButton(
-                              onPressed: _salvando ? null : _salvar,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.primary,
-                                foregroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimary,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: _salvando
-                                  ? SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
-                                      ),
-                                    )
-                                  : const Text(
-                                      "Salvar Alterações",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                            ),
-                            OutlinedButton(
-                              onPressed: () => Navigator.pop(context),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text(
-                                "Cancelar",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        const RodaPe(),
                       ],
                     ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(
+  // ── Cabeçalho estilo "perfil" ──────────────────────────────────────
+  Widget _buildCabecalhoPerfil(
     BuildContext context,
-    String nome,
-    IconData icone,
+    PacienteDetalheModel paciente,
   ) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 355),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: CategoriaAtributos(nome: nome, icone: icone),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
       ),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 40,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.onPrimary.withOpacity(0.18),
+            child: Text(
+              _iniciais(paciente.nome),
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            paciente.nome,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              if (paciente.idade != null)
+                _chipPerfil(
+                  context,
+                  Icons.cake_outlined,
+                  "${paciente.idade} anos",
+                ),
+              _chipPerfil(
+                context,
+                Icons.psychology_alt_outlined,
+                paciente.grau.displayName,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chipPerfil(BuildContext context, IconData icone, String texto) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.18),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icone, size: 14, color: Theme.of(context).colorScheme.onPrimary),
+          const SizedBox(width: 6),
+          Text(
+            texto,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Card de seção (resumo ou formulário de edição) ─────────────────
+  Widget _buildSecaoCard({
+    required BuildContext context,
+    required String titulo,
+    required IconData icone,
+    required bool editando,
+    required VoidCallback aoIniciarEdicao,
+    required VoidCallback aoCancelar,
+    required Widget resumo,
+    required Widget formulario,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.08),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icone,
+                size: 20,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  titulo,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                ),
+              ),
+              if (!editando)
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  tooltip: "Editar",
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: aoIniciarEdicao,
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          editando ? formulario : resumo,
+          if (editando) ...[
+            const SizedBox(height: 16),
+            _botoesSecao(context, aoCancelar: aoCancelar, aoSalvar: _salvar),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _linhaResumo(BuildContext context, String label, String valor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 130,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSecondary.withOpacity(0.55),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              valor,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _botoesSecao(
+    BuildContext context, {
+    required VoidCallback aoCancelar,
+    required VoidCallback aoSalvar,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: _salvando ? null : aoCancelar,
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              "Cancelar",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: _salvando ? null : aoSalvar,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: _salvando
+                ? SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  )
+                : const Text(
+                    "Salvar",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Seção: Dados Pessoais ───────────────────────────────────────────
+  Widget _resumoDadosPessoais(BuildContext context, PacienteDetalheModel p) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _linhaResumo(
+          context,
+          "CPF",
+          (p.cpf != null && p.cpf!.isNotEmpty) ? p.cpf! : "Não informado",
+        ),
+        _linhaResumo(
+          context,
+          "Nascimento",
+          p.dataNascimento != null
+              ? _formatarData(p.dataNascimento!)
+              : "Não informada",
+        ),
+        _linhaResumo(context, "Gênero", p.genero),
+        _linhaResumo(context, "Grau de autismo", p.grau.displayName),
+      ],
+    );
+  }
+
+  Widget _formularioDadosPessoais(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        CampoTexto(
+          label: "Nome Completo",
+          hintText: "Digite o nome completo",
+          keyboardType: TextInputType.name,
+          controller: _nomeController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "O campo não pode ser vazio";
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 12),
+        CampoTexto(
+          label: "CPF",
+          hintText: "000.000.000-00",
+          keyboardType: TextInputType.number,
+          controller: _cpfController,
+        ),
+        const SizedBox(height: 12),
+        _campoDataNascimento(context),
+        const SizedBox(height: 12),
+        _campoDropdown<String>(
+          context: context,
+          label: "Gênero",
+          hint: "Selecione o gênero",
+          valor: _generoSelecionado,
+          itens: _generos,
+          exibir: (g) => g,
+          onChanged: (value) => setState(() => _generoSelecionado = value),
+          validator: (value) =>
+              (value == null || value.isEmpty) ? "Selecione o gênero" : null,
+        ),
+        const SizedBox(height: 12),
+        _campoDropdown<GrauAutismo>(
+          context: context,
+          label: "Grau de Autismo",
+          hint: "Selecione o grau de autismo",
+          valor: _grauAutismoSelecionado,
+          itens: GrauAutismo.values,
+          exibir: (g) => g.displayName,
+          onChanged: (value) => setState(() => _grauAutismoSelecionado = value),
+          validator: (value) =>
+              value == null ? "Selecione o grau de autismo" : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _campoDataNascimento(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Data de Nascimento",
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: _dataNascimentoController,
+          readOnly: true,
+          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+          decoration: InputDecoration(
+            hintText: "00/00/0000",
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainer,
+            suffixIcon: const Icon(Icons.calendar_month),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Selecione a data";
+            }
+            return null;
+          },
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: _dataNascimentoSelecionada ?? DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+              locale: const Locale('pt', 'BR'),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                _dataNascimentoSelecionada = pickedDate;
+                _dataNascimentoController.text = _formatarData(pickedDate);
+              });
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _campoDropdown<T>({
+    required BuildContext context,
+    required String label,
+    required String hint,
+    required T? valor,
+    required List<T> itens,
+    required String Function(T) exibir,
+    required void Function(T?) onChanged,
+    required String? Function(T?) validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
+        ),
+        const SizedBox(height: 6),
+        DropdownButtonFormField<T>(
+          value: valor,
+          isExpanded: true,
+          hint: Text(
+            hint,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainer,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 14,
+            ),
+          ),
+          items: itens
+              .map(
+                (item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(exibir(item), overflow: TextOverflow.ellipsis),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+          validator: validator,
+        ),
+      ],
+    );
+  }
+
+  // ── Seção: Endereço ─────────────────────────────────────────────────
+  Widget _resumoEndereco(BuildContext context, EnderecoModel? endereco) {
+    if (endereco == null || (endereco.rua.isEmpty && endereco.cidade.isEmpty)) {
+      return Text(
+        "Nenhum endereço cadastrado.",
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.6),
+        ),
+      );
+    }
+    final linhaLogradouro =
+        endereco.complemento != null && endereco.complemento!.isNotEmpty
+        ? "${endereco.rua}, ${endereco.numero} - ${endereco.complemento}"
+        : "${endereco.rua}, ${endereco.numero}";
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _linhaResumo(context, "CEP", endereco.cep),
+        _linhaResumo(context, "Logradouro", linhaLogradouro),
+        _linhaResumo(context, "Bairro", endereco.bairro),
+        _linhaResumo(
+          context,
+          "Cidade/UF",
+          "${endereco.cidade}/${endereco.estado}",
+        ),
+      ],
+    );
+  }
+
+  Widget _formularioEndereco(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        CampoTexto(
+          label: "CEP",
+          hintText: "00000-000",
+          keyboardType: TextInputType.number,
+          controller: _cepController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Digite o CEP";
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 12),
+        CampoTexto(
+          label: "Rua",
+          hintText: "Nome da rua",
+          keyboardType: TextInputType.streetAddress,
+          controller: _ruaController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "O campo não pode ser vazio";
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              flex: 2,
+              child: CampoTexto(
+                label: "Número",
+                hintText: "123",
+                keyboardType: TextInputType.number,
+                controller: _numeroController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Obrigatório";
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              flex: 3,
+              child: CampoTexto(
+                label: "Complemento",
+                hintText: "Apto, bloco... (opcional)",
+                keyboardType: TextInputType.text,
+                controller: _complementoController,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        CampoTexto(
+          label: "Bairro",
+          hintText: "Nome do bairro",
+          keyboardType: TextInputType.text,
+          controller: _bairroController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Digite o bairro";
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              flex: 3,
+              child: CampoTexto(
+                label: "Cidade",
+                hintText: "Nome da cidade",
+                keyboardType: TextInputType.text,
+                controller: _cidadeController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Digite a cidade";
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              flex: 2,
+              child: _campoDropdown<String>(
+                context: context,
+                label: "Estado",
+                hint: "UF",
+                valor: _estadoSelecionado,
+                itens: _estados,
+                exibir: (uf) => uf,
+                onChanged: (value) =>
+                    setState(() => _estadoSelecionado = value),
+                validator: (value) =>
+                    (value == null || value.isEmpty) ? "Selecione" : null,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
