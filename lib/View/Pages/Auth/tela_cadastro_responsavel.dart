@@ -1,12 +1,12 @@
-import 'package:espectrum_front/View/Pages/home_responsavel.dart';
+import 'package:espectrum_front/View/Pages/Home/home_responsavel.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/responsive_form_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/widget_termo_uso_privacidade.dart';
-import '../Widgets/widget_input_acesso.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/widget_termo_uso_privacidade.dart';
+import '../../Widgets/widget_input_acesso.dart';
 
 class CadastroResponsavel extends StatefulWidget {
   const CadastroResponsavel({super.key});

@@ -4,13 +4,13 @@ import 'package:espectrum_front/Model/Enum/Perfil.dart';
 import 'package:espectrum_front/Model/UsuarioModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../Services/TokenStorage.dart';
-import '../../Services/UsuarioService.dart';
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/categoria_input.dart';
-import '../Widgets/drawer_padrao.dart';
-import '../Widgets/roda_pe.dart';
-import '../Widgets/widget_input_acesso.dart';
+import '../../../Services/TokenStorage.dart';
+import '../../../Services/UsuarioService.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/categoria_input.dart';
+import '../../Widgets/drawer_padrao.dart';
+import '../../Widgets/roda_pe.dart';
+import '../../Widgets/widget_input_acesso.dart';
 
 extension _PerfilUiExt on Perfil {
   IconData get icone {

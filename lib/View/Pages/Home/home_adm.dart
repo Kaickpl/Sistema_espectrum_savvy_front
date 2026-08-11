@@ -4,15 +4,15 @@ import 'package:espectrum_front/Model/TerapeutaResumoModel.dart';
 import 'package:espectrum_front/Services/AdminService.dart';
 import 'package:espectrum_front/Services/TerapeutaService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
-import 'package:espectrum_front/View/Pages/tela_gerenciar_terapeutas.dart';
-import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_estagiario.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_gerenciar_terapeutas.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_vincular_pacientes.dart';
 import 'package:espectrum_front/View/Widgets/cartao_acoes_rapidas.dart';
 import 'package:espectrum_front/View/Widgets/cartao_aluno.dart';
 import 'package:espectrum_front/View/Widgets/cartao_relatorio.dart';
 import 'package:flutter/material.dart';
-import '../Widgets/drawer_padrao.dart';
+import '../../Widgets/drawer_padrao.dart';
 
 class HomeAdm extends StatefulWidget {
   const HomeAdm({super.key});

@@ -1,9 +1,10 @@
 // tela_splash.dart
-import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_inicial.dart';
 import 'package:flutter/material.dart';
 
 import '../../Services/TokenStorage.dart';
 import '../Widgets/paginaHomePorPerfil.dart';
+
 class TelaSplash extends StatefulWidget {
   const TelaSplash({super.key});
 
@@ -41,14 +42,14 @@ class _TelaSplashState extends State<TelaSplash>
     await Future.delayed(const Duration(milliseconds: 2600));
     if (!mounted) return;
 
-    final bool sessaoValida = token != null && token.isNotEmpty && perfil != null;
+    final bool sessaoValida =
+        token != null && token.isNotEmpty && perfil != null;
 
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 600),
-        pageBuilder: (context, animation, secondaryAnimation) => sessaoValida
-            ? paginaHomePorPerfil(perfil)
-            : const PaginaInicial(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            sessaoValida ? paginaHomePorPerfil(perfil) : const PaginaInicial(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },

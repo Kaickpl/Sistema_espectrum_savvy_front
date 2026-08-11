@@ -1,18 +1,18 @@
 import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 
-import 'package:espectrum_front/View/Pages/home_adm.dart';
+import 'package:espectrum_front/View/Pages/Home/home_adm.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/responsive_form_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
-import '../../Services/AdminService.dart';
-import '../../Services/AuthService.dart';
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/widget_termo_uso_privacidade.dart';
-import '../Widgets/widget_input_acesso.dart';
-import '../Widgets/ValidadorSenha.dart';
+import '../../../Services/AdminService.dart';
+import '../../../Services/AuthService.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/widget_termo_uso_privacidade.dart';
+import '../../Widgets/widget_input_acesso.dart';
+import '../../Widgets/ValidadorSenha.dart';
 
 class CadastroAdmin extends StatefulWidget {
   const CadastroAdmin({super.key});

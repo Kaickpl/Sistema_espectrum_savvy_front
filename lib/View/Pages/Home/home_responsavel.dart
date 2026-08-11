@@ -1,5 +1,5 @@
 import 'package:espectrum_front/Config/coresPadrao.dart';
-import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
+import 'package:espectrum_front/View/Pages/Protocol/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';

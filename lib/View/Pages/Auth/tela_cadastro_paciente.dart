@@ -3,15 +3,15 @@ import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/Enum/GrauAutismo.dart';
 import 'package:flutter/material.dart';
 
-import '../../Services/PacienteService.dart';
-import '../../Services/TokenStorage.dart';
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/categoria_input.dart';
-import '../Widgets/logo_container.dart';
-import '../Widgets/responsive_form_container.dart';
-import '../Widgets/roda_pe.dart';
-import '../Widgets/widget_input_acesso.dart';
-import '../Widgets/widget_termo_uso_privacidade.dart';
+import '../../../Services/PacienteService.dart';
+import '../../../Services/TokenStorage.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/categoria_input.dart';
+import '../../Widgets/logo_container.dart';
+import '../../Widgets/responsive_form_container.dart';
+import '../../Widgets/roda_pe.dart';
+import '../../Widgets/widget_input_acesso.dart';
+import '../../Widgets/widget_termo_uso_privacidade.dart';
 
 class CadastroPaciente extends StatefulWidget {
   const CadastroPaciente({super.key});

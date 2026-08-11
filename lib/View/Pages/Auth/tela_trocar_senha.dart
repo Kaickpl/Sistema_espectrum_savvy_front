@@ -1,13 +1,13 @@
 import 'package:espectrum_front/Services/UsuarioServiceTrocarSenha.dart';
-import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_inicial.dart';
 import 'package:espectrum_front/View/Widgets/app_bar_padrao.dart';
 import 'package:flutter/material.dart';
 
-import '../Widgets/drawer_padrao.dart';
-import '../Widgets/fundo_botão.dart';
-import '../Widgets/roda_pe.dart';
-import '../Widgets/widget_input_acesso.dart';
-import '../Widgets/ValidadorSenha.dart';
+import '../../Widgets/drawer_padrao.dart';
+import '../../Widgets/fundo_botão.dart';
+import '../../Widgets/roda_pe.dart';
+import '../../Widgets/widget_input_acesso.dart';
+import '../../Widgets/ValidadorSenha.dart';
 
 class TelaTrocarSenha extends StatefulWidget {
   final String email; // recebido da tela anterior

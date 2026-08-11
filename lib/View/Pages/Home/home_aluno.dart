@@ -1,11 +1,11 @@
-import 'package:espectrum_front/View/Pages/selecao_paciente.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
-import 'package:espectrum_front/View/Pages/tela_vincular_professor.dart';
+import 'package:espectrum_front/View/Pages/Protocol/selecao_paciente.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_vincular_professor.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_acao_home.dart';
 import 'package:flutter/material.dart';
 
-import '../Widgets/drawer_padrao.dart';
+import '../../Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';

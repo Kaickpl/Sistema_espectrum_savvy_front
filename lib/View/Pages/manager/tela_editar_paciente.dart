@@ -5,11 +5,11 @@ import 'package:espectrum_front/Services/PacienteService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
 import 'package:flutter/material.dart';
 
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/categoria_input.dart';
-import '../Widgets/responsive_form_container.dart';
-import '../Widgets/roda_pe.dart';
-import '../Widgets/widget_input_acesso.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/categoria_input.dart';
+import '../../Widgets/responsive_form_container.dart';
+import '../../Widgets/roda_pe.dart';
+import '../../Widgets/widget_input_acesso.dart';
 
 /// Tela de edição de um paciente já cadastrado. Carrega os dados atuais
 /// via [PacienteService.buscarPaciente] e salva as alterações via

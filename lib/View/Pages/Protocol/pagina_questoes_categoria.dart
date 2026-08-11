@@ -11,6 +11,7 @@ class PaginaQuestoesCategoria extends StatefulWidget {
   final String nomeCategoria;
   final String nomePaciente;
   final String categoriaSessaoId;
+  final String sessaoId;
   final int totalDeQuestoes;
   final IconData iconeCategoria;
   final List<AtividadeSessaoModel> questoesDaCategoria;
@@ -20,6 +21,7 @@ class PaginaQuestoesCategoria extends StatefulWidget {
     required this.nomeCategoria,
     required this.nomePaciente,
     required this.categoriaSessaoId,
+    required this.sessaoId,
     required this.totalDeQuestoes,
     required this.iconeCategoria,
     required this.questoesDaCategoria,
@@ -185,6 +187,11 @@ class _PaginaQuestoesCategoriaState extends State<PaginaQuestoesCategoria> {
                             await ProtocoloService.atualizarPontuacao(
                               questao.id,
                               questao.pontuacao.toString(),
+                            );
+                            // Toda pontuação marcada já entra automaticamente
+                            // no histórico de salvamento do protocolo.
+                            await ProtocoloService.salvarProgresso(
+                              widget.sessaoId,
                             );
                           } catch (e) {
                             print("Erro ao atualizar pontuação: $e");

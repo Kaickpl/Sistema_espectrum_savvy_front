@@ -5,7 +5,7 @@ import 'package:espectrum_front/View/Widgets/cartao_paciente_sem_historico.dart'
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/info_home_professor_e_responsavel.dart';
 import 'package:flutter/material.dart';
-import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
+import 'package:espectrum_front/View/Pages/Protocol/pagina_protocolo.dart';
 
 import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/Model/PacienteResumoModel.dart';

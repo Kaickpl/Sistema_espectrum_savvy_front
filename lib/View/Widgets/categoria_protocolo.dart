@@ -1,12 +1,13 @@
 import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
+import 'package:espectrum_front/View/Pages/Protocol/pagina_questoes_categoria.dart';
 import 'package:flutter/material.dart';
-import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
 
 class CategoriaProtocolo extends StatefulWidget {
   final IconData iconeCategoria;
   final String nomeCategoria;
   final String nomePaciente;
   final String categoriaSessaoId;
+  final String sessaoId;
   final List<AtividadeSessaoModel> questoesDestaCategoria;
   final VoidCallback aoAtualizar;
 
@@ -16,6 +17,7 @@ class CategoriaProtocolo extends StatefulWidget {
     required this.nomeCategoria,
     required this.nomePaciente,
     required this.categoriaSessaoId,
+    required this.sessaoId,
     required this.questoesDestaCategoria,
     required this.aoAtualizar,
   });
@@ -37,6 +39,7 @@ class _CategoriaProtocoloState extends State<CategoriaProtocolo> {
           nomeCategoria: widget.nomeCategoria,
           nomePaciente: widget.nomePaciente,
           categoriaSessaoId: widget.categoriaSessaoId,
+          sessaoId: widget.sessaoId,
           totalDeQuestoes: totalDeQuestoes,
           iconeCategoria: widget.iconeCategoria,
           questoesDaCategoria: widget.questoesDestaCategoria,

@@ -1,5 +1,5 @@
-import 'package:espectrum_front/View/Pages/tela_inicial.dart';
-import 'package:espectrum_front/View/Pages/tela_perfil.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_perfil.dart';
 import 'package:espectrum_front/View/Pages/tela_suporte.dart';
 import 'package:espectrum_front/View/Pages/tela_visualizar_pacientes.dart';
 import 'package:flutter/material.dart';

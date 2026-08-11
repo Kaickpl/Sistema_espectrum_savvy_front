@@ -1,17 +1,17 @@
 import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
-import 'package:espectrum_front/View/Pages/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_inicial.dart';
 import 'package:espectrum_front/View/Widgets/categoria_input.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/responsive_form_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
-import '../../Services/TerapeutaService.dart';
-import '../../Services/TokenStorage.dart';
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/widget_termo_uso_privacidade.dart';
-import '../Widgets/widget_input_acesso.dart';
-import '../Widgets/ValidadorSenha.dart';
+import '../../../Services/TerapeutaService.dart';
+import '../../../Services/TokenStorage.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/widget_termo_uso_privacidade.dart';
+import '../../Widgets/widget_input_acesso.dart';
+import '../../Widgets/ValidadorSenha.dart';
 
 class CadastroEstagiario extends StatefulWidget {
   /// Se true, cadastro feito por admin autenticado (sem código de convite).

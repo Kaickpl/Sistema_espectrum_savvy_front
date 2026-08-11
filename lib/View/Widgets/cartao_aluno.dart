@@ -1,6 +1,6 @@
 // cartao_aluno.dart
 import 'package:flutter/material.dart';
-import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_vincular_pacientes.dart';
 
 class CartaoAluno extends StatelessWidget {
   final String id;
