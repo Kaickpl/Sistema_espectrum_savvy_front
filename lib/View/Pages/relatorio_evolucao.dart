@@ -5,6 +5,7 @@ import 'package:espectrum_front/View/Widgets/cartao_pontuacoes.dart';
 import 'package:espectrum_front/View/Widgets/grafico_barra.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_ano.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_semestre.dart';
+import 'package:espectrum_front/View/Widgets/grafico_teia.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -16,7 +17,30 @@ class RelatorioEvolucao extends StatefulWidget {
 }
 
 class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
-  int? intervaloSelecionado;
+  int? intervaloSelecionado = 6;
+  String categoriaSelecionada = 'Média Geral';
+  final List<String> categorias = [
+    'Média Geral',
+    'Atenção Compartilhada',
+    'Brincar Social',
+    'Auto Regulação',
+    'Social/Emocional',
+    'Linguagem Social',
+    'Comportamentos de Grupo',
+    'Linguagem Social Não Verbal'
+  ];
+  List<double> obterDadosDaCategoria(){
+    switch (categoriaSelecionada) {
+      case 'Atenção Compartilhada':
+        return [1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.0, 4.5, 5.0, 5.0, 4.5, 5.0];
+      case 'Brincar Social':
+        return [2.0, 2.0, 1.5, 2.0, 3.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.5, 4.0];
+      case 'Auto Regulação':
+        return [3.0, 3.5, 3.0, 4.0, 4.0, 4.5, 4.5, 4.5, 5.0, 5.0, 4.5, 5.0];
+      default: 
+        return [3.0, 2.0, 4.0, 4.0, 1.0, 2.0, 3.0, 2.0, 4.0, 4.0, 1.0, 2.0];
+    }
+  }
   void escolherTipoGrafico(int intervalo) {
     setState(() {
       intervaloSelecionado = intervalo;
@@ -27,6 +51,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   Widget build(BuildContext context) {
     final tema = Theme.of(context);
     final cores = tema.colorScheme;
+    final dadosAtuais = obterDadosDaCategoria();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Relatório de evolução'),
@@ -82,7 +107,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                   ),
                   const SizedBox(height: 20),
                   Container(
-                    height: 300,
+                    height: 350,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: cores.surface,
@@ -90,41 +115,65 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          'Histórico evolutivo',
-                          style: TextStyle(fontSize: 18),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Histórico evolutivo',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            DropdownButton<String>(
+                              value: categoriaSelecionada,
+                              icon: const Icon(Icons.keyboard_arrow_down),
+                              style: TextStyle(color: cores.primary, fontSize: 14),
+                              underline: Container(
+                                height: 1,
+                                color: cores.primary.withOpacity(0.5),
+                              ),
+                              onChanged: (String? novaCategoria) {
+                                if (novaCategoria != null) {
+                                  setState(() {
+                                    categoriaSelecionada = novaCategoria;
+                                  });
+                                }
+                              },
+                              items: categorias.map<DropdownMenuItem<String>>((String valor) {
+                                return DropdownMenuItem<String>(
+                                  value: valor,
+                                  child: Text(valor),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
-                        //grafico de Linha
-                        intervaloSelecionado == 6
-                            ? GraficoLinhaSemestre(
-                                pont1: 3,
-                                pont2: 2,
-                                pont3: 4,
-                                pont4: 4,
-                                pont5: 1,
-                                pont6: 2,
-                              )
-                            : GraficoLinhaAno(
-                                pont1: 3,
-                                pont2: 2,
-                                pont3: 4,
-                                pont4: 4,
-                                pont5: 1,
-                                pont6: 2,
-                                pont7: 3,
-                                pont8: 2,
-                                pont9: 4,
-                                pont10: 4,
-                                pont11: 1,
-                                pont12: 2,
-                              ),
+                        Expanded(
+                          child: intervaloSelecionado == 6
+                              ? GraficoLinhaSemestre(
+                                  pont1: dadosAtuais[0], 
+                                  pont2: dadosAtuais[1], 
+                                  pont3: dadosAtuais[2], 
+                                  pont4: dadosAtuais[3], 
+                                  pont5: dadosAtuais[4], 
+                                  pont6: dadosAtuais[5],
+                                )
+                              : GraficoLinhaAno(
+                                  pont1: dadosAtuais[0], pont2: dadosAtuais[1], 
+                                  pont3: dadosAtuais[2], pont4: dadosAtuais[3], 
+                                  pont5: dadosAtuais[4], pont6: dadosAtuais[5],
+                                  pont7: dadosAtuais[6], pont8: dadosAtuais[7], 
+                                  pont9: dadosAtuais[8], pont10: dadosAtuais[9], 
+                                  pont11: dadosAtuais[10], pont12: dadosAtuais[11],
+                                ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  //Comparativo por categoria
+                  
                   Container(
+
+                    
                     decoration: BoxDecoration(
                       color: cores.surface,
                       borderRadius: BorderRadius.circular(15),
@@ -137,20 +186,11 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                             'Comparativo por categoria',
                             style: TextStyle(fontSize: 18),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 25),
                           intervaloSelecionado == 6
-                              ? GraficoBarra(
-                                  pontLinguagem: 2,
-                                  pontMotor: 1,
-                                  pontCognitivo: 3,
-                                  pontSocial: 1,
-                                )
-                              : GraficoBarra(
-                                  pontLinguagem: 3,
-                                  pontMotor: 3,
-                                  pontCognitivo: 5,
-                                  pontSocial: 2,
-                                ),
+                          ? GraficoTeia(pontAtencaoCompartilhada: 2
+                          , pontBrincarSocial: 1, pontAutoRegulacao: 3, pontSocialEmocional: 1, pontLinguagemSocial: 2, pontComportamentos: 4, pontLinguagemSocialNaoVerbal: 3)
+                          : GraficoTeia(pontAtencaoCompartilhada: 3, pontBrincarSocial: 2, pontAutoRegulacao: 4, pontSocialEmocional: 2, pontLinguagemSocial: 3, pontComportamentos: 1, pontLinguagemSocialNaoVerbal: 2)
                         ],
                       ),
                     ),
