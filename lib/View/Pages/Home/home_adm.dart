@@ -246,7 +246,7 @@ class _HomeAdmState extends State<HomeAdm> {
                     Text(
                       'Bem-vindo de volta',
                       style: TextStyle(
-                        color: cores.onSurface.withOpacity(0.5),
+                        color: cores.onSurface.withOpacity(0.9),
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -341,7 +341,7 @@ class _HomeAdmState extends State<HomeAdm> {
                   BotaoAcoesRapidas(
                     titulo: 'Gerenciar Pacientes',
                     subtitulo: 'Editar e organizar pacientes',
-                    icone: Icon(Icons.groups, color: cores.onTertiary),
+                    icone: Icon(Icons.groups, color: cores.onSecondary),
                     corFundo: cores.tertiary,
                     corLetra: cores.onTertiary,
                     onTap: () {

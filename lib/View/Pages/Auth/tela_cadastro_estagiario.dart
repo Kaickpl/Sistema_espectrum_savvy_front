@@ -279,6 +279,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                         DropdownButtonFormField<String>(
                           value: _periodoSelecionado,
                           isExpanded: true,
+                          dropdownColor: Theme.of(context).colorScheme.onPrimary,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSecondary,
                             fontSize: 16,
@@ -307,7 +308,7 @@ class _CadastroEstagiarioState extends State<CadastroEstagiario> {
                               borderSide: BorderSide(
                                 color: Theme.of(
                                   context,
-                                ).scaffoldBackgroundColor,
+                                ).colorScheme.surfaceContainer,
                                 width: 1.5,
                               ),
                             ),
