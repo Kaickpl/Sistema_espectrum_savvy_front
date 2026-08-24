@@ -80,22 +80,34 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   }
 
   Future<void> _exportarPdf() async {
-    if (_relatorio == null || _exportandoPdf) return;
+    debugPrint('[RelatorioPdf] botão tocado');
+    if (_relatorio == null || _exportandoPdf) {
+      debugPrint(
+        '[RelatorioPdf] abortado: relatorio=${_relatorio != null} '
+        'exportando=$_exportandoPdf',
+      );
+      return;
+    }
     setState(() => _exportandoPdf = true);
     try {
+      debugPrint('[RelatorioPdf] gerando bytes do pdf...');
       final bytes = await RelatorioPdfService.gerarPdf(
         _relatorio!,
         intervaloMeses: _intervaloSelecionado,
       );
+      debugPrint('[RelatorioPdf] bytes gerados: ${bytes.length}, abrindo preview...');
       await Printing.layoutPdf(
         onLayout: (_) async => bytes,
         name: 'relatorio_evolucao_${_relatorio!.pacienteNome}.pdf',
       );
-    } catch (_) {
+      debugPrint('[RelatorioPdf] Printing.layoutPdf retornou');
+    } catch (e, st) {
+      debugPrint('[RelatorioPdf] ERRO: $e');
+      debugPrint('$st');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Não foi possível gerar o PDF do relatório.'),
+          content: Text('Não foi possível gerar o PDF do relatório: $e'),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -401,53 +413,6 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                           )
                           .toList(),
                     ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Últimas pontuações',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      if (relatorio.ultimasPontuacoes.length > 3)
-                        TextButton(
-                          onPressed: () => setState(
-                            () => _mostrarTodasPontuacoes =
-                                !_mostrarTodasPontuacoes,
-                          ),
-                          child: Text(
-                            _mostrarTodasPontuacoes ? 'Ver menos' : 'Ver tudo',
-                            style: TextStyle(color: cores.tertiary),
-                          ),
-                        ),
-                    ],
-                  ),
-                  if (pontuacoesVisiveis.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        'Nenhuma pontuação registrada.',
-                        style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
-                      ),
-                    )
-                  else
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: pontuacoesVisiveis
-                          .map(
-                            (p) => CartaoPontuacoes(
-                              titulo: p.nomeAtividade,
-                              icone: Icon(
-                                _iconeParaAtividade(p.categoria),
-                                color: cores.tertiary,
-                              ),
-                              numSessao: p.numeroSessao,
-                              data: p.data ?? DateTime.now(),
-                              pontuacao: p.pontuacao,
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),

@@ -28,8 +28,6 @@ class RelatorioPdfService {
           _secaoTitulo('Histórico de observações'),
           _listaObservacoes(relatorio),
           pw.SizedBox(height: 20),
-          _secaoTitulo('Últimas pontuações'),
-          _tabelaPontuacoes(relatorio),
         ],
       ),
     );
@@ -167,28 +165,7 @@ class RelatorioPdfService {
     );
   }
 
-  static pw.Widget _tabelaPontuacoes(RelatorioEvolucaoModel relatorio) {
-    if (relatorio.ultimasPontuacoes.isEmpty) {
-      return _textoVazio('Nenhuma pontuação registrada.');
-    }
-    return pw.TableHelper.fromTextArray(
-      headers: const ['Atividade', 'Categoria', 'Sessão', 'Data', 'Pontuação'],
-      data: [
-        for (final p in relatorio.ultimasPontuacoes)
-          [
-            p.nomeAtividade,
-            p.categoria,
-            '${p.numeroSessao}',
-            p.data != null ? _formatarData(p.data!) : '-',
-            '${p.pontuacao.toStringAsFixed(1)}/5',
-          ],
-      ],
-      headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
-      cellStyle: const pw.TextStyle(fontSize: 9),
-      cellAlignment: pw.Alignment.centerLeft,
-      headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
-    );
-  }
+  
 
   static pw.Widget _textoVazio(String texto) {
     return pw.Text(
