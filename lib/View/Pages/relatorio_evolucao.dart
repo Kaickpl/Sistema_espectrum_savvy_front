@@ -1,5 +1,6 @@
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/RelatorioEvolucaoModel.dart';
+import 'package:espectrum_front/Services/RelatorioPdfService.dart';
 import 'package:espectrum_front/Services/RelatorioService.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro_relatorio.dart';
 import 'package:espectrum_front/View/Widgets/cartaoObservacao.dart';
@@ -8,6 +9,7 @@ import 'package:espectrum_front/View/Widgets/cartao_pontuacoes.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_semestre.dart';
 import 'package:espectrum_front/View/Widgets/grafico_teia.dart';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 
 const _mediaGeralLabel = 'Média Geral';
 const List<String> _mesesAbreviados = [
@@ -38,6 +40,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   String _categoriaSelecionada = _mediaGeralLabel;
   bool _mostrarTodasObservacoes = false;
   bool _mostrarTodasPontuacoes = false;
+  bool _exportandoPdf = false;
 
   @override
   void initState() {
@@ -73,6 +76,31 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
       );
     } finally {
       if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  Future<void> _exportarPdf() async {
+    if (_relatorio == null || _exportandoPdf) return;
+    setState(() => _exportandoPdf = true);
+    try {
+      final bytes = await RelatorioPdfService.gerarPdf(
+        _relatorio!,
+        intervaloMeses: _intervaloSelecionado,
+      );
+      await Printing.layoutPdf(
+        onLayout: (_) async => bytes,
+        name: 'relatorio_evolucao_${_relatorio!.pacienteNome}.pdf',
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Não foi possível gerar o PDF do relatório.'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _exportandoPdf = false);
     }
   }
 
@@ -178,6 +206,8 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
               idade: relatorio.idade ?? 0,
               nivel: relatorio.nivelSuporte ?? 0,
               nomeTerapeuta: relatorio.nomeTerapeuta,
+              onExportarPdf: _exportarPdf,
+              exportando: _exportandoPdf,
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
