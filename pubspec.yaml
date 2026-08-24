@@ -29,8 +29,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   http: ^1.2.0
-  syncfusion_flutter_pdfviewer: 33.2.13
-  font_awesome_flutter: ^10.7.0
+  syncfusion_flutter_pdfviewer: ^33.2.13
+  font_awesome_flutter: ^11.0.0
   url_launcher: ^6.3.0
   flutter_secure_storage: ^9.2.4
   flutter_localizations:
