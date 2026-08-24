@@ -6,6 +6,7 @@ import 'package:espectrum_front/Services/TokenStorage.dart';
 import 'package:espectrum_front/Services/VinculoService.dart';
 import 'package:espectrum_front/View/Pages/Protocol/pagina_protocolo.dart';
 import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_paciente.dart';
+import 'package:espectrum_front/View/Pages/relatorio_evolucao.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
@@ -308,7 +309,17 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
                               ),
                             );
                           },
-                          onHistorico: () {},
+                          onHistorico: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RelatorioEvolucao(
+                                  pacienteId: p.id,
+                                  pacienteNome: p.nome,
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

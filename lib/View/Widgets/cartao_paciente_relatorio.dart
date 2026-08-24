@@ -5,6 +5,8 @@ class CartaoPacienteRelatorio extends StatelessWidget {
   final int idade;
   final int nivel;
   final String nomeTerapeuta;
+  final VoidCallback? onExportarPdf;
+  final bool exportando;
 
   const CartaoPacienteRelatorio({
     super.key,
@@ -12,6 +14,8 @@ class CartaoPacienteRelatorio extends StatelessWidget {
     required this.idade,
     required this.nivel,
     required this.nomeTerapeuta,
+    this.onExportarPdf,
+    this.exportando = false,
   });
 
   @override
@@ -144,30 +148,39 @@ class CartaoPacienteRelatorio extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
-                      onTap: () => print('Exportando PDF de $nomePaciente...'),
+                      onTap: exportando ? null : onExportarPdf,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 10,
                         ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Exportar',
-                              style: TextStyle(
-                                color: cores.surface,
-                                fontSize: 10,
+                        child: exportando
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: cores.surface,
+                                ),
+                              )
+                            : Column(
+                                children: [
+                                  Text(
+                                    'Exportar',
+                                    style: TextStyle(
+                                      color: cores.surface,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  Text(
+                                    'PDF',
+                                    style: TextStyle(
+                                      color: cores.surface,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              'PDF',
-                              style: TextStyle(
-                                color: cores.surface,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
