@@ -7,8 +7,7 @@ import 'package:espectrum_front/View/Pages/tela_splash.dart';
 
 import 'package:flutter/material.dart';
 
-ValueNotifier<ThemeMode> temaApp =
-ValueNotifier(ThemeMode.light);
+ValueNotifier<ThemeMode> temaApp = ValueNotifier(ThemeMode.light);
 
 void main() {
   runApp(const MyApp());
@@ -19,21 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ValueListenableBuilder(
       valueListenable: temaApp,
 
       builder: (context, ThemeMode modoAtual, child) {
-
         return MaterialApp(
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('pt', 'BR'),
-          ],
+          supportedLocales: const [Locale('pt', 'BR')],
           title: "Espectrum Savvy",
 
           debugShowCheckedModeBanner: false,
