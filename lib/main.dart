@@ -1,6 +1,7 @@
 import 'package:espectrum_front/Config/tema_claro.dart';
 import 'package:espectrum_front/Config/tema_escuro.dart';
-import 'package:espectrum_front/View/Pages/home_aluno.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_inicial.dart';
+import 'package:espectrum_front/View/Pages/Home/home_aluno.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:espectrum_front/View/Pages/tela_splash.dart';
 
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
           theme: TemaClaro.tema,
           darkTheme: TemaEscuro.tema,
 
-          home: const HomeAluno(),
+          home: const PaginaInicial(),
         );
       },
     );
