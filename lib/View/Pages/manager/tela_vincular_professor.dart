@@ -7,11 +7,11 @@ import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/logo_container.dart';
 import 'package:espectrum_front/View/Widgets/roda_pe.dart';
 import 'package:flutter/material.dart';
-import '../../Services/ProfessorService.dart';
-import '../../Services/TokenStorage.dart';
-import '../../Services/VinculoService.dart';
-import '../Widgets/app_bar_padrao.dart';
-import '../Widgets/widget_input_acesso.dart';
+import '../../../Services/ProfessorService.dart';
+import '../../../Services/TokenStorage.dart';
+import '../../../Services/VinculoService.dart';
+import '../../Widgets/app_bar_padrao.dart';
+import '../../Widgets/widget_input_acesso.dart';
 
 class TelaVincularProfessor extends StatefulWidget {
   const TelaVincularProfessor({super.key});

@@ -1,32 +1,103 @@
+import 'package:espectrum_front/Model/ApiExceptionModel.dart';
+import 'package:espectrum_front/Model/RelatorioEvolucaoModel.dart';
+import 'package:espectrum_front/Services/RelatorioService.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro_relatorio.dart';
 import 'package:espectrum_front/View/Widgets/cartaoObservacao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_relatorio.dart';
 import 'package:espectrum_front/View/Widgets/cartao_pontuacoes.dart';
-import 'package:espectrum_front/View/Widgets/grafico_barra.dart';
-import 'package:espectrum_front/View/Widgets/grafico_linha_ano.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_semestre.dart';
+import 'package:espectrum_front/View/Widgets/grafico_teia.dart';
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+
+const _mediaGeralLabel = 'Média Geral';
+const List<String> _mesesAbreviados = [
+  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
+];
 
 class RelatorioEvolucao extends StatefulWidget {
-  const RelatorioEvolucao({super.key});
+  final String pacienteId;
+  final String pacienteNome;
+
+  const RelatorioEvolucao({
+    super.key,
+    required this.pacienteId,
+    required this.pacienteNome,
+  });
 
   @override
   State<RelatorioEvolucao> createState() => _RelatorioEvolucaoState();
 }
 
 class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
-  int? intervaloSelecionado;
-  void escolherTipoGrafico(int intervalo) {
+  bool _carregando = true;
+  String? _erro;
+  RelatorioEvolucaoModel? _relatorio;
+
+  int _intervaloSelecionado = 6;
+  String _categoriaSelecionada = _mediaGeralLabel;
+  bool _mostrarTodasObservacoes = false;
+  bool _mostrarTodasPontuacoes = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarRelatorio();
+  }
+
+  Future<void> _carregarRelatorio() async {
     setState(() {
-      intervaloSelecionado = intervalo;
+      _carregando = true;
+      _erro = null;
     });
+    try {
+      final relatorio = await RelatorioService.buscarRelatorioEvolucao(
+        widget.pacienteId,
+        meses: _intervaloSelecionado,
+      );
+      if (!mounted) return;
+      setState(() {
+        _relatorio = relatorio;
+        if (_categoriaSelecionada != _mediaGeralLabel &&
+            !relatorio.categorias.contains(_categoriaSelecionada)) {
+          _categoriaSelecionada = _mediaGeralLabel;
+        }
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _erro = e.message);
+    } catch (_) {
+      if (!mounted) return;
+      setState(
+        () => _erro = 'Não foi possível carregar o relatório de evolução.',
+      );
+    } finally {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  void _escolherIntervalo(int meses) {
+    if (meses == _intervaloSelecionado) return;
+    setState(() => _intervaloSelecionado = meses);
+    _carregarRelatorio();
+  }
+
+  String _formatarMesAno(DateTime data) {
+    return '${_mesesAbreviados[data.month - 1]}/${data.year.toString().substring(2)}';
+  }
+
+  IconData _iconeParaAtividade(String categoria) {
+    final texto = categoria.toLowerCase();
+    if (texto.contains('linguagem')) return Icons.chat_bubble_outline_rounded;
+    if (texto.contains('motor')) return Icons.handshake;
+    if (texto.contains('social') || texto.contains('brincar')) {
+      return Icons.groups_outlined;
+    }
+    return Icons.remove_red_eye;
   }
 
   @override
   Widget build(BuildContext context) {
-    final tema = Theme.of(context);
-    final cores = tema.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Relatório de evolução'),
@@ -35,14 +106,78 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: SingleChildScrollView(
+      body: _carregando
+          ? const Center(child: CircularProgressIndicator())
+          : _erro != null
+          ? _buildErro()
+          : _buildConteudo(),
+    );
+  }
+
+  Widget _buildErro() {
+    final cores = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _erro!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: cores.error),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _carregarRelatorio,
+              child: const Text('Tentar novamente'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConteudo() {
+    final tema = Theme.of(context);
+    final cores = tema.colorScheme;
+    final relatorio = _relatorio!;
+
+    final categoriasDropdown = [_mediaGeralLabel, ...relatorio.categorias];
+
+    final valoresGrafico = relatorio.evolucaoTemporal
+        .map(
+          (p) => _categoriaSelecionada == _mediaGeralLabel
+              ? p.mediaGeral
+              : (p.mediaPorCategoria[_categoriaSelecionada] ?? 0),
+        )
+        .toList();
+    final labelsGrafico = relatorio.evolucaoTemporal
+        .map((p) => p.data != null ? _formatarMesAno(p.data!) : '')
+        .toList();
+
+    final valoresTeia = relatorio.categorias
+        .map((c) => relatorio.comparativoCategorias[c] ?? 0)
+        .toList();
+
+    final observacoesVisiveis = _mostrarTodasObservacoes
+        ? relatorio.observacoes
+        : relatorio.observacoes.take(3).toList();
+    final pontuacoesVisiveis = _mostrarTodasPontuacoes
+        ? relatorio.ultimasPontuacoes
+        : relatorio.ultimasPontuacoes.take(3).toList();
+
+    return RefreshIndicator(
+      onRefresh: _carregarRelatorio,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
-            const CartaoPacienteRelatorio(
-              nomePaciente: 'Ismael Lins',
-              idade: 3,
-              nivel: 2,
-              nomeTerapeuta: 'Dra. Ana Silva',
+            CartaoPacienteRelatorio(
+              nomePaciente: relatorio.pacienteNome,
+              idade: relatorio.idade ?? 0,
+              nivel: relatorio.nivelSuporte ?? 0,
+              nomeTerapeuta: relatorio.nomeTerapeuta,
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -61,10 +196,8 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                             Icons.calendar_month,
                             color: cores.onSurface.withOpacity(0.7),
                           ),
-                          selecionado: intervaloSelecionado == 6,
-                          onTap: () {
-                            escolherTipoGrafico(6);
-                          },
+                          selecionado: _intervaloSelecionado == 6,
+                          onTap: () => _escolherIntervalo(6),
                         ),
                         BotaoPersonalizadoFiltroRelatorio(
                           titulo: 'Último ano',
@@ -72,17 +205,15 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                             Icons.calendar_month,
                             color: cores.onSurface.withOpacity(0.7),
                           ),
-                          selecionado: intervaloSelecionado == 12,
-                          onTap: () {
-                            escolherTipoGrafico(12);
-                          },
+                          selecionado: _intervaloSelecionado == 12,
+                          onTap: () => _escolherIntervalo(12),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
                   Container(
-                    height: 300,
+                    height: 350,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: cores.surface,
@@ -90,40 +221,77 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          'Histórico evolutivo',
-                          style: TextStyle(fontSize: 18),
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                'Histórico evolutivo',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 150),
+                              child: DropdownButton<String>(
+                                value: _categoriaSelecionada,
+                                isExpanded: true,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                style: TextStyle(
+                                  color: cores.primary,
+                                  fontSize: 13,
+                                ),
+                                underline: Container(
+                                  height: 1,
+                                  color: cores.primary.withOpacity(0.5),
+                                ),
+                                onChanged: (String? novaCategoria) {
+                                  if (novaCategoria != null) {
+                                    setState(
+                                      () =>
+                                          _categoriaSelecionada = novaCategoria,
+                                    );
+                                  }
+                                },
+                                items: categoriasDropdown
+                                    .map<DropdownMenuItem<String>>((valor) {
+                                      return DropdownMenuItem<String>(
+                                        value: valor,
+                                        child: Text(
+                                          valor,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      );
+                                    })
+                                    .toList(),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
-                        //grafico de Linha
-                        intervaloSelecionado == 6
-                            ? GraficoLinhaSemestre(
-                                pont1: 3,
-                                pont2: 2,
-                                pont3: 4,
-                                pont4: 4,
-                                pont5: 1,
-                                pont6: 2,
-                              )
-                            : GraficoLinhaAno(
-                                pont1: 3,
-                                pont2: 2,
-                                pont3: 4,
-                                pont4: 4,
-                                pont5: 1,
-                                pont6: 2,
-                                pont7: 3,
-                                pont8: 2,
-                                pont9: 4,
-                                pont10: 4,
-                                pont11: 1,
-                                pont12: 2,
-                              ),
+                        Expanded(
+                          child: valoresGrafico.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    'Nenhum dado de evolução no período selecionado.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: cores.onSurface.withOpacity(0.5),
+                                    ),
+                                  ),
+                                )
+                              : GraficoLinhaSemestre(
+                                  valores: valoresGrafico,
+                                  labels: labelsGrafico,
+                                ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  //Comparativo por categoria
                   Container(
                     decoration: BoxDecoration(
                       color: cores.surface,
@@ -137,135 +305,119 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                             'Comparativo por categoria',
                             style: TextStyle(fontSize: 18),
                           ),
-                          const SizedBox(height: 10),
-                          intervaloSelecionado == 6
-                              ? GraficoBarra(
-                                  pontLinguagem: 2,
-                                  pontMotor: 1,
-                                  pontCognitivo: 3,
-                                  pontSocial: 1,
+                          const SizedBox(height: 25),
+                          relatorio.categorias.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 24,
+                                  ),
+                                  child: Text(
+                                    'Nenhuma categoria pontuada no período selecionado.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: cores.onSurface.withOpacity(0.5),
+                                    ),
+                                  ),
                                 )
-                              : GraficoBarra(
-                                  pontLinguagem: 3,
-                                  pontMotor: 3,
-                                  pontCognitivo: 5,
-                                  pontSocial: 2,
+                              : GraficoTeia(
+                                  categorias: relatorio.categorias,
+                                  valores: valoresTeia,
                                 ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  //historico de observações
-                  Container(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Histórico de observações',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onPressed: () {
-                                print(
-                                  'ir pra pagina de ver todos os observações',
-                                );
-                              },
-                              child: Text(
-                                'Ver tudo',
-                                style: TextStyle(color: cores.tertiary),
-                              ),
-                            ),
-                          ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Histórico de observações',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      if (relatorio.observacoes.length > 3)
+                        TextButton(
+                          onPressed: () => setState(
+                            () => _mostrarTodasObservacoes =
+                                !_mostrarTodasObservacoes,
+                          ),
+                          child: Text(
+                            _mostrarTodasObservacoes ? 'Ver menos' : 'Ver tudo',
+                            style: TextStyle(color: cores.tertiary),
+                          ),
                         ),
-                        CartaoObservacao(
-                          status: 'Linguagem Receptiva',
-                          data: DateTime(2023, 10, 12),
-                          titulo: 'Identificação de objetos',
-                          texto:
-                              'João demonstrou excelente progresso na identificação de animais. Conseguiu apontar 8 de 10 figuras corretamente sem ajuda física.',
-                        ),
-                        CartaoObservacao(
-                          status: 'Motor fino',
-                          data: DateTime(2023, 10, 12),
-                          titulo: 'Movimento de Pinça',
-                          texto:
-                              'Apresentou leve resistência no início, mas após modelação, conseguiu transferir pequenos blocos entre potes por 3 minutos contínuos.',
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
-                  //ultimas pontuações
-                  Container(
-                    child: Column(
+                  if (observacoesVisiveis.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Nenhuma observação registrada.',
+                        style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+                      ),
+                    )
+                  else
+                    Column(
+                      children: observacoesVisiveis
+                          .map(
+                            (obs) => CartaoObservacao(
+                              status: obs.categoria ?? 'Comentário geral',
+                              data: obs.dataCriacao ?? DateTime.now(),
+                              titulo: obs.autorNome != null
+                                  ? 'Por ${obs.autorNome}'
+                                  : 'Observação',
+                              texto: obs.comentario,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Últimas pontuações',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      if (relatorio.ultimasPontuacoes.length > 3)
+                        TextButton(
+                          onPressed: () => setState(
+                            () => _mostrarTodasPontuacoes =
+                                !_mostrarTodasPontuacoes,
+                          ),
+                          child: Text(
+                            _mostrarTodasPontuacoes ? 'Ver menos' : 'Ver tudo',
+                            style: TextStyle(color: cores.tertiary),
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (pontuacoesVisiveis.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Nenhuma pontuação registrada.',
+                        style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+                      ),
+                    )
+                  else
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Últimas pontuações',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                      children: pontuacoesVisiveis
+                          .map(
+                            (p) => CartaoPontuacoes(
+                              titulo: p.nomeAtividade,
+                              icone: Icon(
+                                _iconeParaAtividade(p.categoria),
+                                color: cores.tertiary,
                               ),
-                              onPressed: () {
-                                print(
-                                  'ir pra pagina de ver todos os observações',
-                                );
-                              },
-                              child: Text(
-                                'Ver tudo',
-                                style: TextStyle(color: cores.tertiary),
-                              ),
+                              numSessao: p.numeroSessao,
+                              data: p.data ?? DateTime.now(),
+                              pontuacao: p.pontuacao,
                             ),
-                          ],
-                        ),
-                        CartaoPontuacoes(
-                          titulo: 'Contato visual',
-                          icone: Icon(
-                            Icons.remove_red_eye,
-                            color: cores.tertiary,
-                          ),
-                          numSessao: 2,
-                          data: DateTime(2026, 5, 3),
-                          pontuacao: 4.5,
-                        ),
-                        CartaoPontuacoes(
-                          titulo: 'Contato visual',
-                          icone: Icon(
-                            Icons.chat_bubble_outline_rounded,
-                            color: cores.tertiary,
-                          ),
-                          numSessao: 2,
-                          data: DateTime(2026, 5, 3),
-                          pontuacao: 4.5,
-                        ),
-                        CartaoPontuacoes(
-                          titulo: 'Imitação motora',
-                          icone: Icon(Icons.handshake, color: cores.tertiary),
-                          numSessao: 2,
-                          data: DateTime(2026, 5, 3),
-                          pontuacao: 4.5,
-                        ),
-                      ],
+                          )
+                          .toList(),
                     ),
-                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

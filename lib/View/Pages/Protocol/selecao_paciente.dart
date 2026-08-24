@@ -4,8 +4,9 @@ import 'package:espectrum_front/Model/PacienteResumoModel.dart';
 import 'package:espectrum_front/Services/ProtocoloService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
 import 'package:espectrum_front/Services/VinculoService.dart';
-import 'package:espectrum_front/View/Pages/pagina_protocolo.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_paciente.dart';
+import 'package:espectrum_front/View/Pages/Protocol/pagina_protocolo.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_paciente.dart';
+import 'package:espectrum_front/View/Pages/relatorio_evolucao.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_home.dart';
@@ -214,8 +215,19 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 20),
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cores.primary,
+                foregroundColor: cores.onPrimary,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -226,56 +238,92 @@ class _SelecaoPacienteState extends State<SelecaoPaciente> {
             ),
           ),
           Expanded(
-            child: _carregando
-                ? const Center(child: CircularProgressIndicator())
-                : _erro != null
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Text(_erro!, style: TextStyle(color: cores.error)),
-                    ),
-                  )
-                : pacientesFiltrados.isEmpty
-                ? Center(
-                    child: Text(
-                      "Nenhum paciente vinculado encontrado.",
-                      style: TextStyle(color: cores.onSurface.withOpacity(0.6)),
-                    ),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: pacientesFiltrados.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final p = pacientesFiltrados[index];
-                      final statusProtocolo = _statusPorPaciente[p.id];
-                      final emAndamento = statusProtocolo == 'EM_ANDAMENTO';
-                      return CartaoPacienteHome(
-                        nomePaciente: p.nome,
-                        nivel: _nivel(p.grauAutismo),
-                        idade: p.idade ?? 0,
-                        status: emAndamento ? 'Em andamento' : 'Não iniciado',
-                        corStatus: emAndamento
-                            ? emAndamentoCor
-                            : naoIniciadoCor,
-                        textoBotaoPrincipal: emAndamento
-                            ? 'Continuar'
-                            : 'Iniciar',
-                        onContinuar: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PaginaProtocolo(
-                                pacienteId: p.id,
-                                nomePaciente: p.nome,
+            child: RefreshIndicator(
+              onRefresh: _carregarPacientes,
+              child: _carregando
+                  ? ListView(
+                      children: const [
+                        SizedBox(
+                          height: 200,
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      ],
+                    )
+                  : _erro != null
+                  ? ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Center(
+                            child: Text(
+                              _erro!,
+                              style: TextStyle(color: cores.error),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : pacientesFiltrados.isEmpty
+                  ? ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Center(
+                            child: Text(
+                              "Nenhum paciente vinculado encontrado.",
+                              style: TextStyle(
+                                color: cores.onSurface.withOpacity(0.6),
                               ),
                             ),
-                          );
-                        },
-                        onHistorico: () {},
-                      );
-                    },
-                  ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: pacientesFiltrados.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final p = pacientesFiltrados[index];
+                        final statusProtocolo = _statusPorPaciente[p.id];
+                        final emAndamento = statusProtocolo == 'EM_ANDAMENTO';
+                        return CartaoPacienteHome(
+                          nomePaciente: p.nome,
+                          nivel: _nivel(p.grauAutismo),
+                          idade: p.idade ?? 0,
+                          status: emAndamento ? 'Em andamento' : 'Não iniciado',
+                          corStatus: emAndamento
+                              ? emAndamentoCor
+                              : naoIniciadoCor,
+                          textoBotaoPrincipal: emAndamento
+                              ? 'Continuar'
+                              : 'Iniciar',
+                          onContinuar: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaginaProtocolo(
+                                  pacienteId: p.id,
+                                  nomePaciente: p.nome,
+                                ),
+                              ),
+                            );
+                          },
+                          onHistorico: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RelatorioEvolucao(
+                                  pacienteId: p.id,
+                                  pacienteNome: p.nome,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
           ),
         ],
       ),

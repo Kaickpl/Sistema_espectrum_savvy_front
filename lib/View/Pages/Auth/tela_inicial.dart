@@ -1,15 +1,15 @@
 import 'package:espectrum_front/Config/formatador_telefone.dart';
 import 'package:espectrum_front/Model/ApiExceptionModel.dart';
-import 'package:espectrum_front/View/Pages/tela_perfis_cadatro.dart';
-import 'package:espectrum_front/View/Pages/tela_verificar_email.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_perfis_cadatro.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_verificar_email.dart';
 import 'package:espectrum_front/View/Widgets/fundo_bot%C3%A3o.dart';
 import 'package:flutter/material.dart';
-import '../../Services/AuthService.dart';
-import '../Widgets/fundo_tela.dart';
-import '../Widgets/logo_container.dart';
-import '../Widgets/paginaHomePorPerfil.dart';
-import '../Widgets/roda_pe.dart';
-import '../Widgets/widget_input_acesso.dart';
+import '../../../Services/AuthService.dart';
+import '../../Widgets/fundo_tela.dart';
+import '../../Widgets/logo_container.dart';
+import '../../Widgets/paginaHomePorPerfil.dart';
+import '../../Widgets/roda_pe.dart';
+import '../../Widgets/widget_input_acesso.dart';
 
 class PaginaInicial extends StatefulWidget {
   const PaginaInicial({super.key});

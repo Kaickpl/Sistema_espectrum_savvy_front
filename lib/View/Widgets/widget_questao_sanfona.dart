@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:espectrum_front/View/Pages/pagina_questoes_categoria.dart';
+import 'package:espectrum_front/View/Pages/Protocol/pagina_questoes_categoria.dart';
 import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 
 class WidgetQuestaoSanfona extends StatefulWidget {
@@ -17,7 +17,7 @@ class WidgetQuestaoSanfona extends StatefulWidget {
     required this.AoResponder,
     required this.controlador,
     required this.aoMudarEstadoSanfona,
-    required this.numeroDaQuestao
+    required this.numeroDaQuestao,
   });
 
   @override
@@ -75,19 +75,19 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
         onExpansionChanged: widget.aoMudarEstadoSanfona,
         shape: const Border(),
         collapsedShape: const Border(),
-         leading: CircleAvatar(
+        leading: CircleAvatar(
           radius: 18, // Dá um respiro maior para caber o 10, 11, 20...
           backgroundColor: Theme.of(context).colorScheme.primary,
           child: Text(
             widget.numeroDaQuestao.toString(),
             style: TextStyle(
-              fontSize: 15, // Diminuímos um tiquinho para encaixar como uma luva
+              fontSize:
+                  15, // Diminuímos um tiquinho para encaixar como uma luva
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),
-      
 
         title: Text(
           widget.questao.nomeAtividade,
@@ -104,12 +104,8 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
           height: 24,
           decoration: BoxDecoration(
             color: estaRespondida
-                ? _corSelecionada(context).withValues(
-                    alpha: 0.2,
-                  ) 
-                : Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.1),
+                ? _corSelecionada(context).withValues(alpha: 0.2)
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: estaRespondida
@@ -204,9 +200,10 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                       // Se selecionado, o número na bolinha colorida fica branco. Senão, fica com a cor do texto do tema.
                                       color: selecionado
                                           ? Colors.white
-                                          : Theme.of(
-                                              context,
-                                            ).colorScheme.onSecondary.withValues(alpha: 0.8),
+                                          : Theme.of(context)
+                                                .colorScheme
+                                                .onSecondary
+                                                .withValues(alpha: 0.8),
                                     ),
                                   ),
                                 ),
@@ -222,9 +219,10 @@ class _WidgetQuestaoSanfonaState extends State<WidgetQuestaoSanfona> {
                                     // Se selecionado, o texto de descrição pega a cor do semáforo. Senão, usa a cor de texto padrão do tema atual.
                                     color: selecionado
                                         ? coresNotas[nota]
-                                        : Theme.of(
-                                            context,
-                                          ).colorScheme.onSecondary.withValues(alpha: 0.8),
+                                        : Theme.of(context)
+                                              .colorScheme
+                                              .onSecondary
+                                              .withValues(alpha: 0.8),
                                     fontWeight: selecionado
                                         ? FontWeight.bold
                                         : FontWeight.normal,

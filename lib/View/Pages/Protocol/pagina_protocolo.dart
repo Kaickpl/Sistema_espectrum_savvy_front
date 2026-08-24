@@ -209,32 +209,9 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
     }
   }
 
-  Future<void> _handleSalvar() async {
-    if (sessaoAtual == null) return;
-
-    try {
-      await _salvarComentarioSeNecessario();
-      await ProtocoloService.salvarProgresso(sessaoAtual!.id);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Progresso salvo com sucesso!"),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Erro ao salvar: $e"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+  Future<void> _voltar() async {
+    await _salvarComentarioSeNecessario();
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -262,65 +239,71 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
     String nomeDoPacienteAtual =
         "${sessaoAtual!.pacienteNome ?? "Paciente Desconhecido"}";
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: CabecalhoPadrao(
-        titulo:
-            "Protocolo: ${sessaoAtual!.pacienteNome ?? "Paciente Desconhecido"}",
-      ),
-      endDrawer: DrawerPadrao(),
-      body: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                InfoQuestoesENomePaciente(
-                  nomePaciente: nomeDoPacienteAtual,
-                  questoesRespondidas: respondidas,
-                  totalDeQuestoes: totalQuestoes,
-                  iconePrincipal: Icons.assignment,
-                  tituloPrincipal: "Protocolo de Atendimento",
-                  subtitulo:
-                      "Protocolo Socially Savvy para análise\n do comportamento social no\n contexto da criança",
-                  textoInstrucoes:
-                      "Este protocolo foi desenvolvido para auxiliar na análise do comportamento social de crianças em diferentes contextos.",
-                  comentarioController: _comentarioController,
-                  tituloComentario: "Comentários sobre o protocolo",
-                  dicaTextoComentario:
-                      "Anote aqui suas observações gerais sobre o protocolo, comportamento da criança, etc.",
-                ),
-
-                SizedBox(height: 8),
-
-                ...sessaoAtual!.categoriasSessao.map((categoriaApi) {
-                  return CategoriaProtocolo(
-                    nomeCategoria: categoriaApi.nomeCategoria,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        if (didPop) {
+          return;
+        }
+        _voltar();
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: CabecalhoPadrao(
+          titulo:
+              "Protocolo: ${sessaoAtual!.pacienteNome ?? "Paciente Desconhecido"}",
+        ),
+        endDrawer: DrawerPadrao(),
+        body: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  InfoQuestoesENomePaciente(
                     nomePaciente: nomeDoPacienteAtual,
-                    categoriaSessaoId: categoriaApi.id,
-                    iconeCategoria: Icons.assignment_turned_in,
-                    questoesDestaCategoria: categoriaApi.atividades,
-                    aoAtualizar: () {
-                      setState(() {});
-                    },
-                  );
-                }).toList(),
-              ],
+                    questoesRespondidas: respondidas,
+                    totalDeQuestoes: totalQuestoes,
+                    iconePrincipal: Icons.assignment,
+                    tituloPrincipal: "Protocolo de Atendimento",
+                    subtitulo:
+                        "Protocolo Socially Savvy para análise\n do comportamento social no\n contexto da criança",
+                    textoInstrucoes:
+                        "Este protocolo foi desenvolvido para auxiliar na análise do comportamento social de crianças em diferentes contextos.",
+                    comentarioController: _comentarioController,
+                    tituloComentario: "Comentários sobre o protocolo",
+                    dicaTextoComentario:
+                        "Anote aqui suas observações gerais sobre o protocolo, comportamento da criança, etc.",
+                  ),
+
+                  SizedBox(height: 8),
+
+                  ...sessaoAtual!.categoriasSessao.map((categoriaApi) {
+                    return CategoriaProtocolo(
+                      nomeCategoria: categoriaApi.nomeCategoria,
+                      nomePaciente: nomeDoPacienteAtual,
+                      categoriaSessaoId: categoriaApi.id,
+                      sessaoId: sessaoAtual!.id,
+                      iconeCategoria: Icons.assignment_turned_in,
+                      questoesDestaCategoria: categoriaApi.atividades,
+                      aoAtualizar: () {
+                        setState(() {});
+                      },
+                    );
+                  }).toList(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16),
-        child: Container(
-          height: 50,
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Row(
-            children: [
-              if (_podeFinalizar) ...[
-                Expanded(
+        bottomNavigationBar: _podeFinalizar
+            ? Padding(
+                padding: EdgeInsets.all(16),
+                child: SizedBox(
+                  height: 50,
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _finalizarSessao,
                     style: ElevatedButton.styleFrom(
@@ -340,29 +323,8 @@ class _PaginaProtocoloState extends State<PaginaProtocolo> {
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
-              ],
-
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _handleSalvar,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    "Salvar",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+              )
+            : null,
       ),
     );
   }

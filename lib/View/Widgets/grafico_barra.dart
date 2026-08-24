@@ -2,16 +2,22 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class GraficoBarra extends StatelessWidget {
-  final double pontLinguagem;
-  final double pontMotor;
-  final double pontCognitivo;
-  final double pontSocial;
+  final double pontAtencaoCompartilhada;
+  final double pontBrincarSocial;
+  final double pontAutoRegulacao;
+  final double pontSocialEmocional;
+  final double pontLinguagemSocial;
+  final double pontComportamentos;
+  final double pontLinguagemSocialNaoVerbal;
   const GraficoBarra({
     super.key,
-    required this.pontLinguagem,
-    required this.pontMotor,
-    required this.pontCognitivo,
-    required this.pontSocial,
+    required this.pontAtencaoCompartilhada,
+    required this.pontBrincarSocial,
+    required this.pontAutoRegulacao,
+    required this.pontSocialEmocional,
+    required this.pontLinguagemSocial,
+    required this.pontComportamentos,
+    required this.pontLinguagemSocialNaoVerbal,
   });
 
   @override
@@ -65,16 +71,25 @@ class GraficoBarra extends StatelessWidget {
                   String texto = '';
                   switch (value.toInt()) {
                     case 0:
-                      texto = 'Linguagem';
+                      texto = 'Atencao Compartilhada';
                       break;
                     case 1:
-                      texto = 'Motor';
+                      texto = 'Brincar Social';
                       break;
                     case 2:
-                      texto = 'Cognitivo';
+                      texto = 'Auto Regulacao';
                       break;
                     case 3:
-                      texto = 'Social';
+                      texto = 'Social/Emocional';
+                      break;
+                    case 4:
+                      texto = 'Linguagem Social';
+                      break;
+                    case 5:
+                      texto = 'Comportamentos de Grupo e de Sala de Aula';
+                      break;
+                    case 6: 
+                      texto = 'Linguagem Social Não Verbal';
                       break;
                   }
                   return SideTitleWidget(
@@ -93,7 +108,7 @@ class GraficoBarra extends StatelessWidget {
               x: 0,
               barRods: [
                 BarChartRodData(
-                  toY: pontLinguagem,
+                  toY: pontAtencaoCompartilhada,
                   color: const Color(0xFF66A3FF),
                   width: 40,
                   borderRadius: BorderRadius.circular(4),
@@ -104,7 +119,7 @@ class GraficoBarra extends StatelessWidget {
               x: 1,
               barRods: [
                 BarChartRodData(
-                  toY: pontMotor,
+                  toY: pontBrincarSocial,
                   color: const Color(0xFF33D69F),
                   width: 40,
                   borderRadius: BorderRadius.circular(4),
@@ -115,7 +130,7 @@ class GraficoBarra extends StatelessWidget {
               x: 2,
               barRods: [
                 BarChartRodData(
-                  toY: pontCognitivo,
+                  toY: pontAutoRegulacao,
                   color: const Color(0xFFFFD44D),
                   width: 40,
                   borderRadius: BorderRadius.circular(4),
@@ -126,13 +141,47 @@ class GraficoBarra extends StatelessWidget {
               x: 3,
               barRods: [
                 BarChartRodData(
-                  toY: pontSocial,
-                  color: const Color(0xFFFFADC7),
+                  toY: pontSocialEmocional,
+                  color: const Color.fromARGB(255, 203, 145, 253),
                   width: 40,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ],
             ),
+            BarChartGroupData(
+              x: 4,
+              barRods: [
+                BarChartRodData(
+                  toY: pontLinguagemSocial,
+                  color: const Color.fromARGB(255, 255, 239, 18),
+                  width: 40,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ],
+            ),
+            BarChartGroupData(
+              x: 5,
+              barRods: [
+                BarChartRodData(
+                  toY: pontComportamentos,
+                  color: const Color.fromARGB(255, 84, 68, 255),
+                  width: 40,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ],
+            ),
+            BarChartGroupData(
+              x: 6,
+              barRods: [
+                BarChartRodData(
+                  toY: pontLinguagemSocialNaoVerbal,
+                  color: const Color.fromARGB(255, 128, 255, 147),
+                  width: 40,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ],
+            ),
+
           ],
         ),
       ),

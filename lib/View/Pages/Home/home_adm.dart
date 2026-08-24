@@ -4,15 +4,15 @@ import 'package:espectrum_front/Model/TerapeutaResumoModel.dart';
 import 'package:espectrum_front/Services/AdminService.dart';
 import 'package:espectrum_front/Services/TerapeutaService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_estagiario.dart';
-import 'package:espectrum_front/View/Pages/tela_cadastro_professor.dart';
-import 'package:espectrum_front/View/Pages/tela_gerenciar_terapeutas.dart';
-import 'package:espectrum_front/View/Pages/tela_vincular_pacientes.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_estagiario.dart';
+import 'package:espectrum_front/View/Pages/Auth/tela_cadastro_professor.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_gerenciar_terapeutas.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_vincular_pacientes.dart';
 import 'package:espectrum_front/View/Widgets/cartao_acoes_rapidas.dart';
 import 'package:espectrum_front/View/Widgets/cartao_aluno.dart';
 import 'package:espectrum_front/View/Widgets/cartao_relatorio.dart';
 import 'package:flutter/material.dart';
-import '../Widgets/drawer_padrao.dart';
+import '../../Widgets/drawer_padrao.dart';
 
 class HomeAdm extends StatefulWidget {
   const HomeAdm({super.key});
@@ -230,202 +230,206 @@ class _HomeAdmState extends State<HomeAdm> {
         actions: [_buildNotificacaoPendentes(cores)],
       ),
       drawer: DrawerPadrao(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: RefreshIndicator(
+        onRefresh: _carregarDados,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Bem-vindo de volta',
+                      style: TextStyle(
+                        color: cores.onSurface.withOpacity(0.9),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Painel Supervisor de Estágio',
+                      style: tema.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: cores.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              _buildSectionTitle(cores, 'Resumo Geral'),
+              const SizedBox(height: 12),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: colunasResumo,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: proporcaoCardResumo,
                 children: [
-                  Text(
-                    'Bem-vindo de volta',
-                    style: TextStyle(
-                      color: cores.onSurface.withOpacity(0.5),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  _buildCardInformativo(
+                    context,
+                    titulo: '${_dashboard?.totalPacientes ?? 0}',
+                    subtitulo: 'Total de pacientes',
+                    icone: Icons.group,
+                    corIcone: cores.primary,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Painel Supervisor de Estágio',
-                    style: tema.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: cores.onSurface,
-                    ),
+                  _buildCardInformativo(
+                    context,
+                    titulo: '${_dashboard?.totalProtocolosFinalizados ?? 0}',
+                    subtitulo: 'Protocolos Finalizados',
+                    icone: Icons.note_add,
+                    corIcone: cores.secondary,
+                  ),
+                  _buildCardInformativo(
+                    context,
+                    titulo: '92',
+                    subtitulo: 'Relatórios gerados',
+                    icone: Icons.bar_chart,
+                    corIcone: cores.tertiary,
                   ),
                 ],
               ),
-            ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 28),
 
-            _buildSectionTitle(cores, 'Resumo Geral'),
-            const SizedBox(height: 12),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: colunasResumo,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: proporcaoCardResumo,
-              children: [
-                _buildCardInformativo(
-                  context,
-                  titulo: '${_dashboard?.totalPacientes ?? 0}',
-                  subtitulo: 'Total de pacientes',
-                  icone: Icons.group,
-                  corIcone: cores.primary,
-                ),
-                _buildCardInformativo(
-                  context,
-                  titulo: '${_dashboard?.totalProtocolosFinalizados ?? 0}',
-                  subtitulo: 'Protocolos Finalizados',
-                  icone: Icons.note_add,
-                  corIcone: cores.secondary,
-                ),
-                _buildCardInformativo(
-                  context,
-                  titulo: '92',
-                  subtitulo: 'Relatórios gerados',
-                  icone: Icons.bar_chart,
-                  corIcone: cores.tertiary,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 28),
-
-            _buildSectionTitle(cores, 'Ações rápidas'),
-            const SizedBox(height: 12),
-            Column(
-              children: [
-                BotaoAcoesRapidas(
-                  titulo: 'Cadastrar novo terapeuta',
-                  subtitulo: 'Adicionar profissional ao sistema',
-                  icone: Icon(Icons.person_add, color: cores.onPrimary),
-                  corFundo: cores.primary,
-                  corLetra: cores.onPrimary,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const CadastroEstagiario(modoAdmin: true),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-                BotaoAcoesRapidas(
-                  titulo: 'Cadastrar novo professor',
-                  subtitulo: 'Adicionar professor ao sistema',
-                  icone: Icon(Icons.school, color: cores.onSecondary),
-                  corFundo: cores.secondary,
-                  corLetra: cores.onSecondary,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CadastroProfessor(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-                BotaoAcoesRapidas(
-                  titulo: 'Gerenciar Pacientes',
-                  subtitulo: 'Editar e organizar pacientes',
-                  icone: Icon(Icons.groups, color: cores.onTertiary),
-                  corFundo: cores.tertiary,
-                  corLetra: cores.onTertiary,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TelaVincularPacientes(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 28),
-
-            _buildSectionHeader(
-              cores,
-              'RELATÓRIOS RECENTES',
-              () => print('ir pra pagina de ver todos os relatorios'),
-            ),
-            const SizedBox(height: 8),
-            Column(
-              children: [
-                CartaoRelatorio(
-                  titulo: 'Relatório Mensal - Maio 2025',
-                  status: 'Concluído',
-                  data: DateTime(25, 07, 08),
-                  nomeTerapeuta: 'Dr. Marcos Souza',
-                ),
-                const SizedBox(height: 8),
-                CartaoRelatorio(
-                  titulo: 'Relatório Mensal - Maio 2025',
-                  status: 'Em progresso',
-                  data: DateTime(25, 07, 08),
-                  nomeTerapeuta: 'Dr. Pedro Alves',
-                ),
-                const SizedBox(height: 8),
-                CartaoRelatorio(
-                  titulo: 'Relatório Mensal - Maio 2025',
-                  status: 'Concluído',
-                  data: DateTime(25, 07, 8),
-                  nomeTerapeuta: 'Dra. Ana Lima',
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 28),
-
-            _buildSectionHeader(cores, 'GESTÃO DE ALUNOS', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const TelaGerenciarTerapeutas(),
-                ),
-              );
-            }),
-            const SizedBox(height: 8),
-            Column(
-              children: _terapeutasPreview.isEmpty
-                  ? [
-                      Text(
-                        'Nenhum terapeuta cadastrado ainda.',
-                        style: TextStyle(
-                          color: cores.onSurface.withOpacity(0.5),
-                          fontSize: 13,
+              _buildSectionTitle(cores, 'Ações rápidas'),
+              const SizedBox(height: 12),
+              Column(
+                children: [
+                  BotaoAcoesRapidas(
+                    titulo: 'Cadastrar novo terapeuta',
+                    subtitulo: 'Adicionar profissional ao sistema',
+                    icone: Icon(Icons.person_add, color: cores.onPrimary),
+                    corFundo: cores.primary,
+                    corLetra: cores.onPrimary,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const CadastroEstagiario(modoAdmin: true),
                         ),
-                      ),
-                    ]
-                  : [
-                      for (int i = 0; i < _terapeutasPreview.length; i++) ...[
-                        CartaoAluno(
-                          id: _terapeutasPreview[i].id,
-                          nome: _terapeutasPreview[i].nome,
-                          numPacientes:
-                              _terapeutasPreview[i].quantidadePacientes,
-                          onDelete: () => _confirmarDesativacaoTerapeuta(
-                            _terapeutasPreview[i],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  BotaoAcoesRapidas(
+                    titulo: 'Cadastrar novo professor',
+                    subtitulo: 'Adicionar professor ao sistema',
+                    icone: Icon(Icons.school, color: cores.onSecondary),
+                    corFundo: cores.secondary,
+                    corLetra: cores.onSecondary,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CadastroProfessor(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  BotaoAcoesRapidas(
+                    titulo: 'Gerenciar Pacientes',
+                    subtitulo: 'Editar e organizar pacientes',
+                    icone: Icon(Icons.groups, color: cores.onSecondary),
+                    corFundo: cores.tertiary,
+                    corLetra: cores.onTertiary,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TelaVincularPacientes(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 28),
+
+              _buildSectionHeader(
+                cores,
+                'RELATÓRIOS RECENTES',
+                () => print('ir pra pagina de ver todos os relatorios'),
+              ),
+              const SizedBox(height: 8),
+              Column(
+                children: [
+                  CartaoRelatorio(
+                    titulo: 'Relatório Mensal - Maio 2025',
+                    status: 'Concluído',
+                    data: DateTime(2025, 07, 08),
+                    nomeTerapeuta: 'Dr. Marcos Souza',
+                  ),
+                  const SizedBox(height: 8),
+                  CartaoRelatorio(
+                    titulo: 'Relatório Mensal - Maio 2025',
+                    status: 'Em progresso',
+                    data: DateTime(2025, 07, 08),
+                    nomeTerapeuta: 'Dr. Pedro Alves',
+                  ),
+                  const SizedBox(height: 8),
+                  CartaoRelatorio(
+                    titulo: 'Relatório Mensal - Maio 2025',
+                    status: 'Concluído',
+                    data: DateTime(2025, 07, 8),
+                    nomeTerapeuta: 'Dra. Ana Lima',
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 28),
+
+              _buildSectionHeader(cores, 'GESTÃO DE ALUNOS', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaGerenciarTerapeutas(),
+                  ),
+                );
+              }),
+              const SizedBox(height: 8),
+              Column(
+                children: _terapeutasPreview.isEmpty
+                    ? [
+                        Text(
+                          'Nenhum terapeuta cadastrado ainda.',
+                          style: TextStyle(
+                            color: cores.onSurface.withOpacity(0.5),
+                            fontSize: 13,
                           ),
                         ),
-                        if (i < _terapeutasPreview.length - 1)
-                          const SizedBox(height: 8),
+                      ]
+                    : [
+                        for (int i = 0; i < _terapeutasPreview.length; i++) ...[
+                          CartaoAluno(
+                            id: _terapeutasPreview[i].id,
+                            nome: _terapeutasPreview[i].nome,
+                            numPacientes:
+                                _terapeutasPreview[i].quantidadePacientes,
+                            onDelete: () => _confirmarDesativacaoTerapeuta(
+                              _terapeutasPreview[i],
+                            ),
+                          ),
+                          if (i < _terapeutasPreview.length - 1)
+                            const SizedBox(height: 8),
+                        ],
                       ],
-                    ],
-            ),
-            const SizedBox(height: 24),
-          ],
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

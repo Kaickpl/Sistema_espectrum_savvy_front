@@ -2,7 +2,7 @@ import 'package:espectrum_front/Model/ApiExceptionModel.dart';
 import 'package:espectrum_front/Model/PacienteDetalheModel.dart';
 import 'package:espectrum_front/Services/PacienteService.dart';
 import 'package:espectrum_front/Services/TokenStorage.dart';
-import 'package:espectrum_front/View/Pages/tela_editar_paciente.dart';
+import 'package:espectrum_front/View/Pages/manager/tela_editar_paciente.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:flutter/material.dart';
@@ -132,86 +132,78 @@ class _TelaVisualizarPacientesState extends State<TelaVisualizarPacientes> {
         child: _carregando
             ? const Center(child: CircularProgressIndicator())
             : _erro != null
-                ? ListView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Center(
-                          child: Text(
-                            _erro!,
-                            style: TextStyle(color: cores.error),
-                          ),
+            ? ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Center(
+                      child: Text(_erro!, style: TextStyle(color: cores.error)),
+                    ),
+                  ),
+                ],
+              )
+            : _pacientes.isEmpty
+            ? ListView(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Center(
+                      child: Text("Nenhum paciente vinculado encontrado."),
+                    ),
+                  ),
+                ],
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: _pacientes.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final paciente = _pacientes[index];
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: cores.onPrimary,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: cores.onSurface, width: 1),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      title: Text(
+                        paciente.nome,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
-                    ],
-                  )
-                : _pacientes.isEmpty
-                    ? ListView(
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(24.0),
-                            child: Center(
-                              child: Text(
-                                "Nenhum paciente vinculado encontrado.",
-                              ),
+                      subtitle: Text(
+                        "${paciente.grau.displayName}"
+                        "${paciente.idade != null ? ' • ${paciente.idade} anos' : ''}",
+                      ),
+                      onTap: () => _abrirEdicao(paciente),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit_outlined),
+                            tooltip: "Editar",
+                            onPressed: () => _abrirEdicao(paciente),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete_outline,
+                              color: cores.error,
                             ),
+                            tooltip: "Excluir",
+                            onPressed: () => _confirmarExclusao(paciente),
                           ),
                         ],
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: _pacientes.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final paciente = _pacientes[index];
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: cores.onPrimary,
-                              borderRadius: BorderRadius.circular(16),
-                              border:
-                                  Border.all(color: cores.onSurface, width: 1),
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              title: Text(
-                                paciente.nome,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              subtitle: Text(
-                                "${paciente.grau.displayName}"
-                                "${paciente.idade != null ? ' • ${paciente.idade} anos' : ''}",
-                              ),
-                              onTap: () => _abrirEdicao(paciente),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit_outlined),
-                                    tooltip: "Editar",
-                                    onPressed: () => _abrirEdicao(paciente),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.delete_outline,
-                                      color: cores.error,
-                                    ),
-                                    tooltip: "Excluir",
-                                    onPressed: () =>
-                                        _confirmarExclusao(paciente),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
                       ),
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }
