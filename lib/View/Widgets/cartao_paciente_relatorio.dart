@@ -28,7 +28,7 @@ class CartaoPacienteRelatorio extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: cores.surface,
+          color: cores.primary.withOpacity(0.05),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
