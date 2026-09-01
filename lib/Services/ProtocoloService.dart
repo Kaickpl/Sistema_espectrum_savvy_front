@@ -1,7 +1,6 @@
 import 'package:espectrum_front/Config/ApiConfig.dart';
 import 'package:espectrum_front/Model/Protocolo/ProtocoloSessaoModel.dart';
 import 'ApiService.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'TokenStorage.dart';
 
 class ProtocoloService {

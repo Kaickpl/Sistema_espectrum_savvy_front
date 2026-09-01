@@ -1,5 +1,4 @@
 import 'AtividadeSessaoModel.dart';
-import 'AtividadeSessaoModel.dart';
 
 class CategoriaSessaoModel {
   final String id;

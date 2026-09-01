@@ -2,7 +2,6 @@ import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/widget_questao_sanfona.dart';
 import 'package:flutter/material.dart';
 import 'package:espectrum_front/View/Widgets/info_questoes_e_nome_paciente.dart';
-import 'package:espectrum_front/View/Widgets/categoria_protocolo.dart';
 import 'package:espectrum_front/Model/Protocolo/AtividadeSessaoModel.dart';
 import 'package:espectrum_front/Services/ProtocoloService.dart';
 import 'package:espectrum_front/Services/ComentarioService.dart';
