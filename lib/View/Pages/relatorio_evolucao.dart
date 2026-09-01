@@ -342,7 +342,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                           titulo: 'Por Aplicação',
                           icone: Icon(
                             Icons.layers_outlined,
-                            color: cores.onSurface.withOpacity(0.7),
+                            color: cores.primary.withOpacity(0.7),
                           ),
                           selecionado: _modo == _ModoRelatorio.porAplicacao,
                           onTap: () =>
@@ -441,7 +441,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
               titulo: 'Últimos 6 meses',
               icone: Icon(
                 Icons.calendar_month,
-                color: cores.onSurface.withOpacity(0.7),
+                color: cores.primary.withOpacity(0.7),
               ),
               selecionado: _intervaloSelecionado == 6,
               onTap: () => _escolherIntervalo(6),
@@ -463,7 +463,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
         height: 350,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: cores.surface,
+          color: cores.onPrimary.withOpacity(0.05),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -482,6 +482,8 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                   child: DropdownButton<String>(
                     value: _categoriaSelecionada,
                     isExpanded: true,
+                    dropdownColor: cores.onPrimary,
+                    focusColor: Colors.transparent,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     style: TextStyle(color: cores.primary, fontSize: 13),
                     underline: Container(
@@ -532,7 +534,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
       const SizedBox(height: 20),
       Container(
         decoration: BoxDecoration(
-          color: cores.surface,
+          color: cores.onSurface.withOpacity(0.05),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Padding(
@@ -543,7 +545,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                 'Comparativo por categoria',
                 style: TextStyle(fontSize: 18),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 50),
               relatorio.categorias.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
@@ -656,7 +658,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
 
     return Container(
       decoration: BoxDecoration(
-        color: cores.surface,
+        color: cores.onPrimary.withOpacity(0.05),
         borderRadius: BorderRadius.circular(15),
       ),
       padding: const EdgeInsets.all(12),
@@ -670,6 +672,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
               Text(
@@ -715,7 +718,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
       height: 350,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: cores.surface,
+        color: cores.onPrimary.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -807,7 +810,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: cores.surface,
+            color: cores.onPrimary.withOpacity(0.05),
             borderRadius: BorderRadius.circular(15),
           ),
           padding: const EdgeInsets.all(12),

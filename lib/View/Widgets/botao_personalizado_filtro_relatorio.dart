@@ -26,12 +26,24 @@ class BotaoPersonalizadoFiltroRelatorio extends StatelessWidget {
           width: 190,
           height: 50,
           decoration: BoxDecoration(
-            color: selecionado ? cores.primary : cores.surface.withOpacity(0.5),
+            color: selecionado
+                ? cores.primary
+                : cores.onPrimary.withOpacity(0.5),
             borderRadius: BorderRadius.circular(20),
             border: selecionado
                 ? Border.all(color: cores.primaryContainer)
                 : null,
+            boxShadow: selecionado
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
           ),
+
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Row(
