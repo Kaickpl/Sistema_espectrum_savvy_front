@@ -5,16 +5,37 @@ import 'package:espectrum_front/Services/RelatorioService.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro_relatorio.dart';
 import 'package:espectrum_front/View/Widgets/cartaoObservacao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_relatorio.dart';
-import 'package:espectrum_front/View/Widgets/cartao_pontuacoes.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_semestre.dart';
 import 'package:espectrum_front/View/Widgets/grafico_teia.dart';
+import 'package:espectrum_front/View/Widgets/seletor_aplicacoes_relatorio.dart';
+import 'package:espectrum_front/View/Widgets/tabela_comparativo_aplicacoes.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 
 const _mediaGeralLabel = 'Média Geral';
 const List<String> _mesesAbreviados = [
-  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
+  'Jan',
+  'Fev',
+  'Mar',
+  'Abr',
+  'Mai',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Set',
+  'Out',
+  'Nov',
+  'Dez',
+];
+
+enum _ModoRelatorio { geral, porAplicacao }
+
+enum _SubModoAplicacao { individual, evolucao, comparativo }
+
+const List<Color> _coresComparativo = [
+  Color(0xFF3E6AE1),
+  Color(0xFFE0A93E),
+  Color(0xFF3EAE6A),
 ];
 
 class RelatorioEvolucao extends StatefulWidget {
@@ -39,13 +60,30 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   int _intervaloSelecionado = 6;
   String _categoriaSelecionada = _mediaGeralLabel;
   bool _mostrarTodasObservacoes = false;
-  bool _mostrarTodasPontuacoes = false;
   bool _exportandoPdf = false;
+
+  _ModoRelatorio _modo = _ModoRelatorio.geral;
+  _SubModoAplicacao _subModo = _SubModoAplicacao.individual;
+  Set<int> _aplicacoesSelecionadas = {};
 
   @override
   void initState() {
     super.initState();
     _carregarRelatorio();
+  }
+
+  int get _mesesParaBusca =>
+      _modo == _ModoRelatorio.geral ? _intervaloSelecionado : 0;
+
+  List<PontoEvolucaoModel> get _aplicacoesOrdenadas =>
+      _relatorio?.evolucaoTemporal ?? [];
+
+  List<PontoEvolucaoModel> get _aplicacoesFiltradas {
+    final filtradas = _aplicacoesOrdenadas
+        .where((p) => _aplicacoesSelecionadas.contains(p.numeroAplicacao))
+        .toList();
+    filtradas.sort((a, b) => a.numeroAplicacao.compareTo(b.numeroAplicacao));
+    return filtradas;
   }
 
   Future<void> _carregarRelatorio() async {
@@ -56,7 +94,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
     try {
       final relatorio = await RelatorioService.buscarRelatorioEvolucao(
         widget.pacienteId,
-        meses: _intervaloSelecionado,
+        meses: _mesesParaBusca,
       );
       if (!mounted) return;
       setState(() {
@@ -65,6 +103,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
             !relatorio.categorias.contains(_categoriaSelecionada)) {
           _categoriaSelecionada = _mediaGeralLabel;
         }
+        _normalizarSelecaoAplicacoes();
       });
     } on ApiException catch (e) {
       if (!mounted) return;
@@ -79,31 +118,116 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
     }
   }
 
-  Future<void> _exportarPdf() async {
-    debugPrint('[RelatorioPdf] botão tocado');
-    if (_relatorio == null || _exportandoPdf) {
-      debugPrint(
-        '[RelatorioPdf] abortado: relatorio=${_relatorio != null} '
-        'exportando=$_exportandoPdf',
-      );
+  void _normalizarSelecaoAplicacoes() {
+    final numeros = _aplicacoesOrdenadas.map((p) => p.numeroAplicacao).toList();
+    if (numeros.isEmpty) {
+      _aplicacoesSelecionadas = {};
       return;
     }
+    switch (_subModo) {
+      case _SubModoAplicacao.individual:
+        if (_aplicacoesSelecionadas.length != 1 ||
+            !numeros.contains(_aplicacoesSelecionadas.first)) {
+          _aplicacoesSelecionadas = {numeros.last};
+        }
+        break;
+      case _SubModoAplicacao.evolucao:
+        _aplicacoesSelecionadas = _aplicacoesSelecionadas
+            .where(numeros.contains)
+            .toSet();
+        if (_aplicacoesSelecionadas.isEmpty) {
+          _aplicacoesSelecionadas = numeros.toSet();
+        }
+        break;
+      case _SubModoAplicacao.comparativo:
+        _aplicacoesSelecionadas = _aplicacoesSelecionadas
+            .where(numeros.contains)
+            .toSet();
+        if (_aplicacoesSelecionadas.length < 2) {
+          _aplicacoesSelecionadas = numeros.length >= 2
+              ? {numeros[numeros.length - 2], numeros.last}
+              : numeros.toSet();
+        }
+        break;
+    }
+  }
+
+  void _alternarAplicacao(int numero) {
+    setState(() {
+      switch (_subModo) {
+        case _SubModoAplicacao.individual:
+          _aplicacoesSelecionadas = {numero};
+          break;
+        case _SubModoAplicacao.evolucao:
+          if (_aplicacoesSelecionadas.contains(numero)) {
+            if (_aplicacoesSelecionadas.length > 1) {
+              _aplicacoesSelecionadas.remove(numero);
+            }
+          } else {
+            _aplicacoesSelecionadas.add(numero);
+          }
+          break;
+        case _SubModoAplicacao.comparativo:
+          if (_aplicacoesSelecionadas.contains(numero)) {
+            if (_aplicacoesSelecionadas.length > 2) {
+              _aplicacoesSelecionadas.remove(numero);
+            }
+          } else if (_aplicacoesSelecionadas.length < 3) {
+            _aplicacoesSelecionadas.add(numero);
+          }
+          break;
+      }
+    });
+  }
+
+  void _escolherModo(_ModoRelatorio modo) {
+    if (modo == _modo) return;
+    setState(() {
+      _modo = modo;
+      if (modo == _ModoRelatorio.porAplicacao) {
+        _subModo = _SubModoAplicacao.individual;
+      }
+    });
+    _carregarRelatorio();
+  }
+
+  void _escolherSubModo(_SubModoAplicacao subModo) {
+    if (subModo == _subModo) return;
+    setState(() {
+      _subModo = subModo;
+      _normalizarSelecaoAplicacoes();
+    });
+  }
+
+  ModoExportacaoPdf get _modoExportacaoAtual {
+    if (_modo == _ModoRelatorio.geral) return ModoExportacaoPdf.geral;
+    switch (_subModo) {
+      case _SubModoAplicacao.individual:
+        return ModoExportacaoPdf.individual;
+      case _SubModoAplicacao.evolucao:
+        return ModoExportacaoPdf.evolucao;
+      case _SubModoAplicacao.comparativo:
+        return ModoExportacaoPdf.comparativo;
+    }
+  }
+
+  Future<void> _exportarPdf() async {
+    if (_relatorio == null || _exportandoPdf) return;
     setState(() => _exportandoPdf = true);
     try {
-      debugPrint('[RelatorioPdf] gerando bytes do pdf...');
       final bytes = await RelatorioPdfService.gerarPdf(
         _relatorio!,
         intervaloMeses: _intervaloSelecionado,
+        modo: _modoExportacaoAtual,
+        aplicacoesSelecionadas: _modo == _ModoRelatorio.porAplicacao
+            ? _aplicacoesFiltradas
+            : null,
       );
-      debugPrint('[RelatorioPdf] bytes gerados: ${bytes.length}, abrindo preview...');
       await Printing.layoutPdf(
         onLayout: (_) async => bytes,
         name: 'relatorio_evolucao_${_relatorio!.pacienteNome}.pdf',
       );
-      debugPrint('[RelatorioPdf] Printing.layoutPdf retornou');
-    } catch (e, st) {
-      debugPrint('[RelatorioPdf] ERRO: $e');
-      debugPrint('$st');
+    } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -124,16 +248,6 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
 
   String _formatarMesAno(DateTime data) {
     return '${_mesesAbreviados[data.month - 1]}/${data.year.toString().substring(2)}';
-  }
-
-  IconData _iconeParaAtividade(String categoria) {
-    final texto = categoria.toLowerCase();
-    if (texto.contains('linguagem')) return Icons.chat_bubble_outline_rounded;
-    if (texto.contains('motor')) return Icons.handshake;
-    if (texto.contains('social') || texto.contains('brincar')) {
-      return Icons.groups_outlined;
-    }
-    return Icons.remove_red_eye;
   }
 
   @override
@@ -179,33 +293,21 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   }
 
   Widget _buildConteudo() {
-    final tema = Theme.of(context);
-    final cores = tema.colorScheme;
+    final cores = Theme.of(context).colorScheme;
     final relatorio = _relatorio!;
 
-    final categoriasDropdown = [_mediaGeralLabel, ...relatorio.categorias];
-
-    final valoresGrafico = relatorio.evolucaoTemporal
-        .map(
-          (p) => _categoriaSelecionada == _mediaGeralLabel
-              ? p.mediaGeral
-              : (p.mediaPorCategoria[_categoriaSelecionada] ?? 0),
-        )
-        .toList();
-    final labelsGrafico = relatorio.evolucaoTemporal
-        .map((p) => p.data != null ? _formatarMesAno(p.data!) : '')
-        .toList();
-
-    final valoresTeia = relatorio.categorias
-        .map((c) => relatorio.comparativoCategorias[c] ?? 0)
-        .toList();
-
-    final observacoesVisiveis = _mostrarTodasObservacoes
+    final observacoesFonte = _modo == _ModoRelatorio.porAplicacao
         ? relatorio.observacoes
-        : relatorio.observacoes.take(3).toList();
-    final pontuacoesVisiveis = _mostrarTodasPontuacoes
-        ? relatorio.ultimasPontuacoes
-        : relatorio.ultimasPontuacoes.take(3).toList();
+              .where(
+                (o) =>
+                    o.numeroAplicacao == null ||
+                    _aplicacoesSelecionadas.contains(o.numeroAplicacao),
+              )
+              .toList()
+        : relatorio.observacoes;
+    final observacoesVisiveis = _mostrarTodasObservacoes
+        ? observacoesFonte
+        : observacoesFonte.take(3).toList();
 
     return RefreshIndicator(
       onRefresh: _carregarRelatorio,
@@ -233,142 +335,32 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                     child: Row(
                       children: [
                         BotaoPersonalizadoFiltroRelatorio(
-                          titulo: 'Últimos 6 meses',
+                          titulo: 'Visão Geral',
                           icone: Icon(
-                            Icons.calendar_month,
+                            Icons.insights,
                             color: cores.onSurface.withOpacity(0.7),
                           ),
-                          selecionado: _intervaloSelecionado == 6,
-                          onTap: () => _escolherIntervalo(6),
+                          selecionado: _modo == _ModoRelatorio.geral,
+                          onTap: () => _escolherModo(_ModoRelatorio.geral),
                         ),
                         BotaoPersonalizadoFiltroRelatorio(
-                          titulo: 'Último ano',
+                          titulo: 'Por Aplicação',
                           icone: Icon(
-                            Icons.calendar_month,
+                            Icons.layers_outlined,
                             color: cores.onSurface.withOpacity(0.7),
                           ),
-                          selecionado: _intervaloSelecionado == 12,
-                          onTap: () => _escolherIntervalo(12),
+                          selecionado: _modo == _ModoRelatorio.porAplicacao,
+                          onTap: () =>
+                              _escolherModo(_ModoRelatorio.porAplicacao),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 350,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: cores.surface,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'Histórico evolutivo',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 150),
-                              child: DropdownButton<String>(
-                                value: _categoriaSelecionada,
-                                isExpanded: true,
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                                style: TextStyle(
-                                  color: cores.primary,
-                                  fontSize: 13,
-                                ),
-                                underline: Container(
-                                  height: 1,
-                                  color: cores.primary.withOpacity(0.5),
-                                ),
-                                onChanged: (String? novaCategoria) {
-                                  if (novaCategoria != null) {
-                                    setState(
-                                      () =>
-                                          _categoriaSelecionada = novaCategoria,
-                                    );
-                                  }
-                                },
-                                items: categoriasDropdown
-                                    .map<DropdownMenuItem<String>>((valor) {
-                                      return DropdownMenuItem<String>(
-                                        value: valor,
-                                        child: Text(
-                                          valor,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                      );
-                                    })
-                                    .toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Expanded(
-                          child: valoresGrafico.isEmpty
-                              ? Center(
-                                  child: Text(
-                                    'Nenhum dado de evolução no período selecionado.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: cores.onSurface.withOpacity(0.5),
-                                    ),
-                                  ),
-                                )
-                              : GraficoLinhaSemestre(
-                                  valores: valoresGrafico,
-                                  labels: labelsGrafico,
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: cores.surface,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'Comparativo por categoria',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          const SizedBox(height: 25),
-                          relatorio.categorias.isEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 24,
-                                  ),
-                                  child: Text(
-                                    'Nenhuma categoria pontuada no período selecionado.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: cores.onSurface.withOpacity(0.5),
-                                    ),
-                                  ),
-                                )
-                              : GraficoTeia(
-                                  categorias: relatorio.categorias,
-                                  valores: valoresTeia,
-                                ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  const SizedBox(height: 10),
+                  if (_modo == _ModoRelatorio.geral)
+                    ..._buildSecaoVisaoGeral(relatorio, cores)
+                  else
+                    ..._buildSecaoPorAplicacao(relatorio, cores),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -377,7 +369,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                         'Histórico de observações',
                         style: TextStyle(fontSize: 18),
                       ),
-                      if (relatorio.observacoes.length > 3)
+                      if (observacoesFonte.length > 3)
                         TextButton(
                           onPressed: () => setState(
                             () => _mostrarTodasObservacoes =
@@ -395,7 +387,9 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         'Nenhuma observação registrada.',
-                        style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+                        style: TextStyle(
+                          color: cores.onSurface.withOpacity(0.5),
+                        ),
                       ),
                     )
                   else
@@ -419,6 +413,466 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
           ],
         ),
       ),
+    );
+  }
+
+  List<Widget> _buildSecaoVisaoGeral(
+    RelatorioEvolucaoModel relatorio,
+    ColorScheme cores,
+  ) {
+    final categoriasDropdown = [_mediaGeralLabel, ...relatorio.categorias];
+
+    final valoresGrafico = relatorio.evolucaoTemporal
+        .map(
+          (p) => _categoriaSelecionada == _mediaGeralLabel
+              ? p.mediaGeral
+              : (p.mediaPorCategoria[_categoriaSelecionada] ?? 0),
+        )
+        .toList();
+    final labelsGrafico = relatorio.evolucaoTemporal
+        .map((p) => p.data != null ? _formatarMesAno(p.data!) : '')
+        .toList();
+
+    final valoresTeia = relatorio.categorias
+        .map((c) => relatorio.comparativoCategorias[c] ?? 0)
+        .toList();
+
+    return [
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            BotaoPersonalizadoFiltroRelatorio(
+              titulo: 'Últimos 6 meses',
+              icone: Icon(
+                Icons.calendar_month,
+                color: cores.onSurface.withOpacity(0.7),
+              ),
+              selecionado: _intervaloSelecionado == 6,
+              onTap: () => _escolherIntervalo(6),
+            ),
+            BotaoPersonalizadoFiltroRelatorio(
+              titulo: 'Último ano',
+              icone: Icon(
+                Icons.calendar_month,
+                color: cores.onSurface.withOpacity(0.7),
+              ),
+              selecionado: _intervaloSelecionado == 12,
+              onTap: () => _escolherIntervalo(12),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 20),
+      Container(
+        height: 350,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: cores.surface,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Histórico evolutivo',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  child: DropdownButton<String>(
+                    value: _categoriaSelecionada,
+                    isExpanded: true,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    style: TextStyle(color: cores.primary, fontSize: 13),
+                    underline: Container(
+                      height: 1,
+                      color: cores.primary.withOpacity(0.5),
+                    ),
+                    onChanged: (String? novaCategoria) {
+                      if (novaCategoria != null) {
+                        setState(() => _categoriaSelecionada = novaCategoria);
+                      }
+                    },
+                    items: categoriasDropdown.map<DropdownMenuItem<String>>((
+                      valor,
+                    ) {
+                      return DropdownMenuItem<String>(
+                        value: valor,
+                        child: Text(
+                          valor,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: valoresGrafico.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Nenhum dado de evolução no período selecionado.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: cores.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                    )
+                  : GraficoLinhaSemestre(
+                      valores: valoresGrafico,
+                      labels: labelsGrafico,
+                    ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 20),
+      Container(
+        decoration: BoxDecoration(
+          color: cores.surface,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const Text(
+                'Comparativo por categoria',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 25),
+              relatorio.categorias.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Text(
+                        'Nenhuma categoria pontuada no período selecionado.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: cores.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                    )
+                  : GraficoTeia(
+                      categorias: relatorio.categorias,
+                      valores: valoresTeia,
+                    ),
+            ],
+          ),
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildSecaoPorAplicacao(
+    RelatorioEvolucaoModel relatorio,
+    ColorScheme cores,
+  ) {
+    if (_aplicacoesOrdenadas.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Text(
+            'Nenhuma aplicação registrada para este paciente.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+          ),
+        ),
+      ];
+    }
+
+    final subModoLegenda = switch (_subModo) {
+      _SubModoAplicacao.individual => 'Escolha uma aplicação:',
+      _SubModoAplicacao.evolucao => 'Escolha uma ou mais aplicações:',
+      _SubModoAplicacao.comparativo =>
+        'Escolha 2 ou 3 aplicações para comparar:',
+    };
+
+    return [
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            BotaoPersonalizadoFiltroRelatorio(
+              titulo: 'Individual',
+              icone: Icon(
+                Icons.description_outlined,
+                color: cores.onSurface.withOpacity(0.7),
+              ),
+              selecionado: _subModo == _SubModoAplicacao.individual,
+              onTap: () => _escolherSubModo(_SubModoAplicacao.individual),
+            ),
+            BotaoPersonalizadoFiltroRelatorio(
+              titulo: 'Evolução',
+              icone: Icon(
+                Icons.show_chart,
+                color: cores.onSurface.withOpacity(0.7),
+              ),
+              selecionado: _subModo == _SubModoAplicacao.evolucao,
+              onTap: () => _escolherSubModo(_SubModoAplicacao.evolucao),
+            ),
+            BotaoPersonalizadoFiltroRelatorio(
+              titulo: 'Comparativo',
+              icone: Icon(
+                Icons.compare_arrows,
+                color: cores.onSurface.withOpacity(0.7),
+              ),
+              selecionado: _subModo == _SubModoAplicacao.comparativo,
+              onTap: () => _escolherSubModo(_SubModoAplicacao.comparativo),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 16),
+      Text(subModoLegenda, style: const TextStyle(fontWeight: FontWeight.w600)),
+      const SizedBox(height: 8),
+      SeletorAplicacoesRelatorio(
+        aplicacoes: _aplicacoesOrdenadas,
+        selecionadas: _aplicacoesSelecionadas,
+        onToggle: _alternarAplicacao,
+      ),
+      const SizedBox(height: 20),
+      switch (_subModo) {
+        _SubModoAplicacao.individual => _buildIndividual(relatorio, cores),
+        _SubModoAplicacao.evolucao => _buildEvolucaoSelecionada(cores),
+        _SubModoAplicacao.comparativo => _buildComparativo(relatorio, cores),
+      },
+    ];
+  }
+
+  Widget _buildIndividual(RelatorioEvolucaoModel relatorio, ColorScheme cores) {
+    if (_aplicacoesFiltradas.isEmpty) {
+      return Text(
+        'Selecione uma aplicação para visualizar os detalhes.',
+        style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+      );
+    }
+    final aplicacao = _aplicacoesFiltradas.first;
+    final valores = relatorio.categorias
+        .map((c) => aplicacao.mediaPorCategoria[c] ?? 0)
+        .toList();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cores.surface,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Aplicação ${aplicacao.numeroAplicacao}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Média geral: ${aplicacao.mediaGeral.toStringAsFixed(1)}/5',
+                style: TextStyle(
+                  color: cores.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          relatorio.categorias.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Text(
+                    'Nenhuma categoria pontuada nesta aplicação.',
+                    style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+                  ),
+                )
+              : GraficoTeia(categorias: relatorio.categorias, valores: valores),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEvolucaoSelecionada(ColorScheme cores) {
+    final pontos = _aplicacoesFiltradas;
+    final valores = pontos
+        .map(
+          (p) => _categoriaSelecionada == _mediaGeralLabel
+              ? p.mediaGeral
+              : (p.mediaPorCategoria[_categoriaSelecionada] ?? 0),
+        )
+        .toList();
+    final labels = pontos.map((p) => 'Ap. ${p.numeroAplicacao}').toList();
+    final categoriasDropdown = [
+      _mediaGeralLabel,
+      ...(_relatorio?.categorias ?? []),
+    ];
+
+    return Container(
+      height: 350,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: cores.surface,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Evolução das aplicações selecionadas',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: DropdownButton<String>(
+                  value: _categoriaSelecionada,
+                  isExpanded: true,
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  style: TextStyle(color: cores.primary, fontSize: 13),
+                  underline: Container(
+                    height: 1,
+                    color: cores.primary.withOpacity(0.5),
+                  ),
+                  onChanged: (String? novaCategoria) {
+                    if (novaCategoria != null) {
+                      setState(() => _categoriaSelecionada = novaCategoria);
+                    }
+                  },
+                  items: categoriasDropdown.map<DropdownMenuItem<String>>((
+                    valor,
+                  ) {
+                    return DropdownMenuItem<String>(
+                      value: valor,
+                      child: Text(
+                        valor,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: valores.length < 2
+                ? Center(
+                    child: Text(
+                      'Selecione ao menos duas aplicações para ver a evolução.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+                    ),
+                  )
+                : GraficoLinhaSemestre(valores: valores, labels: labels),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComparativo(
+    RelatorioEvolucaoModel relatorio,
+    ColorScheme cores,
+  ) {
+    final selecionadas = _aplicacoesFiltradas;
+    if (selecionadas.length < 2) {
+      return Text(
+        'Selecione pelo menos duas aplicações para comparar.',
+        style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+      );
+    }
+
+    final inicial = selecionadas.first;
+    final final_ = selecionadas.last;
+    final series = [
+      for (var i = 0; i < selecionadas.length; i++)
+        SerieRadarRelatorio(
+          label: 'Aplicação ${selecionadas[i].numeroAplicacao}',
+          cor: _coresComparativo[i % _coresComparativo.length],
+          valores: relatorio.categorias
+              .map((c) => selecionadas[i].mediaPorCategoria[c] ?? 0)
+              .toList(),
+        ),
+    ];
+
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: cores.surface,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Sobreposição por categoria',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 16),
+              relatorio.categorias.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Text(
+                        'Nenhuma categoria pontuada nas aplicações selecionadas.',
+                        style: TextStyle(
+                          color: cores.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                    )
+                  : GraficoTeia(
+                      categorias: relatorio.categorias,
+                      valores: const [],
+                      series: series,
+                    ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Container(
+          decoration: BoxDecoration(
+            color: cores.surface,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Evolução ponto a ponto',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              relatorio.categorias.isEmpty
+                  ? Text(
+                      'Nenhuma categoria pontuada nas aplicações selecionadas.',
+                      style: TextStyle(color: cores.onSurface.withOpacity(0.5)),
+                    )
+                  : TabelaComparativoAplicacoes(
+                      categorias: relatorio.categorias,
+                      inicial: inicial,
+                      final_: final_,
+                    ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

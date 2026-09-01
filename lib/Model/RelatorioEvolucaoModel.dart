@@ -1,9 +1,13 @@
 class PontoEvolucaoModel {
+  final String? sessaoId;
+  final int numeroAplicacao;
   final DateTime? data;
   final double mediaGeral;
   final Map<String, double> mediaPorCategoria;
 
   PontoEvolucaoModel({
+    this.sessaoId,
+    required this.numeroAplicacao,
     required this.data,
     required this.mediaGeral,
     required this.mediaPorCategoria,
@@ -11,10 +15,14 @@ class PontoEvolucaoModel {
 
   factory PontoEvolucaoModel.fromJson(Map<String, dynamic> json) {
     return PontoEvolucaoModel(
+      sessaoId: json['sessaoId'],
+      numeroAplicacao: json['numeroAplicacao'] ?? 0,
       data: json['data'] != null ? DateTime.tryParse(json['data']) : null,
       mediaGeral: (json['mediaGeral'] as num?)?.toDouble() ?? 0,
-      mediaPorCategoria: (json['mediaPorCategoria'] as Map<String, dynamic>? ?? {})
-          .map((chave, valor) => MapEntry(chave, (valor as num).toDouble())),
+      mediaPorCategoria:
+          (json['mediaPorCategoria'] as Map<String, dynamic>? ?? {}).map(
+            (chave, valor) => MapEntry(chave, (valor as num).toDouble()),
+          ),
     );
   }
 }
@@ -25,6 +33,7 @@ class ObservacaoModel {
   final DateTime? dataCriacao;
   final String? autorNome;
   final String? categoria;
+  final int? numeroAplicacao;
 
   ObservacaoModel({
     required this.id,
@@ -32,6 +41,7 @@ class ObservacaoModel {
     this.dataCriacao,
     this.autorNome,
     this.categoria,
+    this.numeroAplicacao,
   });
 
   factory ObservacaoModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +53,7 @@ class ObservacaoModel {
           : null,
       autorNome: json['autorNome'],
       categoria: json['categoria'],
+      numeroAplicacao: json['numeroAplicacao'],
     );
   }
 }
@@ -112,8 +123,9 @@ class RelatorioEvolucaoModel {
           .map((p) => PontoEvolucaoModel.fromJson(p as Map<String, dynamic>))
           .toList(),
       comparativoCategorias:
-          (json['comparativoCategorias'] as Map<String, dynamic>? ?? {})
-              .map((chave, valor) => MapEntry(chave, (valor as num).toDouble())),
+          (json['comparativoCategorias'] as Map<String, dynamic>? ?? {}).map(
+            (chave, valor) => MapEntry(chave, (valor as num).toDouble()),
+          ),
       observacoes: (json['observacoes'] as List<dynamic>? ?? [])
           .map((o) => ObservacaoModel.fromJson(o as Map<String, dynamic>))
           .toList(),
