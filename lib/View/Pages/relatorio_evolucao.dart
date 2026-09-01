@@ -3,6 +3,7 @@ import 'package:espectrum_front/Model/RelatorioEvolucaoModel.dart';
 import 'package:espectrum_front/Services/RelatorioPdfService.dart';
 import 'package:espectrum_front/Services/RelatorioService.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro_relatorio.dart';
+import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartaoObservacao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_relatorio.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_semestre.dart';
@@ -253,13 +254,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Relatório de evolução'),
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back),
-        ),
-      ),
+      appBar: CabecalhoPadrao(titulo: "Relatório de Evolução"),
       body: _carregando
           ? const Center(child: CircularProgressIndicator())
           : _erro != null
