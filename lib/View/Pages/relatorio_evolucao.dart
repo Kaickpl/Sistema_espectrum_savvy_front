@@ -5,6 +5,7 @@ import 'package:espectrum_front/Services/RelatorioService.dart';
 import 'package:espectrum_front/View/Widgets/botao_personalizado_filtro_relatorio.dart';
 import 'package:espectrum_front/View/Widgets/cartaoObservacao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_relatorio.dart';
+import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
 import 'package:espectrum_front/View/Widgets/grafico_linha_semestre.dart';
 import 'package:espectrum_front/View/Widgets/grafico_teia.dart';
 import 'package:espectrum_front/View/Widgets/seletor_aplicacoes_relatorio.dart';
@@ -254,12 +255,13 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Relatório de evolução'),
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back),
+        title: Text(
+          'Relatório de evolução',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
         ),
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
+      endDrawer: DrawerPadrao(),
       body: _carregando
           ? const Center(child: CircularProgressIndicator())
           : _erro != null
@@ -328,18 +330,22 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Filtros de Análise'),
-                  const SizedBox(height: 10),
+                  Text(
+                    'Filtros de Análise',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
                         BotaoPersonalizadoFiltroRelatorio(
                           titulo: 'Visão Geral',
-                          icone: Icon(
-                            Icons.insights,
-                            color: cores.onSurface.withOpacity(0.7),
-                          ),
+                          icone: Icon(Icons.insights, color: cores.onSurface),
                           selecionado: _modo == _ModoRelatorio.geral,
                           onTap: () => _escolherModo(_ModoRelatorio.geral),
                         ),
@@ -347,7 +353,7 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
                           titulo: 'Por Aplicação',
                           icone: Icon(
                             Icons.layers_outlined,
-                            color: cores.onSurface.withOpacity(0.7),
+                            color: cores.onSurface,
                           ),
                           selecionado: _modo == _ModoRelatorio.porAplicacao,
                           onTap: () =>
@@ -475,10 +481,14 @@ class _RelatorioEvolucaoState extends State<RelatorioEvolucao> {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Histórico evolutivo',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),

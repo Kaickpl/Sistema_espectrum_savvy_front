@@ -28,7 +28,7 @@ class CartaoPacienteRelatorio extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: cores.surface,
+          color: cores.onPrimaryContainer,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -64,15 +64,14 @@ class CartaoPacienteRelatorio extends StatelessWidget {
                           nomePaciente,
                           style: tema.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: cores.onSecondary,
                           ),
                         ),
                         Row(
                           children: [
                             Text(
-                              '$idade anos',
-                              style: TextStyle(
-                                color: cores.onSurface.withOpacity(0.5),
-                              ),
+                              '$idade ano',
+                              style: TextStyle(color: cores.onSecondary),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
@@ -81,14 +80,12 @@ class CartaoPacienteRelatorio extends StatelessWidget {
                               child: Icon(
                                 Icons.circle,
                                 size: 4,
-                                color: cores.onSurface.withOpacity(0.3),
+                                color: cores.onSecondary,
                               ),
                             ),
                             Text(
                               'TEA Nível $nivel',
-                              style: TextStyle(
-                                color: cores.onSurface.withOpacity(0.5),
-                              ),
+                              style: TextStyle(color: cores.onSecondary),
                             ),
                           ],
                         ),
@@ -123,14 +120,15 @@ class CartaoPacienteRelatorio extends StatelessWidget {
                               Text(
                                 'Terapeuta Responsável',
                                 style: TextStyle(
-                                  color: cores.onSurface.withOpacity(0.5),
+                                  color: cores.onSecondary,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               Text(
                                 nomeTerapeuta,
-                                style: const TextStyle(
+                                style: TextStyle(
+                                  color: cores.onSecondary,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -168,14 +166,14 @@ class CartaoPacienteRelatorio extends StatelessWidget {
                                   Text(
                                     'Exportar',
                                     style: TextStyle(
-                                      color: cores.surface,
+                                      color: cores.onSecondary,
                                       fontSize: 10,
                                     ),
                                   ),
                                   Text(
                                     'PDF',
                                     style: TextStyle(
-                                      color: cores.surface,
+                                      color: cores.onSecondary,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

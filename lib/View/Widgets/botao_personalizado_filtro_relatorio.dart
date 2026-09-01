@@ -26,11 +26,9 @@ class BotaoPersonalizadoFiltroRelatorio extends StatelessWidget {
           width: 190,
           height: 50,
           decoration: BoxDecoration(
-            color: selecionado ? cores.primary : cores.surface.withOpacity(0.5),
+            color: selecionado ? cores.primary : cores.onPrimary,
             borderRadius: BorderRadius.circular(20),
-            border: selecionado
-                ? Border.all(color: cores.primaryContainer)
-                : null,
+            border: selecionado ? Border.all(color: cores.primary) : null,
           ),
           child: Padding(
             padding: const EdgeInsets.all(15.0),
@@ -39,9 +37,7 @@ class BotaoPersonalizadoFiltroRelatorio extends StatelessWidget {
               children: [
                 Icon(
                   icone.icon,
-                  color: selecionado
-                      ? cores.onPrimary
-                      : cores.onSurface.withOpacity(0.7),
+                  color: selecionado ? cores.onPrimary : cores.onSecondary,
                 ),
                 Text(
                   titulo,
@@ -49,9 +45,7 @@ class BotaoPersonalizadoFiltroRelatorio extends StatelessWidget {
                     fontWeight: selecionado
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: selecionado
-                        ? cores.onPrimary
-                        : cores.onSurface.withOpacity(0.7),
+                    color: selecionado ? cores.onPrimary : cores.onSecondary,
                   ),
                 ),
               ],
