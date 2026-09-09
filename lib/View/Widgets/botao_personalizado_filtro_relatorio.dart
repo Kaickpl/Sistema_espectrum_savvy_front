@@ -51,9 +51,7 @@ class BotaoPersonalizadoFiltroRelatorio extends StatelessWidget {
               children: [
                 Icon(
                   icone.icon,
-                  color: selecionado
-                      ? cores.onPrimary
-                      : cores.onSurface.withOpacity(0.7),
+                  color: selecionado ? cores.onPrimary : cores.onSecondary,
                 ),
                 Text(
                   titulo,
@@ -61,9 +59,7 @@ class BotaoPersonalizadoFiltroRelatorio extends StatelessWidget {
                     fontWeight: selecionado
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: selecionado
-                        ? cores.onPrimary
-                        : cores.onSurface.withOpacity(0.7),
+                    color: selecionado ? cores.onPrimary : cores.onSecondary,
                   ),
                 ),
               ],
