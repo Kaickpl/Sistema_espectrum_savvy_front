@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           theme: TemaClaro.tema,
           darkTheme: TemaEscuro.tema,
 
-          home: const PaginaInicial(),
+          home: const HomeAluno(),
         );
       },
     );

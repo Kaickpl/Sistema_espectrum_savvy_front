@@ -70,7 +70,7 @@ class CartaoObservacao extends StatelessWidget {
                     Text(
                       '${data.day}/${data.month}/${data.year}',
                       style: TextStyle(
-                        color: cores.onSurface.withOpacity(0.3),
+                        color: cores.onPrimaryContainer.withOpacity(0.3),
                         fontSize: 12,
                       ),
                     ),

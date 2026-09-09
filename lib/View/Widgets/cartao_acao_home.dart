@@ -23,7 +23,7 @@ class CartaoAcaoHome extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 375),
       child: Material(
-        color: destaque ? cores.primary : cores.surfaceContainer,
+        color: destaque ? cores.primary : cores.tertiary.withOpacity(0.8),
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
@@ -38,7 +38,7 @@ class CartaoAcaoHome extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: destaque
                         ? cores.onPrimary.withOpacity(0.18)
-                        : cores.primary.withOpacity(0.12),
+                        : cores.primary.withOpacity(0.18),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
@@ -57,7 +57,7 @@ class CartaoAcaoHome extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: destaque ? cores.onPrimary : cores.onSurface,
+                          color: cores.onPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -65,9 +65,8 @@ class CartaoAcaoHome extends StatelessWidget {
                         subtitulo,
                         style: TextStyle(
                           fontSize: 13,
-                          color: destaque
-                              ? cores.onPrimary.withOpacity(0.85)
-                              : cores.onSurface.withOpacity(0.6),
+                          color: cores.onPrimary.withOpacity(0.85)
+                      ,
                         ),
                       ),
                     ],

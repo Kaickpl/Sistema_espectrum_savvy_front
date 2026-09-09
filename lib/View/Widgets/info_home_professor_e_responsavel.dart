@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'botao_grande.dart';
-import 'drawer_padrao.dart';
 import 'logo_container.dart';
-import 'cabecalho_padrao.dart';
 
 class InfoHomeProfessorEResponsavel extends StatelessWidget {
   final String nomePerfil;
@@ -31,37 +28,6 @@ class InfoHomeProfessorEResponsavel extends StatelessWidget {
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              SizedBox(height: 16),
-
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Testes em andamento:',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],
