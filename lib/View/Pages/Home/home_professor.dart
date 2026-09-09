@@ -1,5 +1,3 @@
-import 'package:espectrum_front/Config/coresPadrao.dart';
-import 'package:espectrum_front/View/Widgets/botao_grande.dart';
 import 'package:espectrum_front/View/Widgets/cabecalho_padrao.dart';
 import 'package:espectrum_front/View/Widgets/cartao_paciente_sem_historico.dart';
 import 'package:espectrum_front/View/Widgets/drawer_padrao.dart';
@@ -83,13 +81,26 @@ class _HomeProfessorState extends State<HomeProfessor> {
                       if (_isLoading)
                         const Center(child: CircularProgressIndicator())
                       else if (_errorMessage != null)
-                        Text(
-                          "Erro ao carregar pacientes: $_errorMessage",
-                          style: const TextStyle(color: Colors.red),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              "Erro ao carregar pacientes: $_errorMessage",
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            const SizedBox(height: 12),
+                            OutlinedButton(
+                              onPressed: () {
+                                setState(() => _isLoading = true);
+                                _carregarPacientes();
+                              },
+                              child: const Text("Tentar novamente"),
+                            ),
+                          ],
                         )
                       else if (_pacientes.isEmpty)
                         const Text(
-                          "Você ainda não tem pacientes vinculados.",
+                          "Você ainda não tem pacientes vinculados. Peça a um administrador para vincular pacientes a você.",
                           style: TextStyle(color: Colors.grey),
                         )
                       else
@@ -112,11 +123,8 @@ class _HomeProfessorState extends State<HomeProfessor> {
                               },
                               child: CartaoPacienteHomeSemHistorico(
                                 nomePaciente: paciente.nome,
-                                data:
-                                    DateTime.now(), // Temporário (ou pega do DTO)
-                                idade: 5, // Temporário
-                                status: "Em Progresso", // Temporário
-                                corStatus: CoresPadrao.emProgressoCor,
+                                idade: paciente.idade,
+                                grauAutismo: paciente.grauAutismo.displayName,
                                 onContinuar: () {
                                   Navigator.push(
                                     context,
@@ -136,27 +144,6 @@ class _HomeProfessorState extends State<HomeProfessor> {
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
-
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: BotaoGrande(
-              texto: "Iniciar Protocolo",
-              caminho: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Por favor, clique no cartão de um paciente acima para iniciar o protocolo!',
-                    ),
-                  ),
-                );
-              },
             ),
           ),
         ),

@@ -20,11 +20,29 @@ class HomeAluno extends StatefulWidget {
 class _HomeAlunoState extends State<HomeAluno> {
   List<PacienteResumoModel> _pacientes = [];
   bool _isLoading = true;
+  String? _nomeUsuario;
 
   @override
   void initState() {
     super.initState();
     _carregarPacientes();
+    _carregarNomeUsuario();
+  }
+
+  Future<void> _carregarNomeUsuario() async {
+    final nome = await TokenStorage.lerNome();
+    if (mounted) {
+      setState(() {
+        _nomeUsuario = nome;
+      });
+    }
+  }
+
+  String get _saudacao {
+    final hora = DateTime.now().hour;
+    if (hora < 12) return 'Bom dia';
+    if (hora < 18) return 'Boa tarde';
+    return 'Boa noite';
   }
 
   Future<void> _carregarPacientes() async {
@@ -74,47 +92,56 @@ class _HomeAlunoState extends State<HomeAluno> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    height: 64,
-                    width: 64,
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: cores.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Image.asset(
-                      "assets/Images/Logo.png",
-                      fit: BoxFit.fitWidth,
+                  Text(
+                    _nomeUsuario != null && _nomeUsuario!.isNotEmpty
+                        ? '$_saudacao, $_nomeUsuario!'
+                        : 'Que bom ter você de volta!',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: cores.onSurface,
                     ),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Preencha e realize o protocolo Socially Savvy.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: cores.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
 
-                  // boas vindas
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 343),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: cores.surfaceContainer,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const SizedBox(height: 5),
-                          Text(
-                            'Bem vindo ao Espectrum Savvy!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: cores.onSurface,
-                            ),
+                          Icon(
+                            Icons.groups_rounded,
+                            size: 15,
+                            color: cores.onSecondary,
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(width: 6),
                           Text(
-                            'Nosso App tem como intuito ajudar no preenchimento e realização do protocolo Socially Savvy',
-                            textAlign: TextAlign.center,
+                            _isLoading
+                                ? 'Carregando...'
+                                : '${_pacientes.length} ${_pacientes.length == 1 ? "paciente vinculado" : "pacientes vinculados"}',
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w300,
-                              color: cores.onSurface.withOpacity(0.6),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: cores.onSecondary,
                             ),
                           ),
                         ],
@@ -122,144 +149,13 @@ class _HomeAlunoState extends State<HomeAluno> {
                     ),
                   ),
 
-                  // card de duvidas
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 343),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: cores.onPrimary.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Row(
-                              children: [
-                                Icon(Icons.info, color: cores.tertiary),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    'Dúvidas quanto ao protocolo?',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w100,
-                                      color: cores.tertiary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 301),
-                              child: Container(
-                                width: double.infinity,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [cores.tertiary, cores.secondary],
-                                  ),
-                                ),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  onPressed: () => print('Botão pressionado!'),
-                                  child: const Text(
-                                    "Informações",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   Text(
-                    'Que bom ter você de volta!', // Dá pra puxar o nome do terapeuta aqui depois!
-                    style: TextStyle(fontSize: 25, color: cores.onSurface),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // card de progresso (Agora dinâmico com a quantidade de pacientes)
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 343),
-                    child: Container(
-                      width: double.infinity,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        color: cores.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            Text(
-                              _isLoading
-                                  ? 'Carregando protocolos...'
-                                  : 'Você tem ${_pacientes.length} protocolos disponíveis',
-                              style: TextStyle(color: cores.onPrimary),
-                            ),
-                            const SizedBox(height: 20),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: SizedBox(
-                                height: 12,
-                                child: LinearProgressIndicator(
-                                  backgroundColor: cores.onPrimary.withOpacity(
-                                    0.3,
-                                  ),
-                                  value: _isLoading
-                                      ? null
-                                      : (_pacientes.isNotEmpty
-                                            ? 1.0
-                                            : 0.0), // Fica animado enquanto carrega
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    cores.secondary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 343),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'O que você deseja fazer?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: cores.onSurface,
-                        ),
-                      ),
+                    'O que você deseja fazer?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: cores.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -297,6 +193,56 @@ class _HomeAlunoState extends State<HomeAluno> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const TelaVincularProfessor(),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Central de dúvidas em breve por aqui.',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: cores.onSurface.withOpacity(0.3),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.help_outline_rounded,
+                            size: 18,
+                            color: cores.tertiary,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Dúvidas quanto ao protocolo?',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: cores.onSurface,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 13,
+                            color: cores.onSurface.withOpacity(0.4),
+                          ),
+                        ],
                       ),
                     ),
                   ),

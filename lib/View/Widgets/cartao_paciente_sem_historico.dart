@@ -3,21 +3,17 @@ import 'package:flutter/material.dart';
 
 class CartaoPacienteHomeSemHistorico extends StatelessWidget {
   final String nomePaciente;
-  final DateTime data;
-  final int idade;
-  final String status;
-  final Color corStatus;
+  final int? idade;
+  final String grauAutismo;
 
   final VoidCallback onContinuar;
 
   const CartaoPacienteHomeSemHistorico({
     super.key,
     required this.nomePaciente,
-    required this.data,
     required this.idade,
-    required this.status,
-    required this.corStatus,
-    required this.onContinuar, // 🟢 AGORA É OBRIGATÓRIO
+    required this.grauAutismo,
+    required this.onContinuar,
   });
 
   @override
@@ -27,90 +23,55 @@ class CartaoPacienteHomeSemHistorico extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 375),
       child: Container(
-        height: 260,
         width: double.infinity,
         decoration: BoxDecoration(
           color: cores.onPrimary,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: cores.onSurface, width: 1),
         ),
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Text(
+              nomePaciente,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      nomePaciente,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    Text(
-                      'Última avaliação:',
-                      style: TextStyle(fontSize: 12, color: cores.onSurface),
-                    ),
-                    Text(
-                      '${data.day}/${data.month}/${data.year}',
-                      style: TextStyle(fontSize: 12, color: cores.onSurface),
-                    ),
-                  ],
-                ),
-                Container(
-                  height: 70,
-                  width: 130,
-                  decoration: BoxDecoration(
-                    color: corStatus.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(width: 7),
-                      Icon(Icons.circle, color: corStatus, size: 12),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          status,
-                          style: TextStyle(color: corStatus, fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                if (idade != null) _Chip(texto: '$idade anos', cores: cores),
+                _Chip(texto: grauAutismo, cores: cores),
               ],
             ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                SizedBox(width: 5),
-                Container(
-                  width: 60,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: cores.onPrimary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '$idade Anos',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color.fromRGBO(100, 116, 139, 1),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-
+            const SizedBox(height: 20),
             BotaoGrande(texto: "Iniciar Protocolo", caminho: onContinuar),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  final String texto;
+  final ColorScheme cores;
+
+  const _Chip({required this.texto, required this.cores});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: cores.surfaceContainer,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Text(
+        texto,
+        style: TextStyle(fontSize: 13, color: cores.onSecondary),
       ),
     );
   }
